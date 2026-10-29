@@ -1,0 +1,11 @@
+{
+  "appId": "com.revelacode.zerohour",
+  "appName": "Project Zero Hour",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "backgroundColor": "#080d12",
+  "android": {
+    "allowMixedContent": false,
+    "captureInput": true
+  }
+}
