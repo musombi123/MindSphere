@@ -1,0 +1,5 @@
+{
+  "schemaVersion": 1,
+  "description": "Optional animation GLBs exported against the same bone names as public/assets/characters/player.glb. Add only supplied/licensed animation clips here.",
+  "clips": {}
+}

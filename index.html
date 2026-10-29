@@ -22,10 +22,20 @@
 @media(max-width:900px){.right-panel{right:10px;top:68px;width:185px}.hud-left{top:68px;left:10px;width:220px}.hud-card{padding:9px 11px}.reward-card{padding:10px}.weapon-panel{padding:8px}.weapon-select{padding:5px}.weapon-icon{width:24px;height:24px}.bottom-dock{bottom:100px}.action-btn{min-width:84px;padding:8px;font-size:9px}}
 @media(max-width:620px){.topbar{padding:10px}.brand{font-size:10px}.brand-mark{width:30px;height:30px}.top-status{font-size:8px;padding:7px}.hud-left{top:58px;left:8px;width:calc(100vw - 16px);grid-template-columns:1fr 1fr;gap:6px}.hud-left .mission-card{display:none}.hud-card{padding:8px 10px}.health-head{font-size:10px;margin-top:5px}.bar{height:5px;margin-top:5px}.stats{margin-top:6px}.stat{padding:5px}.stat strong{font-size:13px}.stat span{font-size:7px}.right-panel{top:auto;bottom:164px;right:8px;width:160px;gap:6px}.reward-card{padding:8px 9px}.reward-card h3{font-size:10px;margin:4px 0}.reward-card p{font-size:9px;line-height:1.4;margin-bottom:7px}.reward-btn{font-size:8px;padding:8px}.reward-note{display:none}.weapon-panel{padding:7px 8px}.weapon-heading .eyebrow{font-size:8px}.weapon-select{gap:5px;margin-top:3px;padding:4px}.weapon-icon{width:22px;height:22px;font-size:11px}.weapon-text b{font-size:8px}.weapon-text small{display:none}.ammo-display{font-size:10px}.bottom-dock{display:none}#touch-controls{display:flex;inset:auto 8px 13px 8px;gap:6px}.story-card{padding:22px}.story-grid{gap:5px;margin:15px 0}.story-grid div{padding:8px}.story-grid b{font-size:10px}.story-grid small{font-size:8px}.finish-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.story-copy{font-size:11px}.story-foot{font-size:8px}.crosshair{display:none!important}.boss-card{grid-column:1 / -1}.boss-card.active{display:block}.boss-card .bar{margin-top:6px}}
 @media(max-height:520px) and (orientation:landscape){.hud-left{top:53px;width:200px}.right-panel{width:148px;top:56px}.reward-card p{display:none}.reward-card{padding:7px}.weapon-panel{padding:5px}.weapon-select{padding:3px}.bottom-dock{bottom:6px}.action-btn{padding:6px;min-width:75px}.story-card{max-width:540px;padding:18px}.story-card h1{font-size:30px;margin:8px 0}.story-grid{margin:10px 0}.story-copy{font-size:10px}.story-grid small{display:none}}
+
+.character-loader{position:fixed;z-index:9;left:50%;bottom:110px;transform:translateX(-50%);width:min(330px,calc(100vw - 30px));padding:12px 14px;border:1px solid #8be8f74b;border-radius:12px;background:rgba(5,12,17,.92);box-shadow:0 14px 40px #0008;backdrop-filter:blur(10px);pointer-events:none;transition:opacity .25s,transform .25s}
+.character-loader.hidden{display:none}.character-loader strong{display:block;font-size:9px;letter-spacing:.16em;color:var(--cyan)}.character-loader small{display:block;margin-top:5px;font-size:9px;color:var(--muted);letter-spacing:.04em}.character-loader-track{height:4px;border-radius:8px;background:#b5dce21b;overflow:hidden;margin-top:10px}.character-loader-track i{display:block;width:0;height:100%;border-radius:8px;background:linear-gradient(90deg,#58eaff,#b5ffe0);box-shadow:0 0 12px #58eaff66;transition:width .12s linear}
+@media(max-width:620px){.character-loader{bottom:164px;padding:9px 11px}.character-loader strong{font-size:8px}.character-loader small{font-size:8px}}
+
 </style>
 </head>
 <body>
 <div id="viewport"><canvas id="game-canvas" aria-label="Project Zero Hour 3D game"></canvas></div>
+<div class="character-loader" id="character-loader" role="status" aria-live="polite">
+  <strong>AEGIS CHARACTER SYSTEM</strong>
+  <small id="character-loading-status">SEARCHING FOR RIGGED PLAYER MODEL</small>
+  <div class="character-loader-track"><i id="character-loading-progress"></i></div>
+</div>
 <header class="topbar">
   <div class="brand"><div class="brand-mark">ZH</div><div>PROJECT ZERO HOUR<small id="episode-label">STORY MODE / EPISODE 01</small></div></div>
   <div class="top-status" id="mission-status">MISSION STANDBY</div>
@@ -102,6 +112,7 @@
 </div>
 <script type="module">
 import * as THREE from 'three';
+import { PlayerController } from './src/characters/PlayerController.js';
 
 const canvas = document.getElementById('game-canvas');
 const renderer = new THREE.WebGLRenderer({canvas, antialias: !matchMedia('(pointer: coarse)').matches, alpha: false, powerPreference: 'high-performance'});
@@ -246,16 +257,40 @@ for(let i=0;i<70;i++){
 }
 
 const player = {pos:new THREE.Vector3(0,0,9),health:100,maxHealth:100,score:0,kills:0,gangDown:0,thievesStopped:0,intel:0,rescued:0,anchors:0,shieldTime:0,overdriveTime:0,riverDisruptTime:0,dead:false};
+const playerController = new PlayerController({
+  renderer,
+  onProgress: (event) => {
+    const progress = document.getElementById('character-loading-progress');
+    const status = document.getElementById('character-loading-status');
+    if (progress) progress.style.width = Math.max(0, Math.min(100, event.percent || 0)) + '%';
+    if (status && event.message) status.textContent = event.message;
+  },
+  onStatus: (event) => {
+    const status = document.getElementById('character-loading-status');
+    const panel = document.getElementById('character-loader');
+    if (status && event.message) status.textContent = event.message;
+    if (panel && event.type === 'ready') window.setTimeout(() => panel.classList.add('hidden'), 500);
+    if (panel && event.type === 'fallback') window.setTimeout(() => panel.classList.add('hidden'), 2400);
+  }
+});
 const playerModel = createActor(true,false);
+playerController.attachRoot(playerModel);
 scene.add(playerModel);
+playerController.load('/assets/characters/player.glb');
 const playerShadow=new THREE.Mesh(actorShadowGeo,actorShadowMat);playerShadow.position.y=.005;scene.add(playerShadow);
 const shieldBubble=new THREE.Mesh(new THREE.SphereGeometry(1.65,16,12),new THREE.MeshBasicMaterial({color:0x62eaff,wireframe:true,transparent:true,opacity:.22,depthWrite:false}));
 shieldBubble.position.y=1.1;shieldBubble.visible=false;playerModel.add(shieldBubble);
 function createActor(isHero,isBoss,role='gangster'){
   const g=new THREE.Group();
-  const top=isHero?mat.heroBlue:(isBoss?mat.enemyRed:(role==='echo'?mat.echoTop:(role==='thief'?mat.wall2:mat.enemyTop)));
-  const legs=isHero?mat.heroBlue:(role==='echo'?mat.echoLegs:(role==='thief'?mat.wall:mat.enemyPants));
-  const head=new THREE.Mesh(new THREE.SphereGeometry(isBoss?.34:.29,12,10),isHero?mat.skin:mat.skin);head.position.set(0,1.92,0);g.add(head);
+  if(isHero){
+    g.userData.legs=[];
+    g.userData.isHero=true;
+    return g;
+  }
+  const top=isBoss?mat.enemyRed:(role==='echo'?mat.echoTop:(role==='thief'?mat.wall2:mat.enemyTop));
+  const legs=role==='echo'?mat.echoLegs:(role==='thief'?mat.wall:mat.enemyPants);
+  const head=new THREE.Mesh(new THREE.SphereGeometry(isBoss?.34:.29,12,10),mat.skin);
+  head.position.set(0,1.92,0);g.add(head);
   box(.68,.78,.38,top,0,1.28,0,g);
   box(.23,.78,.26,legs,-.22,.45,0,g);
   box(.23,.78,.26,legs,.22,.45,0,g);
@@ -263,17 +298,16 @@ function createActor(isHero,isBoss,role='gangster'){
   box(.3,.16,.42,mat.gun,.22,.1,-.07,g);
   box(.2,.75,.24,top,-.52,1.28,0,g,0,-.12);
   box(.2,.75,.24,top,.52,1.28,0,g,0,.12);
-  box(.13,.19,.13,isHero?mat.heroBright:mat.enemyRed,0,1.63,-.205,g);
-  if(isHero){
-    const cape=new THREE.Mesh(new THREE.BoxGeometry(.78,1.05,.1),mat.cape);cape.position.set(0,1.08,.28);cape.rotation.x=-.12;g.add(cape);
-    box(.14,.18,.42,mat.heroGold,0,1.28,-.23,g);
+  box(.13,.19,.13,mat.enemyRed,0,1.63,-.205,g);
+  if(isBoss||role==='thief'){
+    box(.62,.11,.07,mat.heroGold,0,1.65,-.23,g);
   }else{
-    box(.62,.11,.07,isBoss||role==='thief'?mat.heroGold:mat.enemyRed,0,1.65,-.23,g);
+    box(.15,.14,.5,mat.gun,.42,1.35,-.34,g,.12);
+    box(.1,.11,.63,mat.gun,.42,1.35,-.72,g,.12);
   }
-  box(.15,.14,.5,mat.gun,.42,1.35,-.34,g,.12);
-  box(.1,.11,.63,mat.gun,.42,1.35,-.72,g,.12);
   g.userData.legs=g.children.filter((m,i)=>i===2||i===3);
-  g.userData.isHero=isHero;return g;
+  g.userData.isHero=false;
+  return g;
 }
 
 const enemies=[];
@@ -406,7 +440,7 @@ let running=false,finished=false,firePressed=false,adRemaining=0,adBusy=false;
 let nearbyInteractable=null;
 let shockCooldown=0,shieldCooldown=0;
 let elapsed=0,lastFrame=performance.now();
-const keys={w:false,a:false,s:false,d:false,shift:false};
+const keys={w:false,a:false,s:false,d:false,shift:false,aim:false};
 const projectiles=[],effects=[];
 const targetPlane=new THREE.Plane(new THREE.Vector3(0,1,0),0);
 const raycaster=new THREE.Raycaster();
@@ -696,7 +730,7 @@ function updateInteractionUI(){
 function interactWithNearby(){
   const target=findNearbyInteractable();
   if(!target){showToast(chapter===3?'MOVE CLOSER TO A MEMORY ECHO OR PHASE SEAM':'MOVE CLOSER TO A CIVILIAN OR TEMPORAL ANCHOR');return;}
-  const item=target.item;item.taken=true;scene.remove(item.model);
+  const item=target.item;playerController.trigger('interact');item.taken=true;scene.remove(item.model);
   if(item.kind==='survivor'){
     player.rescued++;player.score+=400;showToast('CIVILIAN RESCUED · +400');
     if(player.rescued===1)showStoryBeat('survivor1');else showToast('EVACUEES SECURED · '+player.rescued+' / 3');
@@ -746,7 +780,7 @@ function fire(){
   const w=weapons[activeWeapon],a=ammo[activeWeapon];
   if(a.mag<=0){showToast('MAGAZINE EMPTY · PRESS R TO RELOAD');firePressed=false;return;}
   if(elapsed-lastShot<w.rate)return;
-  lastShot=elapsed;a.mag--;
+  lastShot=elapsed;a.mag--;playerController.trigger('shoot');
   const dx=aimPoint.x-player.pos.x,dz=aimPoint.z-player.pos.z;
   let base=new THREE.Vector3(dx,0,dz);
   if(base.length()<1){
@@ -766,13 +800,13 @@ function beginReload(){
   if(!running||finished||reloading)return;
   const a=ammo[activeWeapon],w=weapons[activeWeapon];
   if(a.mag>=w.capacity||a.reserve<=0){showToast(a.reserve<=0?'NO RESERVE AMMO':'MAGAZINE READY');return;}
-  reloading=true;reloadEnds=elapsed+1.35;firePressed=false;showToast('RELOADING '+w.name);
+  reloading=true;reloadEnds=elapsed+1.35;firePressed=false;playerController.trigger('reload');showToast('RELOADING '+w.name);
 }
 function hurtPlayer(amount){
   if(player.dead||finished)return;
   const real=player.shieldTime>0?Math.max(1,Math.round(amount*.18)):amount;
-  player.health=Math.max(0,player.health-real);
-  if(player.health<=0){player.dead=true;endMission(false);}
+  player.health=Math.max(0,player.health-real);playerController.trigger('hit');
+  if(player.health<=0){player.dead=true;playerController.trigger('death');endMission(false);}
   updateHUD();
 }
 function damageEnemy(e,amount){
@@ -799,7 +833,7 @@ function explosion(x,z,radius,color=0x8af8ff){
 function shockwave(){
   if(!running||finished||narrativeOpen)return;
   if(shockCooldown>0){showToast('SHOCKWAVE RECHARGING · '+Math.ceil(shockCooldown)+'s');return;}
-  shockCooldown=12;explosion(player.pos.x,player.pos.z,10);
+  shockCooldown=12;playerController.trigger('shockwave');explosion(player.pos.x,player.pos.z,10);
   for(const e of enemies){
     if(!e.dead&&e.model.position.distanceTo(player.pos)<10)damageEnemy(e,e.boss?38:66);
   }
@@ -808,7 +842,7 @@ function shockwave(){
 function aegis(){
   if(!running||finished||narrativeOpen)return;
   if(shieldCooldown>0){showToast('AEGIS RECHARGING · '+Math.ceil(shieldCooldown)+'s');return;}
-  shieldCooldown=16;player.shieldTime=4;shieldBubble.visible=true;showToast('AEGIS ONLINE · DAMAGE REDUCED');updateHUD();
+  shieldCooldown=16;player.shieldTime=4;shieldBubble.visible=true;playerController.trigger('aegis');showToast('AEGIS ONLINE · DAMAGE REDUCED');updateHUD();
 }
 
 const abilityCatalog={
@@ -833,7 +867,7 @@ function useAbility(key){
   if(!running||finished)return;
   const a=abilityCatalog[key];if(!a||!unlocked.includes(key))return;
   if(abilityCooldowns[key]>0){showToast(a.name+' · '+Math.ceil(abilityCooldowns[key])+'s');return;}
-  abilityCooldowns[key]=a.cooldown;
+  abilityCooldowns[key]=a.cooldown;playerController.trigger(key==='chain'?'chainLightning':key==='secondwind'?'secondWind':'overdrive');
   if(key==='overdrive'){overdriveTime=6;showToast('OVERDRIVE ACTIVE · 6 SECONDS');}
   if(key==='secondwind'){
     const before=player.health;player.health=Math.min(player.maxHealth,player.health+40);
@@ -1006,9 +1040,10 @@ canvas.addEventListener('pointermove',e=>{
   pointer.y=-(e.clientY/window.innerHeight)*2+1;
   const cross=document.getElementById('crosshair');cross.style.left=e.clientX+'px';cross.style.top=e.clientY+'px';
 });
-canvas.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button!==0)return;firePressed=true;});
-window.addEventListener('pointerup',()=>firePressed=false);
-window.addEventListener('blur',()=>{for(const k of Object.keys(keys))keys[k]=false;firePressed=false;});
+canvas.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button===2){keys.aim=true;return;}if(e.pointerType==='mouse'&&e.button!==0)return;firePressed=true;});
+canvas.addEventListener('contextmenu',e=>e.preventDefault());
+window.addEventListener('pointerup',e=>{if(e.button===2)keys.aim=false;firePressed=false;});
+window.addEventListener('blur',()=>{for(const k of Object.keys(keys))keys[k]=false;keys.aim=false;firePressed=false;});
 
 function updateWorld(dt){
   if(!running||finished||narrativeOpen)return;
@@ -1032,20 +1067,29 @@ function updateWorld(dt){
     a.mag+=take;a.reserve-=take;reloading=false;showToast('RELOAD COMPLETE');
   }
   const move=new THREE.Vector3((keys.d?1:0)-(keys.a?1:0),0,(keys.s?1:0)-(keys.w?1:0));
+  let moveSpeed=0;
   if(move.lengthSq()>0){
-    move.normalize();let speed=overdriveTime>0?9.2:5.4;if(player.riverDisruptTime>0)speed*=.52;if(keys.shift)speed*=1.35;
-    player.pos.addScaledVector(move,speed*dt);
+    move.normalize();
+    moveSpeed=overdriveTime>0?9.2:5.4;
+    if(player.riverDisruptTime>0)moveSpeed*=.52;
+    if(keys.shift)moveSpeed*=1.35;
+    player.pos.addScaledVector(move,moveSpeed*dt);
     player.pos.x=THREE.MathUtils.clamp(player.pos.x,-5.3,5.3);
     player.pos.z=THREE.MathUtils.clamp(player.pos.z,-56,13);
-    playerModel.rotation.y=Math.atan2(-move.x,-move.z);
-    const walk=Math.sin(elapsed*12)*.22;
-    if(playerModel.userData.legs.length===2){playerModel.userData.legs[0].rotation.x=walk;playerModel.userData.legs[1].rotation.x=-walk;}
-    playerModel.position.copy(player.pos);playerShadow.position.set(player.pos.x,.004,player.pos.z);
+    if(!keys.aim)playerModel.rotation.y=Math.atan2(-move.x,-move.z);
+    playerModel.position.copy(player.pos);
+    playerShadow.position.set(player.pos.x,.004,player.pos.z);
   }
+  playerController.setLocomotion({
+    moveX:move.x,moveZ:move.z,speed:moveSpeed,maxSpeed:9.2,
+    sprinting:keys.shift,aiming:keys.aim
+  });
   pointAim();
-  const desiredCamera=new THREE.Vector3(player.pos.x,player.pos.y+6.4,player.pos.z+10.6);
-  camera.position.lerp(desiredCamera,Math.min(1,dt*4.5));
-  camera.lookAt(player.pos.x,1.15,player.pos.z-4.5);
+  if(keys.aim){
+    const aimDx=aimPoint.x-player.pos.x,aimDz=aimPoint.z-player.pos.z;
+    if(Math.hypot(aimDx,aimDz)>.2)playerModel.rotation.y=Math.atan2(-aimDx,-aimDz);
+  }
+  playerController.updateCamera(camera,dt,player.pos,scene,keys.aim);
   if(firePressed&&elapsed-lastShot>=weapons[activeWeapon].rate)fire();
 
   for(const e of enemies){
@@ -1134,6 +1178,7 @@ function animate(now){
   requestAnimationFrame(animate);
   const dt=Math.min(.04,Math.max(0,(now-lastFrame)/1000));lastFrame=now;
   updateWorld(dt);
+  playerController.update(dt);
   renderer.render(scene,camera);
 }
 function resize(){
