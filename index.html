@@ -75,8 +75,8 @@
   <div class="story-card">
     <div class="story-kicker">Reconstructed rural combat zone · Chapter 01</div>
     <h1>STORY ONE<br><em>THE RED ROAD</em></h1>
-    <p class="story-copy">The Black Viper gang has taken control of the settlement road, stealing supplies and leaving the community trapped between the forest and the homesteads. You are the Guardian: the only person with the power to push them back. Clear the route, retrieve the intelligence, and stop their field lieutenant before the convoy arrives.</p>
-    <div class="story-grid"><div><b>01 / CLEAR</b><small>Take down 5 gang members and their lieutenant.</small></div><div><b>02 / RECOVER</b><small>Find 3 amber intel caches along the road.</small></div><div><b>03 / EXTRACT</b><small>Reach the marker after the route is secure.</small></div></div>
+    <p class="story-copy">The Black Viper gang has seized the settlement road and hired a crew of thieves to raid supply sheds. You are the Guardian: the only person with the power to push them back. Stop the gang fighters and thieves, recover the intelligence, and defeat their field lieutenant before the convoy arrives.</p>
+    <div class="story-grid"><div><b>01 / CLEAR</b><small>Neutralise 3 gang fighters, 2 thieves, and their lieutenant.</small></div><div><b>02 / RECOVER</b><small>Find 3 amber intel caches along the road.</small></div><div><b>03 / EXTRACT</b><small>Reach the marker after the route is secure.</small></div></div>
     <button class="deploy-btn" id="start-btn">DEPLOY TO THE RED ROAD ↗</button>
     <div class="story-foot">DESKTOP: WASD / mouse / click / Q E R · MOBILE: on-screen controls · Fictional sci-fi combat · Early prototype</div>
   </div>
@@ -209,16 +209,16 @@ for(let i=0;i<70;i++){
   pebble.rotation.y=Math.random()*Math.PI;
 }
 
-const player = {pos:new THREE.Vector3(0,0,9),health:100,maxHealth:100,score:0,kills:0,intel:0,shieldTime:0,overdriveTime:0,dead:false};
+const player = {pos:new THREE.Vector3(0,0,9),health:100,maxHealth:100,score:0,kills:0,gangDown:0,thievesStopped:0,intel:0,shieldTime:0,overdriveTime:0,dead:false};
 const playerModel = createActor(true,false);
 scene.add(playerModel);
 const playerShadow=new THREE.Mesh(actorShadowGeo,actorShadowMat);playerShadow.position.y=.005;scene.add(playerShadow);
 const shieldBubble=new THREE.Mesh(new THREE.SphereGeometry(1.65,16,12),new THREE.MeshBasicMaterial({color:0x62eaff,wireframe:true,transparent:true,opacity:.22,depthWrite:false}));
 shieldBubble.position.y=1.1;shieldBubble.visible=false;playerModel.add(shieldBubble);
-function createActor(isHero,isBoss){
+function createActor(isHero,isBoss,role='gangster'){
   const g=new THREE.Group();
-  const top=isHero?mat.heroBlue:(isBoss?mat.enemyRed:mat.enemyTop);
-  const legs=isHero?mat.heroBlue:mat.enemyPants;
+  const top=isHero?mat.heroBlue:(isBoss?mat.enemyRed:(role==='thief'?mat.wall2:mat.enemyTop));
+  const legs=isHero?mat.heroBlue:(role==='thief'?mat.wall:mat.enemyPants);
   const head=new THREE.Mesh(new THREE.SphereGeometry(isBoss?.34:.29,12,10),isHero?mat.skin:mat.skin);head.position.set(0,1.92,0);g.add(head);
   box(.68,.78,.38,top,0,1.28,0,g);
   box(.23,.78,.26,legs,-.22,.45,0,g);
@@ -232,7 +232,7 @@ function createActor(isHero,isBoss){
     const cape=new THREE.Mesh(new THREE.BoxGeometry(.78,1.05,.1),mat.cape);cape.position.set(0,1.08,.28);cape.rotation.x=-.12;g.add(cape);
     box(.14,.18,.42,mat.heroGold,0,1.28,-.23,g);
   }else{
-    box(.62,.11,.07,isBoss?mat.heroGold:mat.enemyRed,0,1.65,-.23,g);
+    box(.62,.11,.07,isBoss||role==='thief'?mat.heroGold:mat.enemyRed,0,1.65,-.23,g);
   }
   box(.15,.14,.5,mat.gun,.42,1.35,-.34,g,.12);
   box(.1,.11,.63,mat.gun,.42,1.35,-.72,g,.12);
@@ -241,12 +241,12 @@ function createActor(isHero,isBoss){
 }
 
 const enemies=[];
-function addEnemy(x,z,boss=false){
-  const model=createActor(false,boss);model.position.set(x,0,z);scene.add(model);
+function addEnemy(x,z,boss=false,role='gangster'){
+  const model=createActor(false,boss,role);model.position.set(x,0,z);scene.add(model);
   const shadow=new THREE.Mesh(actorShadowGeo,actorShadowMat);shadow.position.set(x,.004,z);scene.add(shadow);
-  enemies.push({model,shadow,hp:boss?190:52,maxHp:boss?190:52,boss,dead:false,nextShot:1.2+Math.random()*1.6,moveSpeed:boss?1.35:1.65,flash:0});
+  enemies.push({model,shadow,hp:boss?190:(role==='thief'?36:52),maxHp:boss?190:(role==='thief'?36:52),boss,role,dead:false,nextShot:1.2+Math.random()*1.6,moveSpeed:boss?1.35:(role==='thief'?2.1:1.65),flash:0});
 }
-addEnemy(-2.1,-8,false);addEnemy(2.5,-16,false);addEnemy(-3,-24,false);addEnemy(2.2,-32,false);addEnemy(-1.2,-39,false);addEnemy(0,-48,true);
+addEnemy(-2.1,-8,false,'gangster');addEnemy(2.5,-16,false,'thief');addEnemy(-3,-24,false,'gangster');addEnemy(2.2,-32,false,'thief');addEnemy(-1.2,-39,false,'gangster');addEnemy(0,-48,true,'gangster');
 
 const pickups=[];
 function addIntel(x,z){
@@ -346,8 +346,8 @@ function damageEnemy(e,amount){
   player.score+=Math.round(amount);
   if(e.hp<=0){
     e.dead=true;e.model.visible=false;e.shadow.visible=false;
-    player.kills++;player.score+=e.boss?500:150;
-    showToast(e.boss?'VIPER LIEUTENANT DOWN':'THREAT NEUTRALISED');
+    player.kills++;if(!e.boss&&e.role==='thief')player.thievesStopped++;else if(!e.boss)player.gangDown++;player.score+=e.boss?500:150;
+    showToast(e.boss?'VIPER LIEUTENANT DOWN':(e.role==='thief'?'THIEF STOPPED':'GANG FIGHTER NEUTRALISED'));
     if(Math.random()<.3)addHealthPickup(e.model.position.x,e.model.position.z);
   }
   updateHUD();
@@ -447,7 +447,7 @@ function updateHUD(){
   document.getElementById('intel-count').textContent=player.intel+' / 3';
   document.getElementById('score-value').textContent=String(player.score).padStart(4,'0');
   const a=ammo[activeWeapon];document.getElementById('ammo-value').textContent=a.mag+' / '+a.reserve;
-  document.getElementById('objective-text').innerHTML='Neutralise gang: <b>'+player.kills+' / 6</b><br>Recover intel: <b>'+player.intel+' / 3</b><br>Reach extraction after both are complete.';
+  document.getElementById('objective-text').innerHTML='Gang fighters: <b>'+player.gangDown+' / 3</b><br>Thieves stopped: <b>'+player.thievesStopped+' / 2</b><br>Defeat the <b>lieutenant</b><br>Intel caches: <b>'+player.intel+' / 3</b><br>Then reach extraction.';
   const boss=enemies.find(e=>e.boss);
   if(boss&&!boss.dead){
     document.getElementById('boss-card').classList.add('active');
