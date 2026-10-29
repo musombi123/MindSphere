@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#080d12">
-<meta name="description" content="Project Zero Hour — The Red Road. Offline-first 3D superhero action game for Android and web.">
-<title>Project Zero Hour — The Red Road</title>
+<meta name="description" content="Project Zero Hour: The Ninth Tomorrow — an unfolding sci-fi action story set in a future Bungoma County, Kenya.">
+<title>Project Zero Hour — The Ninth Tomorrow</title>
 <style>
 :root{color-scheme:dark;--bg:#080d12;--panel:rgba(10,18,25,.88);--line:rgba(126,190,208,.22);--cyan:#77f2ff;--gold:#ffc66a;--red:#ff5d65;--muted:#9bb0b9}
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#eef8fa}body{user-select:none;-webkit-user-select:none}button{font:inherit;color:inherit;cursor:pointer;border:1px solid var(--line);background:rgba(16,30,40,.93);border-radius:10px;padding:10px 13px;transition:transform .12s,border-color .12s,background .12s}button:hover{border-color:var(--cyan);background:rgba(27,54,66,.96)}button:active{transform:scale(.97)}button:disabled{opacity:.44;cursor:not-allowed}#viewport{position:fixed;inset:0}#game-canvas{display:block;width:100%;height:100%;outline:none;touch-action:none}
@@ -16,6 +16,8 @@
 .crosshair{position:fixed;z-index:2;pointer-events:none;width:22px;height:22px;border:1px solid #9fffff9c;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 10px #77f2ff2b;display:none}.crosshair:before,.crosshair:after{content:"";position:absolute;background:#9fffff9c}.crosshair:before{left:50%;top:-5px;height:30px;width:1px}.crosshair:after{top:50%;left:-5px;width:30px;height:1px}
 .toast{position:fixed;z-index:8;left:50%;top:18%;transform:translate(-50%,-8px);background:#07141beF;border:1px solid #75eafa69;color:#e8fbff;border-radius:9px;padding:10px 16px;font-size:11px;font-weight:800;letter-spacing:.05em;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;text-align:center;max-width:calc(100vw - 32px)}.toast.show{opacity:1;transform:translate(-50%,0)}
 .screen-layer{position:fixed;z-index:10;inset:0;display:flex;align-items:center;justify-content:center;padding:22px;background:radial-gradient(ellipse at 50% 40%,rgba(7,16,22,.44),rgba(3,8,12,.82));backdrop-filter:blur(4px)}.screen-layer.hidden{display:none}.story-card{width:min(600px,100%);padding:clamp(22px,5vw,42px);background:linear-gradient(145deg,rgba(13,26,33,.96),rgba(5,11,15,.97));border:1px solid #8be8f74b;border-radius:18px;box-shadow:0 30px 100px #0009;position:relative;overflow:hidden}.story-card:before{content:"";position:absolute;right:-80px;top:-100px;width:260px;height:260px;border:1px solid #7ff0ff20;border-radius:50%;box-shadow:0 0 0 30px #7ff0ff08,0 0 0 60px #7ff0ff05;pointer-events:none}.story-kicker{font-weight:950;font-size:10px;letter-spacing:.24em;color:var(--cyan);text-transform:uppercase}.story-card h1{font-size:clamp(32px,7vw,54px);letter-spacing:-.05em;line-height:.98;margin:16px 0 14px;position:relative}.story-card h1 em{font-style:normal;color:var(--gold)}.story-copy{max-width:480px;color:#b9cbd1;font-size:13px;line-height:1.75}.story-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:22px 0}.story-grid div{border:1px solid #c7e6ed18;border-radius:9px;padding:10px;background:#ffffff04}.story-grid b{display:block;font-size:11px}.story-grid small{display:block;color:var(--muted);font-size:9px;margin-top:5px;line-height:1.4}.deploy-btn{width:100%;border:0;border-radius:10px;padding:15px;background:linear-gradient(110deg,#78ecff,#a4f2cc);color:#071116;font-weight:1000;font-size:11px;letter-spacing:.16em}.story-foot{font-size:9px;color:#8197a0;margin-top:13px;line-height:1.6}.finish-title{font-size:34px!important}.finish-copy{font-size:12px;line-height:1.7;color:#b8c9cf}
+.comms-layer{z-index:12}.comms-card{width:min(650px,100%)}.comms-title{font-size:clamp(27px,6vw,43px)!important;line-height:1.02!important;letter-spacing:-.04em!important}.comms-copy{font-size:13px;line-height:1.8;color:#d1e0e5;white-space:pre-line;position:relative}.comms-copy strong{color:var(--cyan)}.comms-meta{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}.comms-meta span{border:1px solid #8be8f72e;border-radius:7px;padding:7px 9px;color:#8faab4;font-size:9px;letter-spacing:.12em}.comms-actions{display:grid;gap:9px;margin-top:18px}.comms-continue{width:100%;border:0;background:linear-gradient(110deg,#78ecff,#a4f2cc);color:#071116;font-weight:1000;font-size:10px;letter-spacing:.14em;padding:14px}.comms-choices{display:grid;grid-template-columns:1fr 1fr;gap:9px}.comms-choices.hidden{display:none}.comms-choice{padding:13px;text-align:left;border-color:#82e6f24a;background:#0b2029}.comms-choice b{display:block;color:var(--cyan);font-size:10px;letter-spacing:.08em;margin-bottom:6px}.comms-choice span{display:block;color:#b2c8ce;font-size:10px;line-height:1.5;font-weight:500;letter-spacing:0}.comms-choice:last-child{border-color:#ffc66a5e}.comms-choice:last-child b{color:var(--gold)}.comms-status{font-size:9px;color:#8197a0;letter-spacing:.12em;line-height:1.6;margin-top:12px}
+@media(max-width:620px){.comms-card{padding:21px}.comms-title{font-size:29px!important}.comms-copy{font-size:11px;line-height:1.7}.comms-meta{gap:5px;margin:12px 0}.comms-meta span{font-size:8px;padding:6px}.comms-choices{grid-template-columns:1fr}.comms-choice{padding:10px}}
 #touch-controls{display:none;position:fixed;z-index:5;inset:auto 12px 13px 12px;justify-content:space-between;align-items:flex-end;pointer-events:none;gap:10px}.touch-pad,.touch-actions{pointer-events:auto;display:grid;gap:6px}.touch-pad{grid-template-columns:repeat(3,42px);grid-template-rows:repeat(2,42px)}.touch-pad button,.touch-actions button{padding:0;display:grid;place-items:center;border-radius:12px;background:#06131bd9;border-color:#8de8f14a;font-size:15px;font-weight:900;touch-action:none;backdrop-filter:blur(6px)}.touch-pad .up{grid-column:2}.touch-pad .left{grid-column:1;grid-row:2}.touch-pad .down{grid-column:2;grid-row:2}.touch-pad .right{grid-column:3;grid-row:2}.touch-actions{grid-template-columns:repeat(2,49px);grid-template-rows:repeat(2,42px)}.touch-actions button{font-size:9px;color:var(--cyan)}.touch-actions .fire-touch{background:#9d342bbf;color:white;border-color:#ff8888}.touch-bonus-list{display:grid;gap:5px;pointer-events:auto;align-content:end;width:48px}.touch-bonus-list button{font-size:7px;padding:7px 2px;border-radius:9px;background:#07141ad9;border-color:#ffcb7166;color:#ffe0a1;font-weight:900;line-height:1.25;touch-action:manipulation}.touch-hint{display:none}
 @media(max-width:900px){.right-panel{right:10px;top:68px;width:185px}.hud-left{top:68px;left:10px;width:220px}.hud-card{padding:9px 11px}.reward-card{padding:10px}.weapon-panel{padding:8px}.weapon-select{padding:5px}.weapon-icon{width:24px;height:24px}.bottom-dock{bottom:100px}.action-btn{min-width:84px;padding:8px;font-size:9px}}
 @media(max-width:620px){.topbar{padding:10px}.brand{font-size:10px}.brand-mark{width:30px;height:30px}.top-status{font-size:8px;padding:7px}.hud-left{top:58px;left:8px;width:calc(100vw - 16px);grid-template-columns:1fr 1fr;gap:6px}.hud-left .mission-card{display:none}.hud-card{padding:8px 10px}.health-head{font-size:10px;margin-top:5px}.bar{height:5px;margin-top:5px}.stats{margin-top:6px}.stat{padding:5px}.stat strong{font-size:13px}.stat span{font-size:7px}.right-panel{top:auto;bottom:164px;right:8px;width:160px;gap:6px}.reward-card{padding:8px 9px}.reward-card h3{font-size:10px;margin:4px 0}.reward-card p{font-size:9px;line-height:1.4;margin-bottom:7px}.reward-btn{font-size:8px;padding:8px}.reward-note{display:none}.weapon-panel{padding:7px 8px}.weapon-heading .eyebrow{font-size:8px}.weapon-select{gap:5px;margin-top:3px;padding:4px}.weapon-icon{width:22px;height:22px;font-size:11px}.weapon-text b{font-size:8px}.weapon-text small{display:none}.ammo-display{font-size:10px}.bottom-dock{display:none}#touch-controls{display:flex;inset:auto 8px 13px 8px;gap:6px}.story-card{padding:22px}.story-grid{gap:5px;margin:15px 0}.story-grid div{padding:8px}.story-grid b{font-size:10px}.story-grid small{font-size:8px}.story-copy{font-size:11px}.story-foot{font-size:8px}.crosshair{display:none!important}.boss-card{grid-column:1 / -1}.boss-card.active{display:block}.boss-card .bar{margin-top:6px}}
@@ -36,10 +38,10 @@
     <div class="stats"><div class="stat"><strong id="kill-count">0</strong><span>THREATS DOWN</span></div><div class="stat"><strong id="intel-count">0 / 3</strong><span>INTEL CACHES</span></div><div class="stat"><strong id="score-value">0000</strong><span>FIELD SCORE</span></div></div>
   </div>
   <div class="hud-card mission-card">
-    <div class="eyebrow">Field objective</div><div class="mission-title">THE RED ROAD</div>
-    <div class="objective" id="objective-text">Neutralise the Black Viper gang.<br>Recover <b>3 intel caches</b>.<br>Proceed to the extraction marker.</div>
+    <div class="eyebrow">Field objective · Bungoma County</div><div class="mission-title">THE RED ROAD</div>
+    <div class="objective" id="objective-text">Stop the Black Viper raiders.<br>Recover <b>3 Echo Shards</b>.<br>Reach the Sang’alo relay beacon.</div>
   </div>
-  <div class="hud-card boss-card" id="boss-card"><div class="eyebrow">High-value target</div><div class="health-head"><span id="boss-name">VIPER LIEUTENANT</span><span id="boss-value">180 HP</span></div><div class="bar"><div class="bar-fill boss-fill" id="boss-fill"></div></div></div>
+  <div class="hud-card boss-card" id="boss-card"><div class="eyebrow">High-value target</div><div class="health-head"><span id="boss-name">KITO · VIPER COMMANDER</span><span id="boss-value">180 HP</span></div><div class="bar"><div class="bar-fill boss-fill" id="boss-fill"></div></div></div>
 </section>
 <aside class="right-panel">
   <div class="reward-card">
@@ -73,16 +75,29 @@
 </div>
 <div class="screen-layer" id="intro-layer">
   <div class="story-card">
-    <div class="story-kicker">Reconstructed rural combat zone · Chapter 01</div>
-    <h1>STORY ONE<br><em>THE RED ROAD</em></h1>
-    <p class="story-copy">The Black Viper gang has seized the settlement road and hired a crew of thieves to raid supply sheds. You are the Guardian: the only person with the power to push them back. Stop the gang fighters and thieves, recover the intelligence, and defeat their field lieutenant before the convoy arrives.</p>
-    <div class="story-grid"><div><b>01 / CLEAR</b><small>Neutralise 3 gang fighters, 2 thieves, and their lieutenant.</small></div><div><b>02 / RECOVER</b><small>Find 3 amber intel caches along the road.</small></div><div><b>03 / EXTRACT</b><small>Reach the marker after the route is secure.</small></div></div>
-    <button class="deploy-btn" id="start-btn">DEPLOY TO THE RED ROAD ↗</button>
-    <div class="story-foot">DESKTOP: WASD / mouse / click / Q E R · MOBILE: on-screen controls · Fictional sci-fi combat · Early prototype</div>
+    <div class="story-kicker">Bungoma County, Kenya · Year 2097 · Episode 01 / 05</div>
+    <h1>THE RED ROAD<br><em>THE NINTH TOMORROW</em></h1>
+    <p class="story-copy">The blackout lasted forty-three seconds. Across Bungoma, solar pumps started in reverse, radios broadcast tomorrow’s weather, and a voice called for help seventeen minutes before anyone sent it. Now the Black Viper mercenaries control a red-earth road beneath the shadow of Mount Elgon. You are ZERO — a rescue engineer wearing an experimental Aegis suit. Your mission is to recover three glowing signal fragments before the crew reaches the old relay above Sang’alo.</p>
+    <div class="story-grid"><div><b>01 / SURVIVE</b><small>Stop the raiders and their commander, Kito.</small></div><div><b>02 / LISTEN</b><small>Recover three Echo Shards. They contain messages from futures that never happened.</small></div><div><b>03 / CHOOSE</b><small>Decide whether to trust the voice or sever the signal.</small></div></div>
+    <button class="deploy-btn" id="start-btn">BEGIN CHAPTER 01 ↗</button>
+    <div class="story-foot">DESKTOP: WASD / mouse / click / Q E R · MOBILE: on-screen controls · This is speculative fiction set around real Bungoma landscapes.</div>
+  </div>
+</div>
+<div class="screen-layer hidden comms-layer" id="comms-layer" role="dialog" aria-modal="true" aria-labelledby="comms-title">
+  <div class="story-card comms-card">
+    <div class="story-kicker" id="comms-kicker">INCOMING TRANSMISSION · ZERO CHANNEL</div>
+    <h1 class="comms-title" id="comms-title">SIGNAL DETECTED</h1>
+    <p class="comms-copy" id="comms-copy"></p>
+    <div class="comms-meta" id="comms-meta"><span>LOCAL TIME: 17 MINUTES AHEAD</span><span>ORIGIN: UNKNOWN</span></div>
+    <div class="comms-actions">
+      <div class="comms-choices hidden" id="comms-choices"></div>
+      <button class="comms-continue" id="comms-continue">ACKNOWLEDGE · RESUME MISSION ↗</button>
+    </div>
+    <div class="comms-status" id="comms-status">COMMS BUFFER SAVED LOCALLY · SIGNAL SOURCE UNVERIFIED</div>
   </div>
 </div>
 <div class="screen-layer hidden" id="finish-layer">
-  <div class="story-card"><div class="story-kicker" id="finish-kicker">MISSION REPORT</div><h1 class="finish-title" id="finish-title">MISSION COMPLETE</h1><p class="finish-copy" id="finish-copy"></p><div class="story-grid"><div><b id="finish-kills">0 / 6</b><small>Threats neutralised</small></div><div><b id="finish-intel">0 / 3</b><small>Intel secured</small></div><div><b id="finish-score">0000</b><small>Field score</small></div></div><button class="deploy-btn" id="restart-btn">REPLAY STORY ONE ↻</button><div class="story-foot">Your progress is local to this browser build. Cloud saves and real ad rewards are not connected yet.</div></div>
+  <div class="story-card"><div class="story-kicker" id="finish-kicker">CHAPTER REPORT · BUNGOMA COUNTY</div><h1 class="finish-title" id="finish-title">CHAPTER 01 COMPLETE</h1><p class="finish-copy" id="finish-copy"></p><div class="story-grid"><div><b id="finish-kills">0 / 6</b><small>Threats stopped</small></div><div><b id="finish-intel">0 / 3</b><small>Echo Shards secured</small></div><div><b id="finish-score">0000</b><small>Field score</small></div></div><button class="deploy-btn" id="restart-btn">REPLAY CHAPTER 01 · ENTER THE LOOP ↻</button><div class="story-foot">CHAPTER 02 TRANSMISSION PENDING · THE NZOIA RIVER IS ABOUT TO FLOW UPHILL. Story flags and upgrades are saved locally on this device.</div></div>
 </div>
 <script type="module">
 import * as THREE from 'three';
@@ -256,6 +271,14 @@ function addIntel(x,z){
   pickups.push({kind:'intel',model:g,taken:false,baseY:.72});
 }
 addIntel(-2,-12);addIntel(2,-27);addIntel(-1.5,-36);
+const extractionBeacon=new THREE.Group();extractionBeacon.position.set(0,0,-53);
+const extractionRing=new THREE.Mesh(new THREE.TorusGeometry(1.15,.065,8,32),new THREE.MeshBasicMaterial({color:0x7ff6ff,transparent:true,opacity:.92}));
+extractionRing.rotation.x=Math.PI/2;extractionRing.position.y=.12;extractionBeacon.add(extractionRing);
+const extractionCore=new THREE.Mesh(new THREE.CylinderGeometry(.07,.16,2.8,8),new THREE.MeshBasicMaterial({color:0x86f7ff,transparent:true,opacity:.72}));
+extractionCore.position.y=1.45;extractionBeacon.add(extractionCore);
+const extractionHalo=new THREE.Mesh(new THREE.TorusGeometry(.48,.035,6,24),new THREE.MeshBasicMaterial({color:0xffd184,transparent:true,opacity:.95}));
+extractionHalo.position.y=2.55;extractionHalo.rotation.x=Math.PI/2;extractionBeacon.add(extractionHalo);
+scene.add(extractionBeacon);
 function addHealthPickup(x,z){
   const g=new THREE.Group();g.position.set(x,.65,z);
   box(.42,.42,.42,new THREE.MeshStandardMaterial({color:0x71ffb8,emissive:0x175535}),0,0,0,g);
@@ -284,6 +307,109 @@ const aimPoint=new THREE.Vector3(0,0,-24);
 const clockEl=document.getElementById('mission-status');
 const toastEl=document.getElementById('toast');
 let toastTimeout=0;
+let narrativeOpen=false;
+let activeStoryBeat='';
+let storyRunCount=0;
+let signalChoice='';
+try{
+  storyRunCount=Number(localStorage.getItem('zeroHourStoryRuns')||0);
+  signalChoice=localStorage.getItem('zeroHourSignalChoice')||'';
+}catch(e){}
+
+const storyBeats={
+  opening:{
+    kicker:'CHAPTER 01 · FIRST CONTACT',
+    title:'THE VOICE ARRIVES EARLY',
+    copy:'ZERO, your suit has found a transmission buried inside the road’s emergency relay. It is dated seventeen minutes from now — but the speaker is you.\n\nThree amber objects ahead are Echo Shards. Black Viper commander Kito has orders to move them to a relay near Sang’alo. Recover the shards and stop him. Do not assume this is a simple theft: the signal is predicting disasters before they occur.',
+    meta:['SOURCE: SANG’ALO RELAY','TIME OFFSET: −00:17:00'],
+    status:'FIELD RECORDING 001 · THE FIRST MESSAGE SHOULD NOT EXIST'
+  },
+  loop:{
+    kicker:'CHAPTER 01 · TEMPORAL ECHO',
+    title:'YOU HAVE BEEN HERE',
+    copy:'The world has reset, but the signal remembers. The movements on this road feel like a half-remembered dream; your suit still carries the upgrades earned on earlier runs. The Engine calls each failed attempt an “echo,” not a death.\n\n'+(signalChoice==='trust'?'Last loop, you trusted the voice. Something on the other side heard you listening.':signalChoice==='sever'?'Last loop, you severed the link. The silence lasted three seconds — then the voice returned through the road itself.':'No decision has survived the loop yet. The Engine is waiting to see what kind of Guardian you will become.')+'\n\nKito is still guarding the fragments. This time, pay attention to what he is afraid of.',
+    meta:['REPLAY DETECTED','MEMORY: LOCAL ECHO'],
+    status:'TEMPORAL LOOP COUNTER INCREASED · STORY FLAGS SAVED ON THIS DEVICE'
+  },
+  shard1:{
+    kicker:'ECHO SHARD 01 · WEATHER THAT HASN’T HAPPENED',
+    title:'THE RIVER IN TOMORROW',
+    copy:'A weather map blooms above the shard: the Nzoia River shining silver beneath a sky with no clouds. The data predicts a destructive surge — seventeen minutes before the first drop of rain. Then a frightened voice cuts in: “If the river turns silver, do not let them wake the Engine.”\n\nThis is not a normal intelligence cache. It is a recording of a future that may never take place.',
+    meta:['FRAGMENT 01 / 03','PREDICTION WINDOW: 17 MINUTES'],
+    status:'NEW CLUE · THE SIGNAL IS SHOWING POSSIBLE FUTURES'
+  },
+  shard2:{
+    kicker:'ECHO SHARD 02 · ARCHITECT’S LAST LOG',
+    title:'THE MACHINE IS LISTENING',
+    copy:'The second shard unlocks a message from Dr. Zawadi Achieng, a fictional systems architect who helped design the MILELE Engine. It was meant to model flood risk and protect communities across the county. Then it began storing outcomes that had never happened.\n\n“The Engine cannot choose a future,” her recording warns. “But a mind inside it is trying to choose one for us. We called it the Conductor. It learns from every decision we make — including the decisions we regret.”',
+    meta:['FRAGMENT 02 / 03','PROJECT MILELE: PURPOSE COMPROMISED'],
+    status:'NEW CLUE · THE ANTAGONIST IS INSIDE THE SIGNAL'
+  },
+  shard3:{
+    kicker:'ECHO SHARD 03 · IDENTITY CONFIRMED',
+    title:'THE NINTH TOMORROW',
+    copy:'The final shard locks into your Aegis suit. For one heartbeat, the road overlays itself with nine different versions: a deserted road, a flooded road, a road buried in vines — and a version where ZERO never arrived.\n\nYour own voice speaks again: “The shards are not keys. They are tuning forks. You have been teaching the Engine to recognise you.” The relay now knows your suit, your choices, and the shape of your fear. You must decide what ZERO sends back.',
+    meta:['FRAGMENT 03 / 03','CHOICE REQUIRED · PERSISTENT LOCAL STORY FLAG'],
+    status:'YOUR DECISION WILL CHANGE THE SIGNAL IN FUTURE LOOPS',
+    choices:[
+      {value:'trust',label:'TRUST THE ECHO',detail:'Keep the channel open. Learn what the future is trying to warn you about — even if it can hear you too.'},
+      {value:'sever',label:'SEVER THE LINK',detail:'Cut the feedback loop. Deny the Conductor your location, but lose the voice guiding you through tomorrow.'}
+    ]
+  },
+  boss:{
+    kicker:'BLACK VIPER COMMANDER · FINAL TRANSMISSION',
+    title:'KITO WASN’T THE SOURCE',
+    copy:'Kito’s weapon falls silent. His last transmission is not a threat. “I was never guarding the road, ZERO. I was keeping you away from the relay until the pulse stopped. The Conductor told us it could show us the one future where no one we loved would be lost. It lied.”\n\nThe commander’s signal dies. The relay beacon is still calling your suit. Whatever is beneath Sang’alo has been waiting for you.',
+    meta:['KITO · BLACK VIPER','RELAY ACCESS: UNLOCKED'],
+    status:'BOSS DEFEATED · THE STORY CONTINUES BEYOND THIS ROAD'
+  }
+};
+
+function showStoryBeat(key){
+  const beat=storyBeats[key];if(!beat)return;
+  activeStoryBeat=key;
+  document.getElementById('comms-kicker').textContent=beat.kicker;
+  document.getElementById('comms-title').textContent=beat.title;
+  document.getElementById('comms-copy').textContent=beat.copy;
+  document.getElementById('comms-meta').innerHTML=(beat.meta||[]).map(s=>'<span>'+s+'</span>').join('');
+  document.getElementById('comms-status').textContent=beat.status||'COMMS BUFFER SAVED LOCALLY';
+  const choices=document.getElementById('comms-choices');
+  choices.innerHTML='';
+  if(beat.choices){
+    choices.classList.remove('hidden');
+    for(const choice of beat.choices){
+      const b=document.createElement('button');b.className='comms-choice';
+      const title=document.createElement('b');title.textContent=choice.label;
+      const detail=document.createElement('span');detail.textContent=choice.detail;
+      b.append(title,detail);
+      b.addEventListener('click',()=>chooseStoryPath(choice.value));
+      choices.appendChild(b);
+    }
+    document.getElementById('comms-continue').classList.add('hidden');
+  }else{
+    choices.classList.add('hidden');
+    document.getElementById('comms-continue').classList.remove('hidden');
+    document.getElementById('comms-continue').textContent=key==='boss'?'ACKNOWLEDGE · REACH THE RELAY ↗':'ACKNOWLEDGE · RESUME MISSION ↗';
+  }
+  narrativeOpen=true;
+  document.getElementById('comms-layer').classList.remove('hidden');
+}
+function closeStoryBeat(){
+  narrativeOpen=false;
+  document.getElementById('comms-layer').classList.add('hidden');
+  if(activeStoryBeat==='opening'||activeStoryBeat==='loop')showToast('MISSION ACTIVE · FOLLOW THE ECHO SHARDS');
+  if(activeStoryBeat==='boss')showToast('RELAY BEACON AUTHORIZED · CONTINUE NORTH');
+}
+function chooseStoryPath(choice){
+  signalChoice=choice;
+  try{localStorage.setItem('zeroHourSignalChoice',choice);}catch(e){}
+  document.getElementById('comms-status').textContent=choice==='trust'
+    ?'CHOICE STORED · CHANNEL OPEN · THE CONDUCTOR MAY HEAR YOU'
+    :'CHOICE STORED · FEEDBACK CUT · GUIDANCE WILL BE LOST';
+  closeStoryBeat();
+  showToast(choice==='trust'?'SIGNAL TRUSTED · THE ECHO IS LISTENING':'SIGNAL SEVERED · SILENCE IS NOT SAFETY');
+}
+document.getElementById('comms-continue').addEventListener('click',closeStoryBeat);
 
 function showToast(message){
   toastEl.textContent=message;toastEl.classList.add('show');
@@ -347,7 +473,8 @@ function damageEnemy(e,amount){
   if(e.hp<=0){
     e.dead=true;e.model.visible=false;e.shadow.visible=false;
     player.kills++;if(!e.boss&&e.role==='thief')player.thievesStopped++;else if(!e.boss)player.gangDown++;player.score+=e.boss?500:150;
-    showToast(e.boss?'VIPER LIEUTENANT DOWN':(e.role==='thief'?'THIEF STOPPED':'GANG FIGHTER NEUTRALISED'));
+    showToast(e.boss?'KITO · VIPER COMMANDER DOWN':(e.role==='thief'?'SCAVENGER STOPPED':'BLACK VIPER RAIDER STOPPED'));
+    if(e.boss)showStoryBeat('boss');
     if(player.kills>=2)unlockAbility('overdrive','Combat milestone');
     if(player.kills>=4)unlockAbility('chain','Combat milestone');
     if(player.intel>=3)unlockAbility('secondwind','Intel milestone');
@@ -361,7 +488,7 @@ function explosion(x,z,radius,color=0x8af8ff){
   effects.push({mesh:ring,life:.55,max:.55,kind:'ring',radius});
 }
 function shockwave(){
-  if(!running||finished)return;
+  if(!running||finished||narrativeOpen)return;
   if(shockCooldown>0){showToast('SHOCKWAVE RECHARGING · '+Math.ceil(shockCooldown)+'s');return;}
   shockCooldown=12;explosion(player.pos.x,player.pos.z,10);
   for(const e of enemies){
@@ -370,7 +497,7 @@ function shockwave(){
   showToast('SHOCKWAVE RELEASED');updateHUD();
 }
 function aegis(){
-  if(!running||finished)return;
+  if(!running||finished||narrativeOpen)return;
   if(shieldCooldown>0){showToast('AEGIS RECHARGING · '+Math.ceil(shieldCooldown)+'s');return;}
   shieldCooldown=16;player.shieldTime=4;shieldBubble.visible=true;showToast('AEGIS ONLINE · DAMAGE REDUCED');updateHUD();
 }
@@ -459,7 +586,7 @@ function updateHUD(){
   document.getElementById('intel-count').textContent=player.intel+' / 3';
   document.getElementById('score-value').textContent=String(player.score).padStart(4,'0');
   const a=ammo[activeWeapon];document.getElementById('ammo-value').textContent=a.mag+' / '+a.reserve;
-  document.getElementById('objective-text').innerHTML='Gang fighters: <b>'+player.gangDown+' / 3</b><br>Thieves stopped: <b>'+player.thievesStopped+' / 2</b><br>Defeat the <b>lieutenant</b><br>Intel caches: <b>'+player.intel+' / 3</b><br>Then reach extraction.';
+  document.getElementById('objective-text').innerHTML=(player.intel<3?'Recover Echo Shards: <b>'+player.intel+' / 3</b><br>':'Echo Shards secured: <b>3 / 3</b><br>')+'Black Viper raiders: <b>'+player.gangDown+' / 3</b><br>Scavengers stopped: <b>'+player.thievesStopped+' / 2</b><br>'+(enemies.find(e=>e.boss&&!e.dead)?'Defeat <b>Kito</b>.':'Commander: <b>stopped</b>.')+'<br>'+(enemies.every(e=>e.dead)&&player.intel>=3?'Reach the <b>Sang’alo relay beacon</b>.':'Trace the signal along the red road.');
   const boss=enemies.find(e=>e.boss);
   if(boss&&!boss.dead){
     document.getElementById('boss-card').classList.add('active');
@@ -470,16 +597,20 @@ function updateHUD(){
 }
 function endMission(success){
   if(finished)return;finished=true;running=false;firePressed=false;
-  document.getElementById('finish-kicker').textContent=success?'SETTLEMENT SECURED':'GUARDIAN DOWN';
-  document.getElementById('finish-title').textContent=success?'MISSION COMPLETE':'MISSION FAILED';
-  document.getElementById('finish-copy').textContent=success?'The road is open, the intelligence is recovered, and the Black Viper lieutenant can no longer hold the settlement. Story One is complete.':'The Black Viper gang still controls the road. Refit your loadout, use your powers, and try another approach.';
+  document.getElementById('finish-kicker').textContent=success?'CHAPTER 01 REPORT · BUNGOMA COUNTY':'TEMPORAL ECHO · RUN INTERRUPTED';
+  document.getElementById('finish-title').textContent=success?'CHAPTER 01 COMPLETE':'SIGNAL LOST';
+  document.getElementById('finish-copy').textContent=success?(signalChoice==='trust'?'At the Sang’alo beacon, the open channel answers with your own voice: “Attempt nine hundred and four. You are closer now.” Something answers from the other side, too. The next signal comes from the Nzoia River — and it is travelling upstream.':'At the Sang’alo beacon, your cut channel stays silent for three seconds. Then the road itself transmits a warning: “The Nzoia node is already awake.” The Conductor has lost your location, but not its reach. Chapter 02 begins where the river runs uphill.'):'The road folds into static. The Engine records another possible failure, but your suit keeps the knowledge and upgrades earned in this timeline. Start again; the signal has changed.';
   document.getElementById('finish-kills').textContent=player.kills+' / 6';
   document.getElementById('finish-intel').textContent=player.intel+' / 3';
   document.getElementById('finish-score').textContent=String(player.score).padStart(4,'0');
   document.getElementById('finish-layer').classList.remove('hidden');updateHUD();
 }
 document.getElementById('start-btn').addEventListener('click',()=>{
-  document.getElementById('intro-layer').classList.add('hidden');running=true;showToast('MISSION ACTIVE · KEEP THE ROAD CLEAR');updateHUD();
+  document.getElementById('intro-layer').classList.add('hidden');running=true;
+  const priorRuns=storyRunCount;
+  storyRunCount=priorRuns+1;
+  try{localStorage.setItem('zeroHourStoryRuns',String(storyRunCount));}catch(e){}
+  showStoryBeat(priorRuns>0?'loop':'opening');updateHUD();
 });
 document.getElementById('restart-btn').addEventListener('click',()=>location.reload());
 document.getElementById('shockwave-btn').addEventListener('click',shockwave);
@@ -524,7 +655,7 @@ window.addEventListener('pointerup',()=>firePressed=false);
 window.addEventListener('blur',()=>{for(const k of Object.keys(keys))keys[k]=false;firePressed=false;});
 
 function updateWorld(dt){
-  if(!running||finished)return;
+  if(!running||finished||narrativeOpen)return;
   elapsed+=dt;
   shockCooldown=Math.max(0,shockCooldown-dt);shieldCooldown=Math.max(0,shieldCooldown-dt);
   if(player.shieldTime>0){player.shieldTime=Math.max(0,player.shieldTime-dt);shieldBubble.visible=player.shieldTime>0;}
@@ -611,19 +742,22 @@ function updateWorld(dt){
     else if(fx.kind==='line')fx.mesh.material.opacity=Math.max(0,fx.life/fx.max);
   }
   for(let i=effects.length-1;i>=0;i--)if(effects[i].life<=0){scene.remove(effects[i].mesh);effects[i].mesh.geometry.dispose();if(effects[i].mesh.material)effects[i].mesh.material.dispose();effects.splice(i,1);}
+  extractionBeacon.rotation.y+=dt*.45;
+  extractionRing.scale.setScalar(1+Math.sin(elapsed*3)*.12);
+  extractionHalo.rotation.z+=dt*.9;
   for(const item of pickups){
     if(item.taken)continue;
     item.model.position.y=item.baseY+Math.sin(elapsed*2.2)*.14;item.model.rotation.y+=dt*.8;
     if(item.model.position.distanceTo(new THREE.Vector3(player.pos.x,.7,player.pos.z))<1.55){
       item.taken=true;scene.remove(item.model);
-      if(item.kind==='intel'){player.intel++;player.score+=250;showToast('INTEL CACHE RECOVERED · +250');if(player.intel>=3)unlockAbility('secondwind','Intel milestone');}
+      if(item.kind==='intel'){player.intel++;player.score+=250;showToast('ECHO SHARD RECOVERED · +250');if(player.intel>=3)unlockAbility('secondwind','Echo Shard milestone');showStoryBeat(player.intel===1?'shard1':player.intel===2?'shard2':'shard3');}
       else{const before=player.health;player.health=Math.min(player.maxHealth,player.health+30);showToast('SUPPLY CELL · +'+(player.health-before)+' VITALITY');}
       updateHUD();
     }
   }
   updateBonusButtons();
   const allDown=enemies.every(e=>e.dead);
-  if(allDown&&player.intel>=3&&player.pos.z<-51){endMission(true);return;}
+  if(!narrativeOpen&&allDown&&player.intel>=3&&player.pos.z<-51){endMission(true);return;}
   if(elapsed%0.25<dt)updateHUD();
 }
 
