@@ -98,7 +98,7 @@
   </div>
 </div>
 <div class="screen-layer hidden" id="finish-layer">
-  <div class="story-card"><div class="story-kicker" id="finish-kicker">CHAPTER REPORT · BUNGOMA COUNTY</div><h1 class="finish-title" id="finish-title">CHAPTER 01 COMPLETE</h1><p class="finish-copy" id="finish-copy"></p><div class="story-grid finish-grid"><div><b id="finish-kills">0 / 6</b><small id="finish-kills-label">Threats stopped</small></div><div><b id="finish-intel">0 / 3</b><small id="finish-intel-label">Echo Shards secured</small></div><div><b id="finish-score">0000</b><small>Field score</small></div><div><b id="finish-anchors">—</b><small id="finish-anchors-label">Signal choice</small></div></div><button class="deploy-btn" id="restart-btn">REPLAY CHAPTER 01 · ENTER THE LOOP ↻</button><div class="story-foot">CHAPTER 02 TRANSMISSION PENDING · THE NZOIA RIVER IS ABOUT TO FLOW UPHILL. Story flags and upgrades are saved locally on this device.</div></div>
+  <div class="story-card"><div class="story-kicker" id="finish-kicker">CHAPTER REPORT · BUNGOMA COUNTY</div><h1 class="finish-title" id="finish-title">CHAPTER 01 COMPLETE</h1><p class="finish-copy" id="finish-copy"></p><div class="story-grid finish-grid"><div><b id="finish-kills">0 / 6</b><small id="finish-kills-label">Threats stopped</small></div><div><b id="finish-intel">0 / 3</b><small id="finish-intel-label">Echo Shards secured</small></div><div><b id="finish-score">0000</b><small>Field score</small></div><div><b id="finish-anchors">—</b><small id="finish-anchors-label">Signal choice</small></div></div><button class="deploy-btn" id="restart-btn">REPLAY CHAPTER 01 · ENTER THE LOOP ↻</button><div class="story-foot" id="finish-foot">Story flags and upgrades are saved locally on this device.</div></div>
 </div>
 <script type="module">
 import * as THREE from 'three';
@@ -949,6 +949,7 @@ function endMission(success){
   if(success&&chapter===1){try{localStorage.setItem('zeroHourChapter1Complete','true');}catch(e){}}
   if(success&&chapter===2){try{localStorage.setItem('zeroHourChapter2Complete','true');}catch(e){}}
   if(success&&chapter===3){try{localStorage.setItem('zeroHourChapter3Complete','true');}catch(e){}}
+  document.getElementById('finish-foot').textContent=success?(chapter===1?'NEXT TRANSMISSION · NZOIA HAS NO SHADOW':chapter===2?'NEXT TRANSMISSION · THE COUNTY THAT NEVER WAS':'NEXT: THE NINE-MINUTE WAR · CHAPTER 04 IS STILL IN DEVELOPMENT'):'REPLAY AVAILABLE · STORY FLAGS AND UPGRADES ARE SAVED LOCALLY ON THIS DEVICE';
   document.getElementById('finish-layer').classList.remove('hidden');updateHUD();
 }
 document.getElementById('start-btn').addEventListener('click',()=>{
