@@ -14,7 +14,8 @@
   "dependencies": {
     "@capacitor/android": "^7.4.3",
     "@capacitor/core": "^7.4.3",
-    "three": "^0.170.0"
+    "three": "^0.170.0",
+    "three-mesh-bvh": "^0.9.17"
   },
   "devDependencies": {
     "@capacitor/cli": "^7.4.3",

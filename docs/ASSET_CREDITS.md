@@ -1,26 +1,22 @@
 # Asset credits and licensing
 
-This phase adds the character loading/animation pipeline and stages the user's own reference images. It does not yet add a third-party humanoid GLB, animation pack, gun model, world pack, or texture pack. No third-party character asset is represented as included.
+## Current world phase
 
-| Asset / code | Source | Licence / status |
+| Asset/code | Source | Licence / status |
 |---|---|---|
-| Three.js core | Existing project dependency, \`three@^0.170.0\` | MIT; retain its upstream licence notice |
-| \`GLTFLoader\`, \`DRACOLoader\`, \`KTX2Loader\`, \`SkeletonUtils\`, \`MeshoptDecoder\` | Three.js example modules bundled with the existing Three dependency | Covered by the Three.js package licensing; see upstream repository |
-| Draco decoder payload | Copied at install from \`three/examples/jsm/libs/draco/gltf/\` | Google Draco is Apache-2.0; preserve its licence/notice when redistributing the copied payload |
-| Basis transcoder payload | Copied at install from \`three/examples/jsm/libs/basis/\` | Preserve the upstream licence notices distributed with the Basis payload |
-| Repository reference JPEGs | Supplied by the project owner; copied byte-for-byte from the repository root into \`public/reference/player/\` | Treat as owner-provided likeness reference material; preserve any rights notes supplied by the owner |
-| Google Photos reference album | \`https://photos.app.goo.gl/EUtjYgGUC73V9CJk8\` | Could not be fetched in this environment; no item from that album is bundled yet |
-| Unsplash gun-photo reference | [Unsplash photo: “A gold and black gun on a black background”](https://unsplash.com/photos/a-gold-and-black-gun-on-a-black-background-HioI0Y-eTEQ) and the supplied [guns search page](https://unsplash.com/s/photos/guns) | Reference-only; no image is bundled in this player-only phase. Check the Unsplash License and any depicted brand/person permissions before using it in a shipped product |
-| Realistic player model | Not supplied yet | **Manual asset required**: add \`public/assets/characters/player.glb\`; record its creator/source and exact licence here before shipping |
-| Animation clips | Not supplied yet | **Manual asset required** if not embedded in \`player.glb\`; record the creator/source and exact licence for each clip before shipping |
+| Three.js core, geometry and loaders | Existing project dependency, three@^0.170.0 | MIT |
+| three-mesh-bvh | https://github.com/gkjohnson/three-mesh-bvh | MIT; added for accelerated terrain raycasts and ground-height queries |
+| Procedural terrain, road, textures, materials and shaders | Original project code in src/world/ | Project-authored; no third-party texture/model files embedded in this phase |
+| Terrain PBR-style maps | Generated with CanvasTexture and deterministic noise at runtime | Procedural project output; not from a third-party image |
+| User world-reference images | Expected under public/reference/world/ | Folder was absent at audit time; no user images applied yet |
+| Poly Haven Red Sand | https://polyhaven.com/a/red_sand | CC0 material identified as an optional laterite source, not bundled |
+| Poly Haven Gravel Road | https://polyhaven.com/a/gravel_road | CC0 material identified as an optional road source, not bundled |
+| Bungoma rural road photograph | https://commons.wikimedia.org/wiki/File:Rural_road_outside_of_Bungoma_Town.jpg | Visual reference only; not downloaded or used as a game texture. Verify exact file-page licence before reuse |
 
-## New packages
+## Optional local assets
 
-No new npm dependency is required for this phase. The GLTF/Draco/KTX2/SkeletonUtils/Meshopt decoder APIs used by the controller are supplied by the project's existing Three.js dependency. A local \`postinstall\` script stages decoder files from \`node_modules/three\` into \`public/decoders/\` for offline-capable runtime loading.
+PBR maps can be added under public/assets/world/textures/ using the names in docs/WORLD_REFERENCE_MAP.md. Record the source URLs, exact asset names, licence and any edits here before shipping. No third-party model, audio recording, HDRI or photograph is represented as included by this phase.
 
-## Links
+## Runtime limits
 
-- Three.js: https://github.com/mrdoob/three.js
-- Google Draco licence: https://github.com/google/draco/blob/main/LICENSE
-- Meshoptimizer licence (if an external meshopt tool is introduced): https://github.com/zeux/meshoptimizer/blob/master/LICENSE.md
-- Unsplash licence: https://unsplash.com/license
+Binary downloads could not be completed by the current shell environment. The world therefore uses procedural replacements now and supports optional local textures later. It requires no remote CDN at runtime and can run offline when assets are bundled.

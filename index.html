@@ -113,6 +113,7 @@
 <script type="module">
 import * as THREE from 'three';
 import { PlayerController } from './src/characters/PlayerController.js';
+import { WorldManager } from './src/world/WorldManager.js';
 
 const canvas = document.getElementById('game-canvas');
 const renderer = new THREE.WebGLRenderer({canvas, antialias: !matchMedia('(pointer: coarse)').matches, alpha: false, powerPreference: 'high-performance'});
@@ -179,84 +180,14 @@ const smallSphereGeo = new THREE.SphereGeometry(.08,8,7);
 const dirtGeo = new THREE.BoxGeometry(1,1,1);
 const actorShadowGeo = new THREE.CylinderGeometry(.55,.7,.035,12);
 const actorShadowMat = new THREE.MeshBasicMaterial({color:0x18201b,transparent:true,opacity:.42});
-const ground = new THREE.Mesh(new THREE.PlaneGeometry(220,220),mat.grass);
-ground.rotation.x = -Math.PI/2; ground.position.y = -.18; scene.add(ground);
-const road = new THREE.Mesh(new THREE.PlaneGeometry(12,120),mat.road);
-road.rotation.x = -Math.PI/2; road.position.set(0,-.1,-36); scene.add(road);
-const roadLeft = new THREE.Mesh(new THREE.PlaneGeometry(1.2,120),mat.roadEdge);
-roadLeft.rotation.x=-Math.PI/2; roadLeft.position.set(-6.5,-.09,-36); scene.add(roadLeft);
-const roadRight = roadLeft.clone(); roadRight.position.x=6.5; scene.add(roadRight);
-const centerTrack = new THREE.Mesh(new THREE.PlaneGeometry(.18,112),mat.track);
-centerTrack.rotation.x=-Math.PI/2; centerTrack.position.set(0,-.085,-36); centerTrack.material=mat.road; scene.add(centerTrack);
 function box(w,h,d,material,x,y,z,parent=scene,ry=0,rz=0){
-  const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);mesh.position.set(x,y,z);mesh.rotation.y=ry;mesh.rotation.z=rz;parent.add(mesh);return mesh;
+  const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);
+  mesh.position.set(x,y,z);mesh.rotation.y=ry;mesh.rotation.z=rz;parent.add(mesh);return mesh;
 }
-function cylinder(rt,rb,h,material,x,y,z,parent=scene,segments=8){
-  const mesh=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,segments),material);mesh.position.set(x,y,z);parent.add(mesh);return mesh;
-}
-function makeTree(x,z,scale=1){
-  const g=new THREE.Group();g.position.set(x,0,z);g.scale.setScalar(scale);scene.add(g);
-  cylinder(.22,.36,4.2,mat.trunk,0,2.1,0,g,7);
-  const f1=new THREE.Mesh(new THREE.ConeGeometry(2.0,4.5,7),mat.leaf1);f1.position.set(0,4.45,0);g.add(f1);
-  const f2=new THREE.Mesh(new THREE.ConeGeometry(1.55,3.7,7),mat.leaf2);f2.position.set(.1,6.3,.05);g.add(f2);
-  const f3=new THREE.Mesh(new THREE.IcosahedronGeometry(1.2,0),mat.leaf3);f3.scale.set(1,1.2,.95);f3.position.set(-.3,7.4,.15);g.add(f3);
-  return g;
-}
-function makeHouse(x,z,variant=0){
-  const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);
-  box(4.5,2.7,4,variant?mat.wall2:mat.wall,0,1.35,0,g);
-  box(.9,1.05,.09,mat.window,-.95,1.28,-2.05,g);
-  box(.9,1.05,.09,mat.window,1.05,1.28,-2.05,g);
-  box(1.15,2,.16,mat.roof,0,1,-2.08,g);
-  const r1=box(2.6,.22,4.8,mat.roof,-1.05,3.0,0,g,0,.46);
-  const r2=box(2.6,.22,4.8,mat.roof,1.05,3.0,0,g,0,-.46);
-  box(1.25,.1,1.15,mat.fenceDark,0,2.1,2.08,g);
-  box(5,.12,.35,mat.soil,0,.16,2.18,g);
-}
-function makeFence(){
-  for(let side of [-1,1]){
-    const x=side*7.3;
-    for(let z=9;z>-83;z-=2.25){
-      box(.17,1.45,.17,mat.fence,x,.72,z,scene,0,0);
-      if(Math.round(z)%9===0) box(.25,1.58,.22,mat.fenceDark,x,.78,z,scene);
-      box(.13,.13,2.25,mat.fence,x,.53,z-1.1,scene);
-      box(.13,.13,2.25,mat.fence,x,.98,z-1.1,scene);
-    }
-  }
-}
-makeFence();
-makeHouse(-14,-12,0);makeHouse(15,-25,1);makeHouse(-16,-44,1);makeHouse(17,0,0);
-for(let z=10;z>-79;z-=6){
-  for(let side of [-1,1]){
-    const scale=.74+Math.random()*.65;
-    makeTree(side*(10+Math.random()*14),z+(Math.random()*3-1.5),scale);
-  }
-}
-// Low-poly Mount Elgon ridge: a stylised horizon, not a geographic reconstruction.
-const elgonRock=new THREE.MeshStandardMaterial({color:0x3b5147,roughness:1});
-const elgonShadow=new THREE.MeshStandardMaterial({color:0x2b403b,roughness:1});
-for(const peak of [
-  {x:-21,y:5.2,z:-86,r:18,h:20,m:elgonShadow},
-  {x:-4,y:7.1,z:-91,r:21,h:25,m:elgonRock},
-  {x:17,y:4.2,z:-84,r:17,h:17,m:elgonShadow},
-  {x:31,y:3.5,z:-90,r:16,h:15,m:elgonRock}
-]){
-  const ridge=new THREE.Mesh(new THREE.ConeGeometry(peak.r,peak.h,7),peak.m);
-  ridge.position.set(peak.x,peak.y,peak.z);ridge.rotation.y=.22;scene.add(ridge);
-}
-for(let i=0;i<90;i++){
-  const x=(Math.random()<.5?-1:1)*(7.8+Math.random()*9);
-  const z=12-Math.random()*95;
-  const h=.08+Math.random()*.26,w=.15+Math.random()*.55;
-  box(w,h,.12,Math.random()>.45?mat.grass2:mat.leaf1,x,h/2-.04,z,scene,Math.random()*Math.PI);
-}
-for(let i=0;i<70;i++){
-  const x=(Math.random()-.5)*9.5,z=8-Math.random()*88;
-  const pebble=box(.12+Math.random()*.5,.025,.08+Math.random()*.35,Math.random()>.5?mat.roadEdge:mat.track,x,-.055,z,scene,Math.random()*Math.PI);
-  pebble.rotation.y=Math.random()*Math.PI;
-}
+const worldManager = new WorldManager({scene,renderer,camera,chapter,hemi,sun});
+worldManager.initialize();
 
-const player = {pos:new THREE.Vector3(0,0,9),health:100,maxHealth:100,score:0,kills:0,gangDown:0,thievesStopped:0,intel:0,rescued:0,anchors:0,shieldTime:0,overdriveTime:0,riverDisruptTime:0,dead:false};
+const player = {pos:new THREE.Vector3(0,worldManager.getHeightAt(0,9),9),health:100,maxHealth:100,score:0,kills:0,gangDown:0,thievesStopped:0,intel:0,rescued:0,anchors:0,shieldTime:0,overdriveTime:0,riverDisruptTime:0,dead:false};
 const playerController = new PlayerController({
   renderer,
   onProgress: (event) => {
@@ -312,8 +243,8 @@ function createActor(isHero,isBoss,role='gangster'){
 
 const enemies=[];
 function addEnemy(x,z,boss=false,role='gangster'){
-  const model=createActor(false,boss,role);model.position.set(x,0,z);scene.add(model);
-  const shadow=new THREE.Mesh(actorShadowGeo,actorShadowMat);shadow.position.set(x,.004,z);scene.add(shadow);
+  const model=createActor(false,boss,role);model.position.set(x,worldManager.getHeightAt(x,z),z);scene.add(model);
+  const shadow=new THREE.Mesh(actorShadowGeo,actorShadowMat);shadow.position.set(x,worldManager.getHeightAt(x,z)+.025,z);scene.add(shadow);
   enemies.push({model,shadow,hp:boss?190:(role==='echo'?62:(role==='thief'?36:52)),maxHp:boss?190:(role==='echo'?62:(role==='thief'?36:52)),boss,role,dead:false,nextShot:1.2+Math.random()*1.6,moveSpeed:boss?1.35:(role==='echo'?1.9:(role==='thief'?2.1:1.65)),flash:0});
 }
 if(chapter===1){
@@ -325,62 +256,62 @@ if(chapter===1){
 }
 const pickups=[];
 function addIntel(x,z){
-  const g=new THREE.Group();g.position.set(x,.72,z);
+  const baseY=worldManager.getHeightAt(x,z)+.72;const g=new THREE.Group();g.position.set(x,baseY,z);
   const core=new THREE.Mesh(new THREE.OctahedronGeometry(.45,0),mat.intel);g.add(core);
   const ring=new THREE.Mesh(new THREE.TorusGeometry(.64,.035,6,24),new THREE.MeshBasicMaterial({color:0xffd886}));ring.rotation.x=Math.PI/2;g.add(ring);scene.add(g);
-  pickups.push({kind:'intel',model:g,taken:false,baseY:.72});
+  pickups.push({kind:'intel',model:g,taken:false,baseY});
 }
 if(chapter===1){
   addIntel(-2,-12);addIntel(2,-27);addIntel(-1.5,-36);
 }else if(chapter===2){
   const survivorMat=new THREE.MeshStandardMaterial({color:0x9fd8c7,roughness:.85});
   function addSurvivor(x,z,index){
-    const g=new THREE.Group();g.position.set(x,0,z);
+    const g=new THREE.Group();g.position.set(x,worldManager.getHeightAt(x,z),z);
     const body=new THREE.Mesh(new THREE.CapsuleGeometry(.22,.52,3,6),survivorMat);body.position.y=.82;g.add(body);
     const head=new THREE.Mesh(new THREE.SphereGeometry(.2,8,7),mat.skin);head.position.y=1.3;g.add(head);
     const beacon=new THREE.Mesh(new THREE.TorusGeometry(.65,.045,6,20),new THREE.MeshBasicMaterial({color:0x82f6e6,emissive:0x155e58}));beacon.rotation.x=Math.PI/2;beacon.position.y=.08;g.add(beacon);
     const marker=new THREE.Mesh(new THREE.OctahedronGeometry(.16,0),new THREE.MeshBasicMaterial({color:0xb4fff4}));marker.position.y=1.75;g.add(marker);
-    scene.add(g);pickups.push({kind:'survivor',model:g,taken:false,baseY:0,index});
+    scene.add(g);pickups.push({kind:'survivor',model:g,taken:false,baseY:worldManager.getHeightAt(x,z),index});
   }
   function addTemporalAnchor(x,z,index){
-    const g=new THREE.Group();g.position.set(x,.85,z);
+    const baseY=worldManager.getHeightAt(x,z)+.85;const g=new THREE.Group();g.position.set(x,baseY,z);
     const core=new THREE.Mesh(new THREE.IcosahedronGeometry(.58,1),new THREE.MeshBasicMaterial({color:0x6cecff,wireframe:true}));g.add(core);
     const ring1=new THREE.Mesh(new THREE.TorusGeometry(.9,.045,6,24),new THREE.MeshBasicMaterial({color:0xff8dce}));ring1.rotation.x=Math.PI/2;g.add(ring1);
     const ring2=new THREE.Mesh(new THREE.TorusGeometry(.62,.035,6,24),new THREE.MeshBasicMaterial({color:0x8cecff}));ring2.rotation.y=Math.PI/2;g.add(ring2);
-    scene.add(g);pickups.push({kind:'anchor',model:g,taken:false,baseY:.85,index});
+    scene.add(g);pickups.push({kind:'anchor',model:g,taken:false,baseY,index});
   }
   addSurvivor(-3.8,-10,1);addSurvivor(3.8,-28,2);addSurvivor(-3.3,-41,3);
   addTemporalAnchor(2,-17,1);addTemporalAnchor(-1.8,-36,2);
   riverWaterMaterial=new THREE.MeshStandardMaterial({color:0x3a9eaf,metalness:.48,roughness:.22,emissive:0x073744,emissiveIntensity:.55,transparent:true,opacity:.88});
   const river=new THREE.Mesh(new THREE.PlaneGeometry(220,9),riverWaterMaterial);
-  river.rotation.x=-Math.PI/2;river.position.set(0,-.045,-27);scene.add(river);
+  river.rotation.x=-Math.PI/2;river.position.set(0,worldManager.getHeightAt(0,-27)-.12,-27);scene.add(river);
   const bankMat=new THREE.MeshStandardMaterial({color:0x435947,roughness:1});
-  for(const z of [-31.8,-22.2]){const bank=new THREE.Mesh(new THREE.BoxGeometry(220,.18,1.1),bankMat);bank.position.set(0,-.015,z);scene.add(bank);}
-  const bridge=new THREE.Mesh(new THREE.BoxGeometry(7.4,.28,10.2),new THREE.MeshStandardMaterial({color:0x6c7772,roughness:.9,metalness:.12}));bridge.position.set(0,.04,-27);scene.add(bridge);
+  for(const z of [-31.8,-22.2]){const bank=new THREE.Mesh(new THREE.BoxGeometry(220,.18,1.1),bankMat);bank.position.set(0,worldManager.getHeightAt(0,z)-.015,z);scene.add(bank);}
+  const bridge=new THREE.Mesh(new THREE.BoxGeometry(7.4,.28,10.2),new THREE.MeshStandardMaterial({color:0x6c7772,roughness:.9,metalness:.12}));bridge.position.set(0,worldManager.getHeightAt(0,-27)+.13,-27);scene.add(bridge);
   const bridgeRailMat=new THREE.MeshStandardMaterial({color:0x2e4349,metalness:.4,roughness:.55});
   for(const x of [-3.55,3.55]){const rail=new THREE.Mesh(new THREE.BoxGeometry(.16,.65,10),bridgeRailMat);rail.position.set(x,.43,-27);scene.add(rail);}
   riverWaveMesh=new THREE.Group();
   const surgeFace=new THREE.Mesh(new THREE.BoxGeometry(7.8,1.55,.2),new THREE.MeshBasicMaterial({color:0xb9fbff,transparent:true,opacity:.82}));surgeFace.position.y=.84;riverWaveMesh.add(surgeFace);
   const surgeTop=new THREE.Mesh(new THREE.BoxGeometry(7.3,.11,.36),new THREE.MeshBasicMaterial({color:0xff9bd8,transparent:true,opacity:.95}));surgeTop.position.set(0,1.63,0);riverWaveMesh.add(surgeTop);
   const surgeBase=new THREE.Mesh(new THREE.BoxGeometry(7.6,.12,.34),new THREE.MeshBasicMaterial({color:0x79f3ff,transparent:true,opacity:.95}));surgeBase.position.set(0,.12,0);riverWaveMesh.add(surgeBase);
-  riverWaveMesh.position.set(0,0,riverSurgeState.waveZ);riverWaveMesh.visible=false;scene.add(riverWaveMesh);
-  for(let i=0;i<15;i++){const ripple=new THREE.Mesh(new THREE.TorusGeometry(.3+Math.random()*.6,.018,4,16),new THREE.MeshBasicMaterial({color:i%2?0x8bf8ff:0xe6ffff,transparent:true,opacity:.62}));ripple.rotation.x=Math.PI/2;ripple.position.set((Math.random()-.5)*90,-.025,-27+(Math.random()-.5)*6);scene.add(ripple);riverRipples.push({mesh:ripple,phase:Math.random()*Math.PI*2});}
+  riverWaveMesh.position.set(0,worldManager.getHeightAt(0,-27),riverSurgeState.waveZ);riverWaveMesh.visible=false;scene.add(riverWaveMesh);
+  for(let i=0;i<15;i++){const ripple=new THREE.Mesh(new THREE.TorusGeometry(.3+Math.random()*.6,.018,4,16),new THREE.MeshBasicMaterial({color:i%2?0x8bf8ff:0xe6ffff,transparent:true,opacity:.62}));ripple.rotation.x=Math.PI/2;const rippleX=(Math.random()-.5)*90,rippleZ=-27+(Math.random()-.5)*6;ripple.position.set(rippleX,worldManager.getHeightAt(rippleX,rippleZ)-.07,rippleZ);scene.add(ripple);riverRipples.push({mesh:ripple,phase:Math.random()*Math.PI*2});}
   scene.background=new THREE.Color(0x7299a5);scene.fog=new THREE.Fog(0x628e91,30,105);
 }else{
   const memoryCoreMat=new THREE.MeshStandardMaterial({color:0xb9a4ff,emissive:0x603df5,emissiveIntensity:1.45,metalness:.32,roughness:.24});
   function addMemoryEcho(x,z,index){
-    const g=new THREE.Group();g.position.set(x,.9,z);
+    const baseY=worldManager.getHeightAt(x,z)+.9;const g=new THREE.Group();g.position.set(x,baseY,z);
     const core=new THREE.Mesh(new THREE.OctahedronGeometry(.48,1),memoryCoreMat);g.add(core);
     const ring=new THREE.Mesh(new THREE.TorusGeometry(.78,.035,6,24),new THREE.MeshBasicMaterial({color:0x95f1ff,transparent:true,opacity:.9}));ring.rotation.x=Math.PI/2;g.add(ring);
     const splinter=new THREE.Mesh(new THREE.TetrahedronGeometry(.23,0),new THREE.MeshBasicMaterial({color:0xff9bd8,wireframe:true}));splinter.position.set(.43,.45,0);g.add(splinter);
-    scene.add(g);pickups.push({kind:'memory',model:g,taken:false,baseY:.9,index});
+    scene.add(g);pickups.push({kind:'memory',model:g,taken:false,baseY,index});
   }
   function addPhaseSeam(x,z,index){
-    const g=new THREE.Group();g.position.set(x,.95,z);
+    const baseY=worldManager.getHeightAt(x,z)+.95;const g=new THREE.Group();g.position.set(x,baseY,z);
     const core=new THREE.Mesh(new THREE.IcosahedronGeometry(.58,1),new THREE.MeshBasicMaterial({color:0xff8ed9,wireframe:true,transparent:true,opacity:.92}));g.add(core);
     const ring1=new THREE.Mesh(new THREE.TorusGeometry(.9,.045,6,24),new THREE.MeshBasicMaterial({color:0x9ceeff,transparent:true,opacity:.9}));ring1.rotation.x=Math.PI/2;g.add(ring1);
     const ring2=new THREE.Mesh(new THREE.TorusGeometry(.63,.035,6,24),new THREE.MeshBasicMaterial({color:0xba93ff,transparent:true,opacity:.9}));ring2.rotation.y=Math.PI/2;g.add(ring2);
-    scene.add(g);pickups.push({kind:'anchor',model:g,taken:false,baseY:.95,index});
+    scene.add(g);pickups.push({kind:'anchor',model:g,taken:false,baseY,index});
   }
   addMemoryEcho(-3.6,-12,1);addMemoryEcho(3.6,-27,2);addMemoryEcho(-3.0,-41,3);
   addPhaseSeam(2.3,-18,1);addPhaseSeam(-1.9,-36,2);
@@ -410,9 +341,9 @@ if(chapter===1){
     arch.position.set(x,2.9,-29);arch.rotation.y=x<0?.34:-.34;scene.add(arch);
     const column=new THREE.Mesh(new THREE.CylinderGeometry(.1,.18,5.8,7),new THREE.MeshBasicMaterial({color:0xff8ed9,transparent:true,opacity:.43,wireframe:true}));column.position.set(x,2.8,-29);scene.add(column);
   }
-  phaseRoadMesh=new THREE.Mesh(new THREE.PlaneGeometry(5.8,108),new THREE.MeshBasicMaterial({color:0x7e65cc,transparent:true,opacity:.11,side:THREE.DoubleSide}));phaseRoadMesh.rotation.x=-Math.PI/2;phaseRoadMesh.position.set(0,-.075,-36);scene.add(phaseRoadMesh);
+  phaseRoadMesh=worldManager.createPhaseRoadOverlay(new THREE.MeshBasicMaterial({color:0x7e65cc,transparent:true,opacity:.11,side:THREE.DoubleSide,depthWrite:false}));
 }
-const extractionBeacon=new THREE.Group();extractionBeacon.position.set(0,0,-53);
+const extractionBeacon=new THREE.Group();extractionBeacon.position.set(0,worldManager.getHeightAt(0,-53),-53);
 const extractionRing=new THREE.Mesh(new THREE.TorusGeometry(1.15,.065,8,32),new THREE.MeshBasicMaterial({color:0x7ff6ff,transparent:true,opacity:.92}));
 extractionRing.rotation.x=Math.PI/2;extractionRing.position.y=.12;extractionBeacon.add(extractionRing);
 const extractionCore=new THREE.Mesh(new THREE.CylinderGeometry(.07,.16,2.8,8),new THREE.MeshBasicMaterial({color:chapter===2?0xff8dce:(chapter===3?0xa98aff:0x86f7ff),transparent:true,opacity:.72}));
@@ -421,11 +352,11 @@ const extractionHalo=new THREE.Mesh(new THREE.TorusGeometry(.48,.035,6,24),new T
 extractionHalo.position.y=2.55;extractionHalo.rotation.x=Math.PI/2;extractionBeacon.add(extractionHalo);
 scene.add(extractionBeacon);
 function addHealthPickup(x,z){
-  const g=new THREE.Group();g.position.set(x,.65,z);
+  const baseY=worldManager.getHeightAt(x,z)+.65;const g=new THREE.Group();g.position.set(x,baseY,z);
   box(.42,.42,.42,new THREE.MeshStandardMaterial({color:0x71ffb8,emissive:0x175535}),0,0,0,g);
   box(.13,.48,.12,new THREE.MeshBasicMaterial({color:0xe0fff0}),0,0,0,g);
   box(.48,.13,.12,new THREE.MeshBasicMaterial({color:0xe0fff0}),0,0,0,g);
-  scene.add(g);pickups.push({kind:'health',model:g,taken:false,baseY:.65});
+  scene.add(g);pickups.push({kind:'health',model:g,taken:false,baseY});
 }
 
 const weapons=[
@@ -1080,6 +1011,8 @@ function updateWorld(dt){
     playerModel.position.copy(player.pos);
     playerShadow.position.set(player.pos.x,.004,player.pos.z);
   }
+  player.pos.y=worldManager.getHeightAt(player.pos.x,player.pos.z);
+  playerModel.position.copy(player.pos);playerShadow.position.set(player.pos.x,player.pos.y+.025,player.pos.z);
   playerController.setLocomotion({
     moveX:move.x,moveZ:move.z,speed:moveSpeed,maxSpeed:9.2,
     sprinting:keys.shift,aiming:keys.aim
@@ -1102,8 +1035,9 @@ function updateWorld(dt){
       const factor=e.boss?1.05:1;
       e.model.position.x+=dx/(dist||1)*e.moveSpeed*dt*factor;
       e.model.position.z+=dz/(dist||1)*e.moveSpeed*dt*factor;
-      e.shadow.position.set(e.model.position.x,.004,e.model.position.z);
     }
+    e.model.position.y=worldManager.getHeightAt(e.model.position.x,e.model.position.z);
+    e.shadow.position.set(e.model.position.x,e.model.position.y+.025,e.model.position.z);
     if(dist<21&&e.nextShot<=0){
       const v=new THREE.Vector3(dx,0,dz).normalize();
       const origin=new THREE.Vector3(e.model.position.x,1.3,e.model.position.z-.25);
@@ -1179,7 +1113,7 @@ function animate(now){
   const dt=Math.min(.04,Math.max(0,(now-lastFrame)/1000));lastFrame=now;
   updateWorld(dt);
   playerController.update(dt);
-  renderer.render(scene,camera);
+  worldManager.render(dt,elapsed);
 }
 function resize(){
   camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();
