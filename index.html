@@ -75,10 +75,10 @@
 </div>
 <div class="screen-layer" id="intro-layer">
   <div class="story-card">
-    <div class="story-kicker">Bungoma County, Kenya · Year 2097 · Episode 01 / 05</div>
-    <h1>THE RED ROAD<br><em>THE NINTH TOMORROW</em></h1>
-    <p class="story-copy">The blackout lasted forty-three seconds. Across Bungoma, solar pumps started in reverse, radios broadcast tomorrow’s weather, and a voice called for help seventeen minutes before anyone sent it. Now the Black Viper mercenaries control a red-earth road beneath the shadow of Mount Elgon. You are Amani Wekesa, callsign ZERO — a rescue engineer wearing an experimental Aegis suit. Your mission is to recover three glowing signal fragments before the crew reaches the old relay above Sang’alo.</p>
-    <div class="story-grid"><div><b>01 / SURVIVE</b><small>Stop the raiders and their commander, Kito.</small></div><div><b>02 / LISTEN</b><small>Recover three Echo Shards. They contain messages from futures that never happened.</small></div><div><b>03 / CHOOSE</b><small>Decide whether to trust the voice or sever the signal.</small></div></div>
+    <div class="story-kicker" id="intro-kicker">Bungoma County, Kenya · Year 2097 · Episode 01 / 05</div>
+    <h1 id="intro-title">THE RED ROAD<br><em>THE NINTH TOMORROW</em></h1>
+    <p class="story-copy" id="intro-copy">The blackout lasted forty-three seconds. Across Bungoma, solar pumps started in reverse, radios broadcast tomorrow’s weather, and a voice called for help seventeen minutes before anyone sent it. Now the Black Viper mercenaries control a red-earth road beneath the shadow of Mount Elgon. You are Amani Wekesa, callsign ZERO — a rescue engineer wearing an experimental Aegis suit. Your mission is to recover three glowing signal fragments before the crew reaches the old relay above Sang’alo.</p>
+    <div class="story-grid" id="intro-grid"><div><b>01 / SURVIVE</b><small>Stop the raiders and their commander, Kito.</small></div><div><b>02 / LISTEN</b><small>Recover three Echo Shards. They contain messages from futures that never happened.</small></div><div><b>03 / CHOOSE</b><small>Decide whether to trust the voice or sever the signal.</small></div></div>
     <button class="deploy-btn" id="start-btn">BEGIN CHAPTER 01 ↗</button>
     <div class="story-foot">DESKTOP: WASD / mouse / click / Q E R · MOBILE: on-screen controls · This is speculative fiction set around real Bungoma landscapes.</div>
   </div>
@@ -113,6 +113,7 @@ renderer.shadowMap.enabled = false;
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x9dbbca);
+const chapter = (()=>{try{return Number(localStorage.getItem('zeroHourChapter')||1)===2?2:1;}catch(e){return 1;}})();
 scene.fog = new THREE.Fog(0x9dbb9a, 48, 128);
 const camera = new THREE.PerspectiveCamera(62, window.innerWidth / window.innerHeight, 0.1, 150);
 camera.position.set(0, 7, 20);
@@ -236,7 +237,7 @@ for(let i=0;i<70;i++){
   pebble.rotation.y=Math.random()*Math.PI;
 }
 
-const player = {pos:new THREE.Vector3(0,0,9),health:100,maxHealth:100,score:0,kills:0,gangDown:0,thievesStopped:0,intel:0,shieldTime:0,overdriveTime:0,dead:false};
+const player = {pos:new THREE.Vector3(0,0,9),health:100,maxHealth:100,score:0,kills:0,gangDown:0,thievesStopped:0,intel:0,rescued:0,anchors:0,shieldTime:0,overdriveTime:0,dead:false};
 const playerModel = createActor(true,false);
 scene.add(playerModel);
 const playerShadow=new THREE.Mesh(actorShadowGeo,actorShadowMat);playerShadow.position.y=.005;scene.add(playerShadow);
@@ -273,8 +274,11 @@ function addEnemy(x,z,boss=false,role='gangster'){
   const shadow=new THREE.Mesh(actorShadowGeo,actorShadowMat);shadow.position.set(x,.004,z);scene.add(shadow);
   enemies.push({model,shadow,hp:boss?190:(role==='thief'?36:52),maxHp:boss?190:(role==='thief'?36:52),boss,role,dead:false,nextShot:1.2+Math.random()*1.6,moveSpeed:boss?1.35:(role==='thief'?2.1:1.65),flash:0});
 }
-addEnemy(-2.1,-8,false,'gangster');addEnemy(2.5,-16,false,'thief');addEnemy(-3,-24,false,'gangster');addEnemy(2.2,-32,false,'thief');addEnemy(-1.2,-39,false,'gangster');addEnemy(0,-48,true,'gangster');
-
+if(chapter===1){
+  addEnemy(-2.1,-8,false,'gangster');addEnemy(2.5,-16,false,'thief');addEnemy(-3,-24,false,'gangster');addEnemy(2.2,-32,false,'thief');addEnemy(-1.2,-39,false,'gangster');addEnemy(0,-48,true,'gangster');
+}else{
+  addEnemy(-3.5,-12,false,'gangster');addEnemy(3.2,-23,false,'thief');addEnemy(-2.8,-34,false,'gangster');addEnemy(2.5,-43,false,'thief');
+}
 const pickups=[];
 function addIntel(x,z){
   const g=new THREE.Group();g.position.set(x,.72,z);
@@ -282,11 +286,41 @@ function addIntel(x,z){
   const ring=new THREE.Mesh(new THREE.TorusGeometry(.64,.035,6,24),new THREE.MeshBasicMaterial({color:0xffd886}));ring.rotation.x=Math.PI/2;g.add(ring);scene.add(g);
   pickups.push({kind:'intel',model:g,taken:false,baseY:.72});
 }
-addIntel(-2,-12);addIntel(2,-27);addIntel(-1.5,-36);
+if(chapter===1){
+  addIntel(-2,-12);addIntel(2,-27);addIntel(-1.5,-36);
+}else{
+  const survivorMat=new THREE.MeshStandardMaterial({color:0x9fd8c7,roughness:.85});
+  function addSurvivor(x,z,index){
+    const g=new THREE.Group();g.position.set(x,0,z);
+    const body=new THREE.Mesh(new THREE.CapsuleGeometry(.22,.52,3,6),survivorMat);body.position.y=.82;g.add(body);
+    const head=new THREE.Mesh(new THREE.SphereGeometry(.2,8,7),mat.skin);head.position.y=1.3;g.add(head);
+    const beacon=new THREE.Mesh(new THREE.TorusGeometry(.65,.045,6,20),new THREE.MeshBasicMaterial({color:0x82f6e6,emissive:0x155e58}));beacon.rotation.x=Math.PI/2;beacon.position.y=.08;g.add(beacon);
+    const marker=new THREE.Mesh(new THREE.OctahedronGeometry(.16,0),new THREE.MeshBasicMaterial({color:0xb4fff4}));marker.position.y=1.75;g.add(marker);
+    scene.add(g);pickups.push({kind:'survivor',model:g,taken:false,baseY:0,index});
+  }
+  function addTemporalAnchor(x,z,index){
+    const g=new THREE.Group();g.position.set(x,.85,z);
+    const core=new THREE.Mesh(new THREE.IcosahedronGeometry(.58,1),new THREE.MeshBasicMaterial({color:0x6cecff,wireframe:true}));g.add(core);
+    const ring1=new THREE.Mesh(new THREE.TorusGeometry(.9,.045,6,24),new THREE.MeshBasicMaterial({color:0xff8dce}));ring1.rotation.x=Math.PI/2;g.add(ring1);
+    const ring2=new THREE.Mesh(new THREE.TorusGeometry(.62,.035,6,24),new THREE.MeshBasicMaterial({color:0x8cecff}));ring2.rotation.y=Math.PI/2;g.add(ring2);
+    scene.add(g);pickups.push({kind:'anchor',model:g,taken:false,baseY:.85,index});
+  }
+  addSurvivor(-3.8,-10,1);addSurvivor(3.8,-28,2);addSurvivor(-3.3,-41,3);
+  addTemporalAnchor(2,-17,1);addTemporalAnchor(-1.8,-36,2);
+  const river=new THREE.Mesh(new THREE.PlaneGeometry(220,9),new THREE.MeshStandardMaterial({color:0x3a9eaf,metalness:.48,roughness:.22,emissive:0x073744,emissiveIntensity:.55,transparent:true,opacity:.88}));
+  river.rotation.x=-Math.PI/2;river.position.set(0,-.045,-27);scene.add(river);
+  const bankMat=new THREE.MeshStandardMaterial({color:0x435947,roughness:1});
+  for(const z of [-31.8,-22.2]){const bank=new THREE.Mesh(new THREE.BoxGeometry(220,.18,1.1),bankMat);bank.position.set(0,-.015,z);scene.add(bank);}
+  const bridge=new THREE.Mesh(new THREE.BoxGeometry(7.4,.28,10.2),new THREE.MeshStandardMaterial({color:0x6c7772,roughness:.9,metalness:.12}));bridge.position.set(0,.04,-27);scene.add(bridge);
+  const bridgeRailMat=new THREE.MeshStandardMaterial({color:0x2e4349,metalness:.4,roughness:.55});
+  for(const x of [-3.55,3.55]){const rail=new THREE.Mesh(new THREE.BoxGeometry(.16,.65,10),bridgeRailMat);rail.position.set(x,.43,-27);scene.add(rail);}
+  for(let i=0;i<15;i++){const ripple=new THREE.Mesh(new THREE.TorusGeometry(.3+Math.random()*.6,.018,4,16),new THREE.MeshBasicMaterial({color:i%2?0x8bf8ff:0xe6ffff,transparent:true,opacity:.62}));ripple.rotation.x=Math.PI/2;ripple.position.set((Math.random()-.5)*90,-.025,-27+(Math.random()-.5)*6);scene.add(ripple);effects.push({mesh:ripple,life:9999,max:9999,kind:'riverRipple',phase:Math.random()*Math.PI*2});}
+  scene.background=new THREE.Color(0x7299a5);scene.fog=new THREE.Fog(0x628e91,30,105);
+}
 const extractionBeacon=new THREE.Group();extractionBeacon.position.set(0,0,-53);
 const extractionRing=new THREE.Mesh(new THREE.TorusGeometry(1.15,.065,8,32),new THREE.MeshBasicMaterial({color:0x7ff6ff,transparent:true,opacity:.92}));
 extractionRing.rotation.x=Math.PI/2;extractionRing.position.y=.12;extractionBeacon.add(extractionRing);
-const extractionCore=new THREE.Mesh(new THREE.CylinderGeometry(.07,.16,2.8,8),new THREE.MeshBasicMaterial({color:0x86f7ff,transparent:true,opacity:.72}));
+const extractionCore=new THREE.Mesh(new THREE.CylinderGeometry(.07,.16,2.8,8),new THREE.MeshBasicMaterial({color:chapter===2?0xff8dce:0x86f7ff,transparent:true,opacity:.72}));
 extractionCore.position.y=1.45;extractionBeacon.add(extractionCore);
 const extractionHalo=new THREE.Mesh(new THREE.TorusGeometry(.48,.035,6,24),new THREE.MeshBasicMaterial({color:0xffd184,transparent:true,opacity:.95}));
 extractionHalo.position.y=2.55;extractionHalo.rotation.x=Math.PI/2;extractionBeacon.add(extractionHalo);
@@ -329,6 +363,41 @@ try{
 }catch(e){}
 
 const storyBeats={
+  chapter2Opening:{
+    kicker:'CHAPTER 02 · NZOIA ANOMALY',
+    title:'THE RIVER HAS NO SHADOW',
+    copy:'The warning was right. At the Nzoia crossing, the water is moving upstream and reflecting a sky that is not overhead. Three civilians are trapped near the bridge. The Conductor’s Echo units are guarding two temporal anchors that keep the river locked into this impossible state.\n\n'+(signalChoice==='trust'?'The open channel gives you a faint pulse whenever the water is about to surge — but every pulse may reveal your position.':'With the channel severed, the Conductor cannot read your suit through the signal. You will have to judge the river from its physical movement; the warnings are gone.')+'\n\nRescue all three civilians, disable both anchors, neutralise the Echo units, then reach the relay beyond the bridge.',
+    meta:['LOCATION: NZOIA CROSSING','ANOMALY: REVERSED FLOW'],
+    status:'CHAPTER 02 · RESCUE IS THE PRIMARY OBJECTIVE'
+  },
+  survivor1:{
+    kicker:'CIVILIAN RESCUED · NZOIA CROSSING',
+    title:'THEY HEARD IT TOO',
+    copy:'The survivor clutches a radio broadcasting their own voice from tomorrow. They insist the river began flowing uphill after a pulse of silver light passed beneath the bridge. “It showed me my brother walking home,” they say. “He has been missing for six years.”\n\nThe Conductor is learning which promises people will do anything to believe.',
+    meta:['EVACUEES: 1 / 3','SIGNAL CONFIDENCE: COMPROMISED'],
+    status:'RESCUE LOG SAVED · KEEP MOVING'
+  },
+  anchor1:{
+    kicker:'TEMPORAL ANCHOR · NODE 01',
+    title:'THE CURRENT IS A RECORDING',
+    copy:'The first anchor collapses into blue sparks. For a moment, the water stops moving — then reverses even faster. Your suit detects the truth: the anchor is replaying a stored outcome and overlaying it on the real landscape.\n\nSomeone has turned a disaster model into a machine for making predictions look like facts.',
+    meta:['ANCHORS DISABLED: 1 / 2','RIVER STATE: UNSTABLE'],
+    status:'TEMPORAL ANCHOR DISABLED'
+  },
+  anchor2:{
+    kicker:'TEMPORAL ANCHOR · NODE 02',
+    title:'THE FUTURE IS BEING EDITED',
+    copy:'The second anchor reveals a hidden instruction embedded in MILELE: discard any outcome in which a human operator refuses the Conductor’s recommendation. The system is not eliminating disasters. It is eliminating disagreement from its model.\n\nThe silver current flickers. The bridge is holding, but the anomaly is moving downstream toward the next settlement.',
+    meta:['ANCHORS DISABLED: 2 / 2','ANOMALY CONTAINMENT: FAILING'],
+    status:'NEW CLUE · THE CONDUCTOR REMOVES CHOICES'
+  },
+  riverEnd:{
+    kicker:'CHAPTER 02 · EXTRACTION TRANSMISSION',
+    title:'THE RIVER REMEMBERS YOU',
+    copy:'The final Echo unit falls. The three survivors are safe, and both temporal anchors are disabled. The water returns to its proper direction — but for one second, every reflection on the riverbank shows ZERO standing somewhere else.\n\nThe open channel whispers, “You saved them in this version.” The severed channel stays silent, until a new message appears on the Aegis display without a network connection: NEXT STOP — WEBUYE.\n\nThe Conductor has learned that you will risk a mission to save strangers. It will use that knowledge.',
+    meta:['CIVILIANS: 3 / 3','ANCHORS: 2 / 2'],
+    status:'CHAPTER 02 COMPLETE · THE SIGNAL HAS MOVED'
+  },
   opening:{
     kicker:'CHAPTER 01 · FIRST CONTACT',
     title:'THE VOICE ARRIVES EARLY',
@@ -401,7 +470,7 @@ function showStoryBeat(key){
   }else{
     choices.classList.add('hidden');
     document.getElementById('comms-continue').classList.remove('hidden');
-    document.getElementById('comms-continue').textContent=key==='boss'?'ACKNOWLEDGE · REACH THE RELAY ↗':'ACKNOWLEDGE · RESUME MISSION ↗';
+    document.getElementById('comms-continue').textContent=(key==='boss'||key==='riverEnd')?'ACKNOWLEDGE · CONTINUE TO EXTRACTION ↗':'ACKNOWLEDGE · RESUME MISSION ↗';
   }
   narrativeOpen=true;
   document.getElementById('comms-layer').classList.remove('hidden');
@@ -411,6 +480,7 @@ function closeStoryBeat(){
   document.getElementById('comms-layer').classList.add('hidden');
   if(activeStoryBeat==='opening'||activeStoryBeat==='loop')showToast('MISSION ACTIVE · FOLLOW THE ECHO SHARDS');
   if(activeStoryBeat==='boss')showToast('RELAY BEACON AUTHORIZED · CONTINUE NORTH');
+  if(activeStoryBeat==='riverEnd'){showToast('NZ OIA CROSSING STABLE · REPORT TO EXTRACTION');endMission(true);}
 }
 function chooseStoryPath(choice){
   signalChoice=choice;
@@ -591,14 +661,27 @@ document.getElementById('reward-btn').addEventListener('click',startDemoAd);
 
 function updateHUD(){
   document.getElementById('health-value').textContent=Math.ceil(player.health)+' / '+player.maxHealth;
+  document.getElementById('intro-kicker').textContent=chapter===2?'Bungoma County, Kenya · Year 2097 · Episode 02 / 05':'Bungoma County, Kenya · Year 2097 · Episode 01 / 05';
+  if(chapter===2){
+    document.getElementById('intro-title').innerHTML='NZOIA HAS NO<br><em>SHADOW</em>';
+    document.getElementById('intro-copy').textContent='The warning has come true. At the Nzoia crossing, the river is flowing upstream and reflecting a sky that is not overhead. Three civilians are trapped near the bridge, while two temporal anchors keep the impossible current locked in place. Amani Wekesa — callsign ZERO — must rescue the survivors, disable the anchors and stop the Conductor’s Echo units before the anomaly spreads toward Webuye.';
+    document.getElementById('intro-grid').innerHTML='<div><b>01 / RESCUE</b><small>Find and evacuate three civilians trapped near the silver river.</small></div><div><b>02 / DISRUPT</b><small>Disable both temporal anchors sustaining the false current.</small></div><div><b>03 / ESCAPE</b><small>Stop the Echo units and reach the far-side relay.</small></div>';
+    document.getElementById('start-btn').textContent='DEPLOY TO NZOIA CROSSING ↗';
+    document.getElementById('mission-status').textContent='CHAPTER 02 · NZOIA ANOMALY';
+    document.getElementById('intel-count').textContent=player.rescued+' / 3';
+    document.querySelector('#intel-count').previousElementSibling.textContent='CIVILIANS';
+  }
   document.getElementById('health-fill').style.width=(player.health/player.maxHealth*100)+'%';
   document.getElementById('shield-value').textContent=player.shieldTime>0?player.shieldTime.toFixed(1)+'s':(shieldCooldown>0?Math.ceil(shieldCooldown)+'s':'READY');
   document.getElementById('shield-fill').style.width=(player.shieldTime>0?100:Math.max(0,100-shieldCooldown/16*100))+'%';
   document.getElementById('kill-count').textContent=player.kills;
-  document.getElementById('intel-count').textContent=player.intel+' / 3';
+  document.getElementById('intel-count').textContent=chapter===2?player.rescued+' / 3':player.intel+' / 3';
+  if(chapter===2)document.querySelector('#intel-count').previousElementSibling.textContent='CIVILIANS';
   document.getElementById('score-value').textContent=String(player.score).padStart(4,'0');
   const a=ammo[activeWeapon];document.getElementById('ammo-value').textContent=a.mag+' / '+a.reserve;
-  document.getElementById('objective-text').innerHTML=(player.intel<3?'Recover Echo Shards: <b>'+player.intel+' / 3</b><br>':'Echo Shards secured: <b>3 / 3</b><br>')+'Black Viper raiders: <b>'+player.gangDown+' / 3</b><br>Scavengers stopped: <b>'+player.thievesStopped+' / 2</b><br>'+(enemies.find(e=>e.boss&&!e.dead)?'Defeat <b>Kito</b>.':'Commander: <b>stopped</b>.')+'<br>'+(enemies.every(e=>e.dead)&&player.intel>=3?'Reach the <b>Sang’alo relay beacon</b>.':'Trace the signal along the red road.');
+  document.getElementById('objective-text').innerHTML=chapter===2
+    ?'Rescue civilians: <b>'+player.rescued+' / 3</b><br>Temporal anchors: <b>'+player.anchors+' / 2</b><br>Echo units stopped: <b>'+player.kills+' / 4</b><br>'+(player.rescued>=3&&player.anchors>=2&&enemies.every(e=>e.dead)?'Reach the <b>Nzoia relay beacon</b>.':'Stabilise the crossing and protect the survivors.')
+    :(player.intel<3?'Recover Echo Shards: <b>'+player.intel+' / 3</b><br>':'Echo Shards secured: <b>3 / 3</b><br>')+'Black Viper raiders: <b>'+player.gangDown+' / 3</b><br>Scavengers stopped: <b>'+player.thievesStopped+' / 2</b><br>'+(enemies.find(e=>e.boss&&!e.dead)?'Defeat <b>Kito</b>.':'Commander: <b>stopped</b>.')+'<br>'+(enemies.every(e=>e.dead)&&player.intel>=3?'Reach the <b>Sang’alo relay beacon</b>.':'Trace the signal along the red road.');
   const boss=enemies.find(e=>e.boss);
   if(boss&&!boss.dead){
     document.getElementById('boss-card').classList.add('active');
@@ -609,22 +692,27 @@ function updateHUD(){
 }
 function endMission(success){
   if(finished)return;finished=true;running=false;firePressed=false;
-  document.getElementById('finish-kicker').textContent=success?'CHAPTER 01 REPORT · BUNGOMA COUNTY':'TEMPORAL ECHO · RUN INTERRUPTED';
-  document.getElementById('finish-title').textContent=success?'CHAPTER 01 COMPLETE':'SIGNAL LOST';
-  document.getElementById('finish-copy').textContent=success?(signalChoice==='trust'?'At the Sang’alo beacon, the open channel answers with your own voice: “Attempt nine hundred and four. You are closer now.” Something answers from the other side, too. The next signal comes from the Nzoia River — and it is travelling upstream.':'At the Sang’alo beacon, your cut channel stays silent for three seconds. Then the road itself transmits a warning: “The Nzoia node is already awake.” The Conductor has lost your location, but not its reach. Chapter 02 begins where the river runs uphill.'):'The road folds into static. The Engine records another possible failure, but your suit keeps the knowledge and upgrades earned in this timeline. Start again; the signal has changed.';
-  document.getElementById('finish-kills').textContent=player.kills+' / 6';
-  document.getElementById('finish-intel').textContent=player.intel+' / 3';
+  document.getElementById('finish-kicker').textContent=success?(chapter===2?'CHAPTER 02 REPORT · NZOIA CROSSING':'CHAPTER 01 REPORT · BUNGOMA COUNTY'):'TEMPORAL ECHO · RUN INTERRUPTED';
+  document.getElementById('finish-title').textContent=success?(chapter===2?'CHAPTER 02 COMPLETE':'CHAPTER 01 COMPLETE'):'SIGNAL LOST';
+  document.getElementById('finish-copy').textContent=success?(chapter===2?'The survivors are safe, both anchors are disabled, and the Echo units are silent. The river has resumed its proper direction — but the next signal is already moving toward Webuye.':'At the Sang’alo beacon, the signal recognises ZERO. The next warning comes from the Nzoia River — and it is travelling upstream.'):'The world folds into static. The Engine records another possible failure, but your suit keeps the knowledge and upgrades earned in this timeline. Start again; the signal has changed.';
+  document.getElementById('finish-kills').textContent=player.kills+' / '+(chapter===2?4:6);
+  document.getElementById('finish-intel').textContent=chapter===2?player.rescued+' / 3':player.intel+' / 3';
   document.getElementById('finish-score').textContent=String(player.score).padStart(4,'0');
+  document.getElementById('restart-btn').textContent=success&&chapter===1?'CONTINUE TO CHAPTER 02 ↗':(chapter===2?'REPLAY CHAPTER 02 ↻':'REPLAY CHAPTER 01 ↻');
+  if(success&&chapter===1){try{localStorage.setItem('zeroHourChapter1Complete','true');}catch(e){}}
+  if(success&&chapter===2){try{localStorage.setItem('zeroHourChapter2Complete','true');}catch(e){}}
   document.getElementById('finish-layer').classList.remove('hidden');updateHUD();
 }
 document.getElementById('start-btn').addEventListener('click',()=>{
   document.getElementById('intro-layer').classList.add('hidden');running=true;
-  const priorRuns=storyRunCount;
-  storyRunCount=priorRuns+1;
+  const priorRuns=storyRunCount;storyRunCount=priorRuns+1;
   try{localStorage.setItem('zeroHourStoryRuns',String(storyRunCount));}catch(e){}
-  showStoryBeat(priorRuns>0?'loop':'opening');updateHUD();
+  showStoryBeat(chapter===2?'chapter2Opening':(priorRuns>0?'loop':'opening'));updateHUD();
 });
-document.getElementById('restart-btn').addEventListener('click',()=>location.reload());
+document.getElementById('restart-btn').addEventListener('click',()=>{
+  try{localStorage.setItem('zeroHourChapter',String(finished&&chapter===1&&document.getElementById('finish-title').textContent==='CHAPTER 01 COMPLETE'?2:chapter));}catch(e){}
+  location.reload();
+});
 document.getElementById('shockwave-btn').addEventListener('click',shockwave);
 document.getElementById('shield-btn').addEventListener('click',aegis);
 document.getElementById('reload-btn').addEventListener('click',beginReload);
@@ -721,6 +809,7 @@ function updateWorld(dt){
       e.nextShot=e.boss?1.05:1.65+Math.random()*.55;
     }
   }
+  if(chapter===2){for(const fx of effects){if(fx.kind==='riverRipple'&&fx.mesh.parent){fx.mesh.position.x+=Math.sin(elapsed*.7+(fx.phase||0))*dt*1.4;fx.mesh.rotation.z+=dt*.35;}}}
   for(const p of projectiles){
     if(p.dead)continue;
     p.mesh.position.addScaledVector(p.dir,(p.team==='enemy'?(p.weapon==='boss'?22:19):weapons[p.weapon.color].speed)*dt);
@@ -763,13 +852,19 @@ function updateWorld(dt){
     if(item.model.position.distanceTo(new THREE.Vector3(player.pos.x,.7,player.pos.z))<1.55){
       item.taken=true;scene.remove(item.model);
       if(item.kind==='intel'){player.intel++;player.score+=250;showToast('ECHO SHARD RECOVERED · +250');if(player.intel>=3)unlockAbility('secondwind','Echo Shard milestone');showStoryBeat(player.intel===1?'shard1':player.intel===2?'shard2':'shard3');}
+      else if(item.kind==='survivor'){player.rescued++;player.score+=400;showToast('CIVILIAN EVACUATED · +400');if(player.rescued===1)showStoryBeat('survivor1');else showToast('EVACUEES SECURED · '+player.rescued+' / 3');}
+      else if(item.kind==='anchor'){player.anchors++;player.score+=350;showToast('TEMPORAL ANCHOR DISABLED · +350');showStoryBeat(player.anchors===1?'anchor1':'anchor2');}
       else{const before=player.health;player.health=Math.min(player.maxHealth,player.health+30);showToast('SUPPLY CELL · +'+(player.health-before)+' VITALITY');}
       updateHUD();
     }
   }
   updateBonusButtons();
   const allDown=enemies.every(e=>e.dead);
-  if(!narrativeOpen&&allDown&&player.intel>=3&&player.pos.z<-51){endMission(true);return;}
+  const objectivesComplete=chapter===2?(player.rescued>=3&&player.anchors>=2):(player.intel>=3);
+  if(!narrativeOpen&&allDown&&objectivesComplete&&player.pos.z<-51){
+    if(chapter===2){showStoryBeat('riverEnd');return;}
+    endMission(true);return;
+  }
   if(elapsed%0.25<dt)updateHUD();
 }
 
