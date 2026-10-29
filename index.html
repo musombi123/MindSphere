@@ -782,7 +782,7 @@ function damageEnemy(e,amount){
   if(e.hp<=0){
     e.dead=true;e.model.visible=false;e.shadow.visible=false;
     player.kills++;if(!e.boss&&e.role==='thief')player.thievesStopped++;else if(!e.boss)player.gangDown++;player.score+=e.boss?500:150;
-    showToast(e.boss?'KITO · VIPER COMMANDER DOWN':(e.role==='thief'?'SCAVENGER STOPPED':'BLACK VIPER RAIDER STOPPED'));
+    showToast(e.boss?'KITO · VIPER COMMANDER DOWN':(chapter===3?'ECHO UNIT DISSOLVED':(e.role==='thief'?'SCAVENGER STOPPED':'BLACK VIPER RAIDER STOPPED')));
     if(e.boss)showStoryBeat('boss');
     if(player.kills>=2)unlockAbility('overdrive','Combat milestone');
     if(player.kills>=4)unlockAbility('chain','Combat milestone');
