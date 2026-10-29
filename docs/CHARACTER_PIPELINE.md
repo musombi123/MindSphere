@@ -6,7 +6,7 @@ The player is created as a visual root managed by \`src/characters/PlayerControl
 
 If \`player.glb\` is absent or invalid, a temporary capsule/sphere humanoid proxy is displayed and a clear \`console.warn\` identifies the missing asset. It is explicitly a development fallback, **not** the final realistic model. The existing game still owns player movement, mission progression, weapons, damage, abilities, story, and HUD.
 
-The loading strip shows model progress. A short over-the-shoulder camera mode is activated by holding the **right mouse button**; standard movement and the existing left-mouse/Space fire controls remain intact.
+The loading strip shows model progress. Asset/decoder paths are resolved against Vite’s configured base URL, so the same paths work at a GitHub Pages project subpath and in the Capacitor WebView. A short over-the-shoulder camera mode is activated by holding the **right mouse button**; standard movement and the existing left-mouse/Space fire controls remain intact.
 
 ## Exact manual steps still required
 

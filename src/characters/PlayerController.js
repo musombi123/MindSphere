@@ -5,9 +5,15 @@ import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { clone as cloneSkinnedScene } from 'three/addons/utils/SkeletonUtils.js';
 
-const CHARACTER_URL = '/assets/characters/player.glb';
-const ANIMATION_MANIFEST_URL = '/assets/animations/manifest.json';
+const CHARACTER_URL = 'assets/characters/player.glb';
+const ANIMATION_MANIFEST_URL = 'assets/animations/manifest.json';
 const TARGET_HEIGHT_METRES = 1.88;
+const BASE_URL = import.meta.env.BASE_URL || './';
+
+function publicAssetUrl(path) {
+  const cleanPath = String(path || '').replace(/^\\/+/, '');
+  return new URL(cleanPath, new URL(BASE_URL, window.location.href)).href;
+}
 
 const REQUIRED_CLIPS = [
   'idle', 'walk', 'run', 'sprint', 'strafeLeft', 'strafeRight', 'backpedal',
@@ -114,6 +120,7 @@ export class PlayerController {
 
   async load(url = CHARACTER_URL) {
     if (!this.root) throw new Error('PlayerController.attachRoot(root) must be called before load().');
+    const modelUrl = /^https?:\\/\\//i.test(url) ? url : publicAssetUrl(url);
     this.reportProgress(2, 'SEARCHING FOR RIGGED PLAYER MODEL');
 
     const manager = new THREE.LoadingManager();
@@ -121,11 +128,11 @@ export class PlayerController {
       this.reportProgress(5 + (total ? (loaded / total) * 85 : 0), 'LOADING MODEL DATA ' + loaded + ' / ' + total);
     };
     const dracoLoader = new DRACOLoader(manager);
-    dracoLoader.setDecoderPath('/decoders/draco/');
+    dracoLoader.setDecoderPath(publicAssetUrl('decoders/draco/'));
     dracoLoader.preload();
 
     const ktx2Loader = new KTX2Loader(manager);
-    ktx2Loader.setTranscoderPath('/decoders/basis/');
+    ktx2Loader.setTranscoderPath(publicAssetUrl('decoders/basis/'));
     if (this.renderer) ktx2Loader.detectSupport(this.renderer);
 
     const loader = new GLTFLoader(manager);
@@ -134,12 +141,12 @@ export class PlayerController {
     loader.setMeshoptDecoder(MeshoptDecoder);
 
     try {
-      if (!(await this.assetExists(url))) {
-        throw new Error('Required asset is missing: ' + url);
+      if (!(await this.assetExists(modelUrl))) {
+        throw new Error('Required asset is missing: ' + modelUrl);
       }
 
       this.reportProgress(5, 'DECODING HUMANOID MESH');
-      const gltf = await loader.loadAsync(url, (event) => {
+      const gltf = await loader.loadAsync(modelUrl, (event) => {
         if (event && event.total > 0) {
           this.reportProgress(5 + (event.loaded / event.total) * 80, 'DOWNLOADING PLAYER MODEL');
         }
@@ -181,7 +188,7 @@ export class PlayerController {
         message: 'Temporary character active. Add public/assets/characters/player.glb.'
       });
       console.warn(
-        '[Project Zero Hour] Rigged player model is not available at ' + url +
+        '[Project Zero Hour] Rigged player model is not available at ' + modelUrl +
         '. The game is using a temporary non-box humanoid proxy. Add a rigged GLB to enable the real character and its AnimationMixer clips.',
         error && error.message ? error.message : error
       );
@@ -208,7 +215,7 @@ export class PlayerController {
 
   async loadExternalAnimationClips(loader) {
     try {
-      const response = await fetch(ANIMATION_MANIFEST_URL, { cache: 'no-store' });
+      const response = await fetch(publicAssetUrl(ANIMATION_MANIFEST_URL), { cache: 'no-store' });
       if (!response.ok) return [];
       const manifest = await response.json();
       const entries = Object.entries(manifest.clips || {});
@@ -217,9 +224,11 @@ export class PlayerController {
       const results = await Promise.all(entries.map(async ([key, value]) => {
         const definition = typeof value === 'string' ? { file: value } : value;
         if (!definition || !definition.file) return null;
-        const file = definition.file.startsWith('/')
+        const file = /^https?:\\/\\//i.test(definition.file)
           ? definition.file
-          : '/assets/animations/' + definition.file;
+          : publicAssetUrl(definition.file.startsWith('/')
+            ? definition.file.slice(1)
+            : 'assets/animations/' + definition.file);
         try {
           const clipGltf = await loader.loadAsync(file);
           const expected = definition.clipName ? normaliseName(definition.clipName) : normaliseName(key);
