@@ -1,0 +1,8 @@
+/** Optional offline ambience. Place licensed files in public/assets/world/audio/. Missing files are silently skipped. */
+export class AudioAmbience{
+ constructor(){this.enabled=false;this.context=null;this.master=null;this.nodes=[];this.files={wind:'assets/world/audio/wind.ogg',birds:'assets/world/audio/birds.ogg',insects:'assets/world/audio/insects.ogg',soil:'assets/world/audio/footsteps_soil.ogg',grass:'assets/world/audio/footsteps_grass.ogg'};this.buffers={};}
+ async enable(){if(this.enabled)return;const C=window.AudioContext||window.webkitAudioContext;if(!C)return;this.context=new C();await this.context.resume();this.master=this.context.createGain();this.master.gain.value=.16;this.master.connect(this.context.destination);this.enabled=true;for(const [name,path] of Object.entries(this.files)){try{const r=await fetch((import.meta.env.BASE_URL||'./')+path);if(!r.ok)continue;this.buffers[name]=await this.context.decodeAudioData(await r.arrayBuffer());if(['wind','birds','insects'].includes(name))this.loop(name);}catch{}}}
+ loop(name){const s=this.context.createBufferSource(),g=this.context.createGain();s.buffer=this.buffers[name];s.loop=true;g.gain.value=name==='wind'?.5:.2;s.connect(g);g.connect(this.master);s.start();this.nodes.push(s);}
+ playFootstep(surface='soil'){if(!this.enabled||!this.buffers[surface])return;const s=this.context.createBufferSource();s.buffer=this.buffers[surface];s.connect(this.master);s.start();this.nodes.push(s);}
+ dispose(){for(const n of this.nodes)try{n.stop();}catch{}this.context?.close();this.nodes=[];this.enabled=false;}
+}

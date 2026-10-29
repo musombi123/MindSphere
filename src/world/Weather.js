@@ -1,0 +1,6 @@
+import * as THREE from 'three';
+export class Weather{
+ constructor({scene,quality='medium'}){this.scene=scene;this.quality=quality;const count=quality==='high'?400:quality==='medium'?210:70,positions=new Float32Array(count*3);let s=777;const rand=()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};for(let i=0;i<count;i++){positions[i*3]=(rand()-.5)*70;positions[i*3+1]=rand()*18;positions[i*3+2]=10-rand()*100;}const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(positions,3));this.particles=new THREE.Points(geo,new THREE.PointsMaterial({color:0xe8d8b6,size:quality==='high'?.09:.06,transparent:true,opacity:.3,depthWrite:false}));this.particles.name='DUST_AND_POLLEN';scene.add(this.particles);}
+ update(dt,elapsed){const p=this.particles.geometry.attributes.position;for(let i=0;i<p.count;i++){p.array[i*3]+=Math.sin(elapsed*.17+i)*.07*dt;p.array[i*3+1]+=.08*dt;if(p.array[i*3+1]>19)p.array[i*3+1]=0;}p.needsUpdate=true;}
+ setQuality(q){this.quality=q;}dispose(){this.scene.remove(this.particles);this.particles.geometry.dispose();this.particles.material.dispose();}
+}

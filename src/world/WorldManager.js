@@ -2,6 +2,12 @@ import * as THREE from 'three';
 import { createProceduralPbrTextures } from './TextureFactory.js';
 import { Terrain } from './Terrain.js';
 import { Road } from './Road.js';
+import { Sky } from './Sky.js';
+import { Vegetation } from './Vegetation.js';
+import { Props } from './Props.js';
+import { Weather } from './Weather.js';
+import { AudioAmbience } from './AudioAmbience.js';
+import { Postprocessing } from './Postprocessing.js';
 
 export class WorldManager {
   constructor({ scene, renderer, camera, chapter = 1, hemi, sun, quality = null }) {
@@ -12,20 +18,27 @@ export class WorldManager {
     this.textures = createProceduralPbrTextures(this.quality === 'high' ? 384 : 256);
     this.terrain = new Terrain({ scene, quality: this.quality, textures: this.textures });
     this.road = new Road({ scene, terrain: this.terrain, textures: this.textures, quality: this.quality });
+    this.sky = new Sky({scene,sun,hemi,quality:this.quality});
+    this.vegetation = new Vegetation({scene,quality:this.quality,textures:this.textures,terrain:this.terrain});
+    this.props = new Props({scene,terrain:this.terrain,textures:this.textures,quality:this.quality});
+    this.weather = new Weather({scene,quality:this.quality});
+    this.audio = new AudioAmbience();
+    this.postprocessing = new Postprocessing({renderer,quality:this.quality});
     this.phaseRoadMesh = null;
     this.elapsed = 0;
   }
   initialize() {}
   getHeightAt(x, z) { return this.terrain.getHeightAt(x, z); }
   createPhaseRoadOverlay(material) { this.phaseRoadMesh = this.road.createPhaseOverlay(material); return this.phaseRoadMesh; }
-  update(dt, elapsed) { this.elapsed = elapsed; this.road.update(dt, elapsed); }
-  render(dt, elapsed) { this.update(dt, elapsed); this.renderer.render(this.scene, this.camera); }
+  update(dt, elapsed) { this.elapsed = elapsed; this.road.update(dt, elapsed); this.sky.update(dt,elapsed); this.vegetation.update(dt,elapsed); this.props.update(dt,elapsed); this.weather.update(dt,elapsed); }
+  render(dt, elapsed) { this.update(dt, elapsed); this.postprocessing.render(this.scene,this.camera); }
   setQuality(quality) {
     if (!['low','medium','high'].includes(quality) || quality === this.quality) return;
     this.quality = quality;
     try { localStorage.setItem('zeroHourWorldQuality', quality); } catch {}
     this.terrain.setQuality(quality);
     this.road.setQuality(quality);
+    this.sky.setQuality(quality);this.vegetation.setQuality(quality);this.props.setQuality(quality);this.weather.setQuality(quality);this.postprocessing.setQuality(quality);
   }
-  dispose() { this.road.dispose(); this.terrain.dispose(); }
+  dispose() { this.road.dispose(); this.terrain.dispose();this.sky.dispose();this.vegetation.dispose();this.props.dispose();this.weather.dispose();this.audio.dispose();this.postprocessing.dispose(); }
 }
