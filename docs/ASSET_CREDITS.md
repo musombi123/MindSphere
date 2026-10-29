@@ -1,22 +1,24 @@
 # Asset credits and licensing
 
-## Current world phase
+## User-supplied real-world photo references
 
-| Asset/code | Source | Licence / status |
-|---|---|---|
-| Three.js core, geometry and loaders | Existing project dependency, three@^0.170.0 | MIT |
-| three-mesh-bvh | https://github.com/gkjohnson/three-mesh-bvh | MIT; added for accelerated terrain raycasts and ground-height queries |
-| Procedural terrain, road, textures, materials and shaders | Original project code in src/world/ | Project-authored; no third-party texture/model files embedded in this phase |
-| Terrain PBR-style maps | Generated with CanvasTexture and deterministic noise at runtime | Procedural project output; not from a third-party image |
-| User world-reference images | Expected under public/reference/world/ | Folder was absent at audit time; no user images applied yet |
-| Poly Haven Red Sand | https://polyhaven.com/a/red_sand | CC0 material identified as an optional laterite source, not bundled |
-| Poly Haven Gravel Road | https://polyhaven.com/a/gravel_road | CC0 material identified as an optional road source, not bundled |
-| Bungoma rural road photograph | https://commons.wikimedia.org/wiki/File:Rural_road_outside_of_Bungoma_Town.jpg | Visual reference only; not downloaded or used as a game texture. Verify exact file-page licence before reuse |
+| File | Source and status |
+|---|---|
+| \`public/reference/world/video_frame_02s.webp\` | Still extracted from the user's uploaded video \`1000034633.mp4\`, approx. 2 seconds. Red laterite road, brick boundary wall, dense tree line and clouded blue sky. Road/soil crops are sourced from this frame. |
+| \`public/reference/world/video_frame_16s.webp\` | Still extracted from the user's uploaded video, approx. 16 seconds. Timber/stick fence, tree trunks, green garden and flowers. |
+| \`public/reference/world/video_frame_26s.webp\` | Still extracted from the user's uploaded video, approx. 26 seconds. Rustic homestead/outbuilding, rough walls, corrugated roof and yard. |
 
-## Optional local assets
+These are user-provided media, not third-party stock. The project does not assert rights to people or other private subjects appearing in the footage; obtain any permissions needed for public distribution.
 
-PBR maps can be added under public/assets/world/textures/ using the names in docs/WORLD_REFERENCE_MAP.md. Record the source URLs, exact asset names, licence and any edits here before shipping. No third-party model, audio recording, HDRI or photograph is represented as included by this phase.
+## Code and dependencies
 
-## Runtime limits
+| Asset or module | License / status |
+|---|---|
+| Three.js | Existing project dependency; MIT |
+| \`three-mesh-bvh\` | MIT; used for heightfield spatial raycasts |
+| \`src/world/TextureFactory.js\` | Project code that crops the user's photographs and derives normal/roughness maps from those pixels. It does not synthesize substitute albedo textures. |
+| \`src/world/Sky.js\` | Project code placing the user's ordinary camera frames on feathered curved background panels; the source footage is not a 360-degree panorama. |
 
-Binary downloads could not be completed by the current shell environment. The world therefore uses procedural replacements now and supports optional local textures later. It requires no remote CDN at runtime and can run offline when assets are bundled.
+## Still required for full photorealism
+
+Near-range tree, homestead, fence, vehicle and water-tank GLB models and a true 360-degree HDR panorama are not included yet. These missing GLBs are intentionally listed in the F3 debug panel and the on-screen asset-missing banner.

@@ -64,12 +64,13 @@ export class Terrain {
     geometry.computeBoundsTree({ maxLeafTris: 12 });
 
     const material = new THREE.MeshStandardMaterial({
-      color: 0xffffff, roughness: 0.95, metalness: 0,
-      normalMap: this.textures.grass.normal,
-      normalScale: new THREE.Vector2(0.4, 0.4),
-      roughnessMap: this.textures.grass.roughness
+      color: 0xffffff, roughness: 0.98, metalness: 0,
+      map: this.textures.ground.albedo,
+      normalMap: this.textures.ground.normal,
+      normalScale: new THREE.Vector2(0.42, 0.42),
+      roughnessMap: this.textures.ground.roughness
     });
-    this.patchSplatShader(material);
+    // Real photo-derived albedo/normal/roughness from the user's own video; shader stays stock WebGL-safe.
     material.userData.splatUniforms = null;
     this.mesh = new THREE.Mesh(geometry, material);
     this.mesh.name = 'BUNGOMA_HEIGHTFIELD_BVH';

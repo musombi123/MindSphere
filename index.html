@@ -125,7 +125,7 @@ renderer.toneMappingExposure = 1.18;
 renderer.shadowMap.enabled = false;
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x9dbbca);
+scene.background = null;
 const chapter = (()=>{try{const value=Number(localStorage.getItem('zeroHourChapter')||1);return [1,2,3].includes(value)?value:1;}catch(e){return 1;}})();
 const riverRipples=[];
 let phaseWallMaterial=null,phaseRoofMaterial=null,phaseGlowMaterial=null,phaseRoadMesh=null;
@@ -296,7 +296,7 @@ if(chapter===1){
   const surgeBase=new THREE.Mesh(new THREE.BoxGeometry(7.6,.12,.34),new THREE.MeshBasicMaterial({color:0x79f3ff,transparent:true,opacity:.95}));surgeBase.position.set(0,.12,0);riverWaveMesh.add(surgeBase);
   riverWaveMesh.position.set(0,worldManager.getHeightAt(0,-27),riverSurgeState.waveZ);riverWaveMesh.visible=false;scene.add(riverWaveMesh);
   for(let i=0;i<15;i++){const ripple=new THREE.Mesh(new THREE.TorusGeometry(.3+Math.random()*.6,.018,4,16),new THREE.MeshBasicMaterial({color:i%2?0x8bf8ff:0xe6ffff,transparent:true,opacity:.62}));ripple.rotation.x=Math.PI/2;const rippleX=(Math.random()-.5)*90,rippleZ=-27+(Math.random()-.5)*6;ripple.position.set(rippleX,worldManager.getHeightAt(rippleX,rippleZ)-.07,rippleZ);scene.add(ripple);riverRipples.push({mesh:ripple,phase:Math.random()*Math.PI*2});}
-  scene.background=new THREE.Color(0x7299a5);scene.fog=new THREE.Fog(0x628e91,30,105);
+  worldManager.sky.setMood('river');scene.fog=new THREE.Fog(0x628e91,30,105);
 }else{
   const memoryCoreMat=new THREE.MeshStandardMaterial({color:0xb9a4ff,emissive:0x603df5,emissiveIntensity:1.45,metalness:.32,roughness:.24});
   function addMemoryEcho(x,z,index){
@@ -316,7 +316,7 @@ if(chapter===1){
   addMemoryEcho(-3.6,-12,1);addMemoryEcho(3.6,-27,2);addMemoryEcho(-3.0,-41,3);
   addPhaseSeam(2.3,-18,1);addPhaseSeam(-1.9,-36,2);
   // The County That Never Was: familiar rural forms survive as unstable, translucent duplicates.
-  scene.background=new THREE.Color(0x17172f);scene.fog=new THREE.Fog(0x28213e,16,86);
+  worldManager.sky.setMood('echo');scene.fog=new THREE.Fog(0x28213e,16,86);
   hemi.color.set(0xaacaff);hemi.groundColor.set(0x2c174a);hemi.intensity=1.7;
   sun.color.set(0xa9c5ff);sun.intensity=1.35;
   phaseWallMaterial=new THREE.MeshBasicMaterial({color:0x91d9ff,wireframe:true,transparent:true,opacity:.28,depthWrite:false});
@@ -673,7 +673,7 @@ function interactWithNearby(){
     player.anchors++;player.score+=350;
     if(chapter===3){
       if(player.anchors>=2){
-        scene.background.set(0x303746);scene.fog.color.set(0x303746);scene.fog.near=24;scene.fog.far=112;
+        worldManager.sky.setMood('stabilized');scene.fog.color.set(0x303746);scene.fog.near=24;scene.fog.far=112;
         if(phaseWallMaterial)phaseWallMaterial.opacity=.12;
         if(phaseRoofMaterial)phaseRoofMaterial.opacity=.1;
         if(phaseGlowMaterial)phaseGlowMaterial.opacity=.07;

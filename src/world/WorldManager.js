@@ -8,9 +8,11 @@ import { Props } from './Props.js';
 import { Weather } from './Weather.js';
 import { AudioAmbience } from './AudioAmbience.js';
 import { Postprocessing } from './Postprocessing.js';
+import { installWorldDebugPanel, registerMissingAsset } from './AssetDiagnostics.js';
 
 export class WorldManager {
   constructor({ scene, renderer, camera, chapter = 1, hemi, sun, quality = null }) {
+    installWorldDebugPanel();
     this.scene = scene; this.renderer = renderer; this.camera = camera; this.chapter = chapter;
     this.hemi = hemi; this.sun = sun;
     this.quality = quality || (matchMedia('(pointer: coarse)').matches ? 'low' : 'medium');
@@ -18,12 +20,19 @@ export class WorldManager {
     this.textures = createProceduralPbrTextures(this.quality === 'high' ? 384 : 256);
     this.terrain = new Terrain({ scene, quality: this.quality, textures: this.textures });
     this.road = new Road({ scene, terrain: this.terrain, textures: this.textures, quality: this.quality });
-    this.sky = new Sky({scene,sun,hemi,quality:this.quality});
+    this.sky = new Sky({scene,sun,hemi,quality:this.quality,photos:this.textures.photo});
     this.vegetation = new Vegetation({scene,quality:this.quality,textures:this.textures,terrain:this.terrain});
     this.props = new Props({scene,terrain:this.terrain,textures:this.textures,quality:this.quality});
     this.weather = new Weather({scene,quality:this.quality});
     this.audio = new AudioAmbience();
     this.postprocessing = new Postprocessing({renderer,quality:this.quality});
+    for (const modelPath of [
+      '/assets/world/models/acacia.glb', '/assets/world/models/eucalyptus.glb',
+      '/assets/world/models/mango_tree.glb', '/assets/world/models/fig_tree.glb',
+      '/assets/world/models/mud_house.glb', '/assets/world/models/timber_fence.glb',
+      '/assets/world/models/boda_boda.glb', '/assets/world/models/rusted_pickup.glb',
+      '/assets/world/models/water_tank.glb'
+    ]) registerMissingAsset(modelPath, 'Near-field licensed GLB not supplied. The game must not pretend a photo card is a 3D model.');
     this.phaseRoadMesh = null;
     this.elapsed = 0;
   }
