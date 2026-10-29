@@ -212,6 +212,18 @@ for(let z=10;z>-79;z-=6){
     makeTree(side*(10+Math.random()*14),z+(Math.random()*3-1.5),scale);
   }
 }
+// Low-poly Mount Elgon ridge: a stylised horizon, not a geographic reconstruction.
+const elgonRock=new THREE.MeshStandardMaterial({color:0x3b5147,roughness:1});
+const elgonShadow=new THREE.MeshStandardMaterial({color:0x2b403b,roughness:1});
+for(const peak of [
+  {x:-21,y:5.2,z:-86,r:18,h:20,m:elgonShadow},
+  {x:-4,y:7.1,z:-91,r:21,h:25,m:elgonRock},
+  {x:17,y:4.2,z:-84,r:17,h:17,m:elgonShadow},
+  {x:31,y:3.5,z:-90,r:16,h:15,m:elgonRock}
+]){
+  const ridge=new THREE.Mesh(new THREE.ConeGeometry(peak.r,peak.h,7),peak.m);
+  ridge.position.set(peak.x,peak.y,peak.z);ridge.rotation.y=.22;scene.add(ridge);
+}
 for(let i=0;i<90;i++){
   const x=(Math.random()<.5?-1:1)*(7.8+Math.random()*9);
   const z=12-Math.random()*95;
