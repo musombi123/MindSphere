@@ -23,6 +23,10 @@ jobs:
     steps:
       - name: Check out source
         uses: actions/checkout@v6
+      - name: Validate game JavaScript
+        run: |
+          sed -n '/<script type="module">/,/<\/script>/p' index.html | sed '1d;$d' > /tmp/zero-hour-game.mjs
+          node --check /tmp/zero-hour-game.mjs
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
       - name: Upload static game
