@@ -47,11 +47,11 @@ namespace ProjectZeroHour.Ads.Editor
 
             // The plugin's current documented Android requirement is API 24+; target API 35+ is
             // required by the Google Mobile Ads Unity quick start. Never lower a project's newer target.
-            if (PlayerSettings.Android.minSdkVersion < AndroidSdkVersions.AndroidApiLevel24)
-                PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel24;
+            if ((int)PlayerSettings.Android.minSdkVersion < 24)
+                PlayerSettings.Android.minSdkVersion = (UnityEditor.AndroidSdkVersions)24;
 
-            if (PlayerSettings.Android.targetSdkVersion < (AndroidSdkVersions)35)
-                PlayerSettings.Android.targetSdkVersion = (AndroidSdkVersions)35;
+            if ((int)PlayerSettings.Android.targetSdkVersion < 35)
+                PlayerSettings.Android.targetSdkVersion = (UnityEditor.AndroidSdkVersions)35;
 
             bool developmentBuild = (report.summary.options & BuildOptions.Development) != 0;
             AdConfig config = AssetDatabase.LoadAssetAtPath<AdConfig>(ConfigPath);
@@ -99,11 +99,5 @@ namespace ProjectZeroHour.Ads.Editor
         }
     }
 
-    /// <summary>Unity's Android API level enum is maintained by Unity; this bridge keeps numeric
-    /// API-level comparisons readable while staying compatible with Unity 6 enum names.</summary>
-    internal static class AndroidSdkVersions
-    {
-        public const AndroidApiLevel AndroidApiLevel24 = AndroidApiLevel.AndroidApiLevel24;
-    }
 }
 #endif
