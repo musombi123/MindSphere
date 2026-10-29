@@ -89,6 +89,7 @@ export class PlayerController {
     this.cameraSafeDistance = 0;
     this.cameraCheckTimer = 0;
     this.lastCameraAimMode = null;
+    this.cameraTime = 0;
     this.fallback = this.createFallbackHumanoid();
   }
 
@@ -273,7 +274,19 @@ export class PlayerController {
     (clips || []).forEach((clip) => {
       const key = resolveClipKey(clip.name);
       if (!key || this.actions.has(key)) return;
-      this.actions.set(key, this.avatarMixer.clipAction(clip));
+      let mappedClip = clip;
+      if (key === 'aimIdle') {
+        const upperBodyTracks = clip.tracks.filter((track) => {
+          const target = normaliseName(String(track.name).split('.')[0].split('/').pop());
+          return /spine|chest|neck|head|clavicle|shoulder|arm|forearm|hand|finger/.test(target);
+        });
+        if (upperBodyTracks.length) {
+          mappedClip = new THREE.AnimationClip(clip.name + '_UPPER_BODY', clip.duration, upperBodyTracks, clip.blendMode);
+        } else {
+          console.warn('[Project Zero Hour] Aim clip has no recognisable upper-body bone tracks; using the supplied clip as-is:', clip.name);
+        }
+      }
+      this.actions.set(key, this.avatarMixer.clipAction(mappedClip));
     });
 
     const missing = REQUIRED_CLIPS.filter((key) => !this.actions.has(key));
@@ -475,11 +488,16 @@ export class PlayerController {
       add('sprint', intensity * sprintBlend, 'run');
     }
 
-    const total = Array.from(desired.values()).reduce((sum, value) => sum + value, 0);
+    const aimingAction = this.actions.get('aimIdle');
+    const locomotionTotal = Array.from(desired.entries())
+      .filter(([action]) => action !== aimingAction)
+      .reduce((sum, [, value]) => sum + value, 0);
     const blend = clamp01(dt * 8);
     const allActions = new Set(this.actions.values());
     allActions.forEach((action) => {
-      const targetWeight = total > 0 ? (desired.get(action) || 0) / total : 0;
+      const targetWeight = action === aimingAction
+        ? (motion.aiming ? 1 : 0)
+        : (locomotionTotal > 0 ? (desired.get(action) || 0) / locomotionTotal : 0);
       const currentWeight = this.actionWeights.get(action) || 0;
       const nextWeight = THREE.MathUtils.lerp(currentWeight, targetWeight, blend);
       if ((targetWeight > 0 || nextWeight > 0.001) && !action.isRunning()) {
@@ -551,12 +569,16 @@ export class PlayerController {
 
   updateCamera(camera, dt, playerPosition, scene, aiming = false) {
     if (!camera || !playerPosition) return;
+    this.cameraTime += dt;
     const pivot = playerPosition.clone();
     pivot.y += aiming ? 1.42 : 1.28;
     const offset = aiming
       ? new THREE.Vector3(1.15, 2.55, 5.75)
       : new THREE.Vector3(0.65, 5.2, 9.4);
     const desired = playerPosition.clone().add(offset);
+    const sway = clamp01(this.motion.speed / this.motion.maxSpeed) * (aiming ? 0.32 : 1);
+    desired.x += Math.sin(this.cameraTime * 2.4) * 0.022 * sway;
+    desired.y += Math.sin(this.cameraTime * 4.8) * 0.012 * sway;
     const direction = desired.clone().sub(pivot);
     const desiredDistance = direction.length();
     direction.normalize();
