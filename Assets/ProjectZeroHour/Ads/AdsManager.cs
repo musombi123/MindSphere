@@ -71,12 +71,27 @@ namespace ProjectZeroHour.Ads
 
         private void Start()
         {
+#if UNITY_EDITOR
+            // No SDK initialization or ad requests in Editor Play mode.
+            Log("Editor Play mode: SDK requests disabled; test IDs remain configured.");
+            return;
+#else
+            if (Application.platform != RuntimePlatform.Android)
+            {
+                Log("Non-Android runtime: ads disabled.");
+                return;
+            }
             if (!enableAds || config == null || consentController == null) { Log("Ads disabled or references missing."); return; }
             consentController.GatherConsent(HandleConsentResult);
+#endif
         }
 
         private void HandleConsentResult(bool canRequest)
         {
+#if UNITY_EDITOR
+            Log("Editor Play mode: ignoring SDK initialization.");
+            return;
+#endif
             if (!canRequest || !HasInternet) { Log("Ads unavailable: consent/network not ready."); return; }
             if (sdkInitialized) { PreloadAds(); return; }
 
@@ -95,6 +110,9 @@ namespace ProjectZeroHour.Ads
 
         private void Update()
         {
+#if UNITY_EDITOR
+            return;
+#endif
             if (!sdkInitialized && enableAds && config != null && consentController != null &&
                 HasInternet && consentController.ConsentFlowFinished && consentController.CanRequestAds)
                 HandleConsentResult(true);
