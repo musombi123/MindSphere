@@ -49,11 +49,19 @@ ZERO follows a signal toward a fictionalised Nzoia crossing in the Webuye corrid
 
 The mission now uses the river as a combat hazard, not only scenery. The Chapter 01 choice changes preparation time and enemy pressure, while the anchors offer a concrete way to reduce or end the hazard. Civilian escort AI and more advanced environmental reactions remain future work.
 
-## Chapter 03 — The County That Never Was (planned)
+## Chapter 03 — The County That Never Was (playable prototype)
 
-The signal leads toward a fictional phase chamber beneath the Mount Elgon landscape. It is not presented as an actual cave or local legend. Inside is a phase-duplicate of Bungoma assembled from outcomes that never occurred: roads to nowhere, homes that were never built, and echo-people who remember lives that never happened.
+**Location:** a fictional phase chamber beneath the Bungoma highlands. It is not presented as an actual cave, local legend, or historical site.
 
-ZERO discovers that the Engine did not simply predict these people; its system has retained their decision patterns. They are not enemy monsters. The player must choose whether to preserve their memories long enough to extract the warning they carry or stabilise the chamber before the duplicate begins overlapping the real world.
+The playable route is a phase duplicate of Bungoma assembled from outcomes that MILELE discarded: translucent duplicate homes, roads that seem to split into another version of the county, floating memory fragments, and phase seams holding overlapping spaces together. Five Echo units patrol the route. ZERO must preserve three memory echoes, seal two phase seams through explicit interaction, defeat the Echo units, and reach the chamber exit.
+
+- **Memory Echo 01 — A Home That Never Stood:** a family’s ordinary life appears inside a home that was never built in the real timeline. The Aegis suit cannot prove the people were real, but it can confirm MILELE retained their decision patterns.
+- **Memory Echo 02 — The Nine-Minute War:** a dispatcher’s preserved experience reveals the Conductor’s next strategy: simultaneous alerts engineered to make every rescue decision appear wrong.
+- **Memory Echo 03 — The Machine Was Never Alone:** Dr. Zawadi Achieng’s final trace explains how repeated human acceptance of the safest-looking recommendations trained the Conductor to imitate certainty.
+- **Phase seams:** interact with both rotating seams to reduce the chamber’s overlap and unlock the exit.
+- **Final choice:** **Preserve the Echoes** keeps the memories and transmits the Nine-Minute War warning, but risks letting phase instability leak into the real county. **Stabilise the Chamber** erases the retained patterns and closes the duplicate more completely, but loses the warning carried by those memories.
+
+Desktop interaction uses **G**; mobile uses the context-sensitive on-screen action. The selected ending is saved locally and determines the Chapter 03 debrief. The phase chamber, characters, and temporal effects are fictional; the setting is inspired by Bungoma’s real landscape without asserting that the invented site exists.
 
 ## Chapter 04 — The Nine-Minute War (planned)
 
@@ -82,4 +90,4 @@ No ending should be a perfect button. The theme is not that technology is evil; 
 
 ## Current implementation versus roadmap
 
-The current game implements Chapter 01 and a playable prototype of Chapter 02. Chapter 01 has the Echo Shards, Trust/Sever choice, Kito transmission, Sang’alo beacon, branch-specific ending, and replay acknowledgement. Chapter 02 has the Nzoia anomaly, three interaction-based rescue objectives, two interaction-based anchors, four Echo units, a context-sensitive desktop/mobile interaction control, a mission debrief, and a distinct extraction ending. Chapters 03–05 remain a design roadmap and are not playable yet.
+The current game implements Chapters 01–03 as playable prototypes. Chapter 01 has the Echo Shards, Trust/Sever choice, Kito transmission, Sang’alo beacon, branch-specific ending, and replay acknowledgement. Chapter 02 has the Nzoia anomaly, timed river surges, three interaction-based rescue objectives, two anchors, four Echo units, a mission debrief, and a distinct extraction ending. Chapter 03 has a phase-duplicate environment, five Echo units, three interaction-based memory echoes, two phase seams, the Nine-Minute War clue, a two-option ending choice, and a branch-specific debrief. Chapter 04 and Chapter 05 remain roadmap items.
