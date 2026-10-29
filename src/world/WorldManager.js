@@ -21,8 +21,8 @@ export class WorldManager {
     this.terrain = new Terrain({ scene, quality: this.quality, textures: this.textures });
     this.road = new Road({ scene, terrain: this.terrain, textures: this.textures, quality: this.quality });
     this.sky = new Sky({scene,sun,hemi,quality:this.quality,photos:this.textures.photo});
-    this.vegetation = new Vegetation({scene,quality:this.quality,textures:this.textures,terrain:this.terrain});
-    this.props = new Props({scene,terrain:this.terrain,textures:this.textures,quality:this.quality});
+    this.vegetation = new Vegetation({scene,quality:this.quality,textures:this.textures,terrain:this.terrain,camera});
+    this.props = new Props({scene,terrain:this.terrain,textures:this.textures,quality:this.quality,camera});
     this.weather = new Weather({scene,quality:this.quality});
     this.audio = new AudioAmbience();
     this.postprocessing = new Postprocessing({renderer,quality:this.quality});

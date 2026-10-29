@@ -1,12 +1,44 @@
 import * as THREE from 'three';
-import {roadCenterX} from './Terrain.js';
-export class Props{
- constructor({scene,terrain,textures,quality='medium'}){this.scene=scene;this.terrain=terrain;this.textures=textures;this.quality=quality;this.meshes=[];this.build();}
- add(o,n){o.name=n;o.castShadow=true;o.receiveShadow=true;this.scene.add(o);this.meshes.push(o);}
- build(){const t=THREE,rng=(()=>{let s=49117;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};})(),wood=new t.MeshStandardMaterial({color:0x80603c,map:this.textures.wood.albedo,roughness:1}),mud=new t.MeshStandardMaterial({color:0x8b694b,map:this.textures.mud.albedo,roughness:1}),metal=new t.MeshStandardMaterial({color:0x727d7b,map:this.textures.metal.albedo,roughness:.85,metalness:.22}),stone=new t.MeshStandardMaterial({color:0x6d6a5c,map:this.textures.rock.albedo,roughness:1}),d=new t.Object3D();const postCount=160,railCount=320,posts=new t.InstancedMesh(new t.CylinderGeometry(.08,.13,1.3,7),wood,postCount),rails=new t.InstancedMesh(new t.CylinderGeometry(.05,.06,1,7),wood,railCount);let p=0,q=0;
- for(const side of [-1,1])for(let z=18;z>-118;z-=3.6){const x=roadCenterX(z)+side*(7.2+Math.sin(z*.12)*.6),y=this.terrain.getHeightAt(x,z);d.position.set(x,y+.62,z);d.rotation.set(0,0,(rng()-.5)*.04);d.updateMatrix();if(p<postCount)posts.setMatrixAt(p++,d.matrix);for(const h of [.3,.8]){const nx=roadCenterX(z-3.6)+side*(7.2+Math.sin((z-3.6)*.12)*.6),ny=this.terrain.getHeightAt(nx,z-3.6);d.position.set((x+nx)/2,(y+ny)/2+h,z-1.8);d.scale.set(1,1,Math.hypot(nx-x,3.6));d.rotation.set(0,Math.atan2(nx-x,-3.6),Math.PI/2);d.updateMatrix();if(q<railCount)rails.setMatrixAt(q++,d.matrix);}}
- posts.count=p;rails.count=q;posts.instanceMatrix.needsUpdate=rails.instanceMatrix.needsUpdate=true;this.add(posts,'WEATHERED_POSTS');this.add(rails,'WEATHERED_RAILS');
- for(let i=0;i<(this.quality==='high'?12:this.quality==='medium'?7:4);i++){const z=8-i*15,side=i%2?1:-1,x=roadCenterX(z)+side*(13+rng()*6),y=this.terrain.getHeightAt(x,z),g=new t.Group();g.position.set(x,y,z);const w=3.8+rng(),dep=3+rng();const walls=new t.Mesh(new t.BoxGeometry(w,2.2,dep),mud);walls.position.y=1.1;g.add(walls);const roof=new t.Mesh(new t.ConeGeometry(1,1,4),metal);roof.scale.set(w*.85,.55,dep*.85);roof.rotation.y=Math.PI/4;roof.position.y=2.45;g.add(roof);const door=new t.Mesh(new t.BoxGeometry(.7,1.6,.08),wood);door.position.set(0,.8,dep/2+.05);g.add(door);this.add(g,'RURAL_MUD_BRICK_HOME_'+i);}
- const rc=this.quality==='high'?140:this.quality==='medium'?80:35,rocks=new t.InstancedMesh(new t.DodecahedronGeometry(.6,1),stone,rc);let n=0;for(let i=0;i<rc*2&&n<rc;i++){const z=18-rng()*140,x=(rng()-.5)*90;if(Math.abs(x-roadCenterX(z))<6)continue;d.position.set(x,this.terrain.getHeightAt(x,z)+.18,z);d.rotation.set(rng(),rng()*6.28,rng());d.scale.set(.4+rng(),.3+rng()*.5,.5+rng());d.updateMatrix();rocks.setMatrixAt(n++,d.matrix);}rocks.count=n;rocks.instanceMatrix.needsUpdate=true;this.add(rocks,'ROCK_COVER_PROPS');}
- update(){}setQuality(q){this.dispose();this.quality=q;this.build();}dispose(){for(const m of this.meshes){this.scene.remove(m);m.traverse?.(o=>{if(o.geometry)o.geometry.dispose();if(o.material){if(Array.isArray(o.material))o.material.forEach(x=>x.dispose());else o.material.dispose();}});if(m.geometry)m.geometry.dispose();if(m.material)m.material.dispose();}this.meshes=[];}
+import { roadCenterX } from './Terrain.js';
+import { registerMissingAsset, recordWorldNote } from './AssetDiagnostics.js';
+
+export class Props {
+ constructor({scene,terrain,textures,quality='medium',camera}){
+  this.scene=scene;this.terrain=terrain;this.textures=textures;this.quality=quality;this.camera=camera;this.meshes=[];this.build();
+ }
+ addPhotoPanel(texture,name,x,y,z,width,height,rotationY=0){
+  if(!texture){registerMissingAsset('/reference/world/video_frame_26s.webp','Required user photo for a rural house/fence panel is unavailable.');return;}
+  const material=new THREE.MeshBasicMaterial({map:texture,transparent:true,opacity:.98,side:THREE.DoubleSide,depthWrite:false});
+  const mesh=new THREE.Mesh(new THREE.PlaneGeometry(width,height),material);
+  mesh.name=name;mesh.position.set(x,y,z);mesh.rotation.y=rotationY;mesh.frustumCulled=true;mesh.castShadow=false;mesh.receiveShadow=false;
+  this.scene.add(mesh);this.meshes.push(mesh);return mesh;
+ }
+ build(){
+  const fence=this.textures.photo.fence,homestead=this.textures.photo.homestead;
+  const segments=this.quality==='high'?14:this.quality==='medium'?9:5;
+  // The fence is the owner's actual photo, displayed as a perspective roadside panel.
+  for(const side of [-1,1]){
+   for(let i=0;i<segments;i++){
+    const z=16-i*(128/segments),x=roadCenterX(z)+side*8.7,y=this.terrain.getHeightAt(x,z);
+    this.addPhotoPanel(fence,'USER_PHOTO_TIMBER_FENCE_'+side+'_'+i,x,y+1.45,z,9.2,2.9,Math.PI/2);
+   }
+  }
+  // The homestead photo is used as a photo card until a matching near-field GLB is supplied.
+  const count=this.quality==='high'?9:this.quality==='medium'?6:3;
+  for(let i=0;i<count;i++){
+   const z=8-i*20,side=i%2?1:-1,x=roadCenterX(z)+side*(17+(i%3)*2),y=this.terrain.getHeightAt(x,z);
+   this.addPhotoPanel(homestead,'USER_PHOTO_RURAL_HOMESTEAD_'+i,x,y+3.0,z,9.4,5.3,side===1?-.10:.10);
+  }
+  for(const path of [
+   '/assets/world/models/mud_house.glb','/assets/world/models/timber_fence.glb',
+   '/assets/world/models/boda_boda.glb','/assets/world/models/rusted_pickup.glb',
+   '/assets/world/models/water_tank.glb','/assets/world/models/bridge.glb',
+   '/assets/world/models/crates.glb','/assets/world/models/tyres.glb',
+   '/assets/world/models/fire_pit.glb','/assets/world/models/stone_wall.glb'
+  ])registerMissingAsset(path,'Real near-range model not supplied; no generic box/cone substitute is used for this element.');
+  recordWorldNote('Rural homes and timber fences are shown using the actual user-video photos on feathered photo cards. These are not true 3D buildings or colliders; matching GLBs are still required for close-up geometry.');
+ }
+ update(){}
+ setQuality(q){if(q===this.quality)return;this.dispose();this.quality=q;this.build();}
+ dispose(){for(const mesh of this.meshes){this.scene.remove(mesh);mesh.geometry.dispose();mesh.material.dispose();}this.meshes=[];}
 }

@@ -1,13 +1,62 @@
 import * as THREE from 'three';
-import {roadCenterX} from './Terrain.js';
-function rng(seed){let s=seed>>>0;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
+import { roadCenterX } from './Terrain.js';
+import { registerMissingAsset, recordWorldNote } from './AssetDiagnostics.js';
+
+function seeded(seed){let s=seed>>>0;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
+
 export class Vegetation {
- constructor({scene,quality='medium',textures,terrain}){this.scene=scene;this.quality=quality;this.textures=textures;this.terrain=terrain;this.meshes=[];this.build();}
- build(){const random=rng(2097),q=this.quality==='high'?1:this.quality==='medium'?.65:.35,d=new THREE.Object3D();const treeCount=Math.round(180*q);const trunk=new THREE.InstancedMesh(new THREE.CylinderGeometry(.12,.22,1,7),new THREE.MeshStandardMaterial({color:0x59432d,map:this.textures.bark.albedo,roughness:1}),treeCount);const leaves=[0x315d35,0x466c39,0x657641].map(c=>new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,1),new THREE.MeshStandardMaterial({color:c,roughness:.94}),treeCount*2));let n=0;
- for(let i=0;i<treeCount*2&&n<treeCount;i++){const x=(random()-.5)*124,z=20-random()*145;if(Math.abs(x-roadCenterX(z))<8||Math.abs(x)>59)continue;const y=this.terrain.getHeightAt(x,z),s=.65+random()*1.35;d.position.set(x,y+s*1.2,z);d.scale.set(.22*s,2.4*s,.22*s);d.rotation.z=(random()-.5)*.08;d.updateMatrix();trunk.setMatrixAt(n,d.matrix);for(let c=0;c<2;c++){d.position.set(x+(random()-.5)*.65,y+s*(2.6+random()*.4),z+(random()-.5)*.65);d.scale.set(s*(.8+random()*.4),s*.65,s*(.8+random()*.4));d.rotation.set(random()*.3,random()*6.28,random()*.3);d.updateMatrix();leaves[Math.floor(random()*3)].setMatrixAt(n*2+c,d.matrix);}n++;}
- trunk.count=n;trunk.instanceMatrix.needsUpdate=true;trunk.castShadow=true;trunk.receiveShadow=true;trunk.name='INSTANCED_TREE_TRUNKS';this.scene.add(trunk);this.meshes.push(trunk);for(const l of leaves){l.count=Math.min(n*2,l.count);l.instanceMatrix.needsUpdate=true;l.castShadow=true;l.name='INSTANCED_TREE_CANOPIES';this.scene.add(l);this.meshes.push(l);}
- const gc=this.quality==='high'?8000:this.quality==='medium'?4200:1500;const geo=new THREE.PlaneGeometry(.22,.8,1,2);geo.translate(0,.4,0);const grass=new THREE.InstancedMesh(geo,new THREE.MeshStandardMaterial({color:0x71864b,map:this.textures.grass.albedo,side:THREE.DoubleSide,roughness:1}),gc);let g=0;for(let i=0;i<gc*2&&g<gc;i++){const x=(random()-.5)*100,z=20-random()*140;if(Math.abs(x-roadCenterX(z))<5.6)continue;d.position.set(x,this.terrain.getHeightAt(x,z),z);d.rotation.set(0,random()*Math.PI,0);const s=.4+random();d.scale.set(s,s,s);d.updateMatrix();grass.setMatrixAt(g++,d.matrix);}grass.count=g;grass.instanceMatrix.needsUpdate=true;grass.name='INSTANCED_FIELD_GRASS';this.scene.add(grass);this.meshes.push(grass);
- const cropCount=Math.round(100*q);const crop=new THREE.InstancedMesh(new THREE.PlaneGeometry(.2,1.25,1,2),new THREE.MeshStandardMaterial({color:0x829144,side:THREE.DoubleSide,roughness:1}),cropCount);let c=0;for(let i=0;i<cropCount*3&&c<cropCount;i++){const x=(random()-.5)*88,z=15-random()*120;if(Math.abs(x-roadCenterX(z))<12)continue;d.position.set(x,this.terrain.getHeightAt(x,z)+.6,z);d.rotation.y=random()*Math.PI;d.scale.set(.8+random(),.8+random(),1);d.updateMatrix();crop.setMatrixAt(c++,d.matrix);}crop.count=c;crop.instanceMatrix.needsUpdate=true;crop.name='INSTANCED_SHAMBA_CROPS';this.scene.add(crop);this.meshes.push(crop);}
- update(){} setQuality(q){this.dispose();this.quality=q;this.build();}
- dispose(){for(const m of this.meshes){this.scene.remove(m);m.geometry.dispose();m.material.dispose();}this.meshes=[];}
+ constructor({scene,quality='medium',textures,terrain,camera}){
+  this.scene=scene;this.quality=quality;this.textures=textures;this.terrain=terrain;this.camera=camera;
+  this.meshes=[];this.billboards=[];this.build();
+ }
+ build(){
+  const random=seeded(2097);
+  const q=this.quality==='high'?1:this.quality==='medium'?.62:.30;
+  // These are actual cutouts derived from user footage, not generated leaf colours.
+  this.addCutoutCards(this.textures.photo.treeCutout,'PHOTO_TREE_CANOPY',Math.round((this.quality==='high'?112:this.quality==='medium'?68:34)*q),random,{
+   minDistance:9,minX:10,maxX:59,minZ:-125,maxZ:19,minY:0.2,width:4.8,height:8.6
+  });
+  this.addCutoutCards(this.textures.photo.plants,'PHOTO_GARDEN_UNDERSTORY',Math.round((this.quality==='high'?180:this.quality==='medium'?110:50)*q),random,{
+   minDistance:5.0,minX:6.5,maxX:32,minZ:-123,maxZ:20,minY:0.02,width:2.1,height:1.8
+  });
+  for(const path of [
+   '/assets/world/models/acacia.glb','/assets/world/models/eucalyptus.glb',
+   '/assets/world/models/mango_tree.glb','/assets/world/models/fig_tree.glb',
+   '/assets/world/models/banana_plant.glb','/assets/world/models/maize_patch.glb',
+   '/assets/world/models/sugarcane_patch.glb'
+  ])registerMissingAsset(path,'Near-range licensed model was not supplied. The distant layer uses extracted photo cutouts from your video.');
+  recordWorldNote('Trees and ground cover use extracted, alpha-keyed pixels from the user video as camera-facing billboards. Near-range tree GLBs are still missing and must not be mistaken for completed photogrammetry.');
+ }
+ addCutoutCards(texture,name,count,random,options){
+  if(!texture){registerMissingAsset('/reference/world/video_frame_16s.webp','Required plant/tree photo cutout texture is unavailable.');return;}
+  const geometry=new THREE.PlaneGeometry(1,1,1,2);geometry.translate(0,.5,0);
+  const material=new THREE.MeshStandardMaterial({map:texture,transparent:true,alphaTest:.045,side:THREE.DoubleSide,roughness:1,metalness:0,depthWrite:false});
+  const mesh=new THREE.InstancedMesh(geometry,material,count);mesh.name=name;mesh.frustumCulled=true;mesh.castShadow=false;mesh.receiveShadow=false;
+  const dummy=new THREE.Object3D();let placed=0;
+  for(let i=0;i<count*5&&placed<count;i++){
+   const side=random()<.5?-1:1;
+   const x=side*(options.minX+random()*(options.maxX-options.minX));
+   const z=options.minZ+random()*(options.maxZ-options.minZ);
+   if(Math.abs(x-roadCenterX(z))<options.minDistance)continue;
+   const y=this.terrain.getHeightAt(x,z)+(options.minY||0);
+   const width=options.width*(.72+random()*.72),height=options.height*(.72+random()*.72);
+   const record={mesh,index:placed,position:new THREE.Vector3(x,y,z),width,height,phase:random()*Math.PI*2,yawSeed:random()*Math.PI*2};
+   dummy.position.copy(record.position);dummy.rotation.y=record.yawSeed;dummy.scale.set(width,height,1);dummy.updateMatrix();mesh.setMatrixAt(placed,dummy.matrix);
+   this.billboards.push(record);placed++;
+  }
+  mesh.count=placed;mesh.instanceMatrix.needsUpdate=true;this.scene.add(mesh);this.meshes.push(mesh);
+ }
+ update(_dt,elapsed){
+  if(!this.camera||!this.billboards.length)return;
+  const dummy=new THREE.Object3D(),touched=new Set();
+  for(const card of this.billboards){
+   const yaw=Math.atan2(this.camera.position.x-card.position.x,this.camera.position.z-card.position.z);
+   dummy.position.copy(card.position);
+   dummy.rotation.set(0,yaw+Math.sin(elapsed*.45+card.phase)*.009,Math.sin(elapsed*1.1+card.phase)*.008);
+   dummy.scale.set(card.width,card.height,1);dummy.updateMatrix();card.mesh.setMatrixAt(card.index,dummy.matrix);touched.add(card.mesh);
+  }
+  for(const mesh of touched)mesh.instanceMatrix.needsUpdate=true;
+ }
+ setQuality(q){if(q===this.quality)return;this.dispose();this.quality=q;this.build();}
+ dispose(){for(const mesh of this.meshes){this.scene.remove(mesh);mesh.geometry.dispose();mesh.material.dispose();}this.meshes=[];this.billboards=[];}
 }

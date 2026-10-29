@@ -41,9 +41,24 @@ function surface(name,path,crop){
  }).catch(()=>{});
  return {albedo,normal,roughness,sourcePath:'/'+path};
 }
-function photo(name,path,crop){
+function photo(name,path,crop,{feather=true,foliageKey=false}={}){
  const canvas=document.createElement('canvas');canvas.width=1024;canvas.height=512;const ctx=canvas.getContext('2d',{willReadFrequently:true}),texture=makeTexture(canvas,true,false);
- loadImage(path,name).then(image=>{drawCrop(ctx,canvas,image,crop,true);texture.needsUpdate=true;}).catch(()=>{});
+ loadImage(path,name).then(image=>{
+  drawCrop(ctx,canvas,image,crop,feather);
+  if(foliageKey){
+   const im=ctx.getImageData(0,0,canvas.width,canvas.height),d=im.data;
+   for(let i=0;i<d.length;i+=4){
+    const r=d[i],g=d[i+1],b=d[i+2],bright=(r+g+b)/3;
+    const sky=(b>r*1.16&&g>r*1.1&&b>80)||(bright>205&&Math.max(r,g,b)-Math.min(r,g,b)<26);
+    const soil=(r>g*1.2&&r>b*1.25&&r>64);
+    const green=g>r*1.08&&g>b*.93&&g>38;
+    if(sky||soil||!green)d[i+3]=0;
+    else d[i+3]=Math.round(d[i+3]*THREE.MathUtils.smoothstep(g-r,2,22));
+   }
+   ctx.putImageData(im,0,0);
+  }
+  texture.needsUpdate=true;
+ }).catch(()=>{});
  return texture;
 }
 export function createPhotoPbrTextures(){
@@ -64,6 +79,8 @@ export function createPhotoPbrTextures(){
    sky:photo('photo sky and skyline strip',FILES.landscape,[0,0,1,.58]),
    horizon:photo('rural road and tree-line backdrop',FILES.landscape,[0,.17,1,.56]),
    treeLine:photo('distant tree-line photo panel',FILES.landscape,[0,.22,1,.43]),
+   treeCutout:photo('tree canopy foliage alpha cutout from user video',FILES.landscape,[.12,.16,.76,.40],{feather:true,foliageKey:true}),
+   plants:photo('green understory alpha cutout from user garden photo',FILES.fence,[0,.58,1,.40],{feather:true,foliageKey:true}),
    vegetation:photo('garden and fence photo',FILES.fence,[0,0,1,1]),
    fence:photo('hand-built timber fence photo',FILES.fence,[0,.1,1,.72]),
    homestead:photo('rural homestead and corrugated roof photo',FILES.homestead,[0,0,1,1])
