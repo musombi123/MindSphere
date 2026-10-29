@@ -256,7 +256,7 @@ namespace ProjectZeroHour.Ads
 
         public bool CanOfferRewarded(AdRewardPurpose purpose)
         {
-            if (!AdsAllowed || _rewardedAd == null || !_rewardedAd.CanShowAd()) return false;
+            if (!AdsAllowed || _hasPendingReward || _rewardedAd == null || !_rewardedAd.CanShowAd()) return false;
             if (purpose == AdRewardPurpose.FieldUpgradeProgram)
                 return IsFieldUpgradeContext(_screenContext) && !IsFieldUpgradeActive;
             if (purpose == AdRewardPurpose.ReviveOncePerMission)
@@ -272,7 +272,7 @@ namespace ProjectZeroHour.Ads
             if (!_isOnline) return "Not available right now — connect to the internet.";
             if (!_consentFlowFinished || !_sdkInitialized) return "Not available right now — privacy setup is not ready.";
             if (!ConsentInformation.CanRequestAds()) return "Not available right now — ads are not permitted by the current consent state.";
-            if (_fullscreenAdShowing) return "An ad is already open.";
+            if (_fullscreenAdShowing || _hasPendingReward) return "An ad is already open.";
             if (_rewardedAd == null || !_rewardedAd.CanShowAd()) return "Not available right now — no rewarded ad is ready.";
             if (purpose == AdRewardPurpose.FieldUpgradeProgram && (!IsFieldUpgradeContext(_screenContext) || IsFieldUpgradeActive))
                 return "Field Upgrade is offered from the menu, loadout, or between missions, once for a mission.";
@@ -490,7 +490,12 @@ namespace ProjectZeroHour.Ads
             }
             if (!_isOnline)
             {
-                WriteLog("consent_offline", "Privacy options cannot be refreshed offline.");
+                WriteLog("consent_offline", "Privacy options cannot be opened offline.");
+                return;
+            }
+            if (!PrivacyOptionsRequired)
+            {
+                WriteLog("privacy_options_not_required", "UMP does not currently require the privacy-options entry point.");
                 return;
             }
 
@@ -502,7 +507,36 @@ namespace ProjectZeroHour.Ads
                     {
                         if (error != null) WriteLog("privacy_options_failed", error.Message);
                         else WriteLog("privacy_options_closed", "Privacy choices updated.");
+
+                        PrivacyOptionsRequired =
+                            ConsentInformation.PrivacyOptionsRequirementStatus == PrivacyOptionsRequirementStatus.Required;
                         _consentFlowFinished = true;
+
+                        // Re-evaluate the current UMP decision. Do not leave a previously loaded ad
+                        // visible/eligible if the user changed their choices to disallow ad requests.
+                        if (!ConsentInformation.CanRequestAds())
+                        {
+                            SafeDestroyRewarded();
+                            SafeDestroyInterstitial();
+                            HideBanner();
+                            WriteLog("ads_not_permitted", "Privacy choices currently disallow ad requests; all loaded ads were discarded.");
+                        }
+                        else if (_sdkInitialized)
+                        {
+                            SafeDestroyRewarded();
+                            SafeDestroyInterstitial();
+                            LoadRewardedAd();
+                            LoadInterstitialAd();
+                            if (_bannerRequested && IsBannerContext(_screenContext))
+                            {
+                                if (_bannerView != null)
+                                {
+                                    try { _bannerView.Destroy(); } catch { }
+                                    _bannerView = null;
+                                }
+                                EnsureBanner();
+                            }
+                        }
                         NotifyStateChanged();
                     });
                 });
