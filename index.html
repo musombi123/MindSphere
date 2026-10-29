@@ -85,7 +85,7 @@
   <div class="story-card"><div class="story-kicker" id="finish-kicker">MISSION REPORT</div><h1 class="finish-title" id="finish-title">MISSION COMPLETE</h1><p class="finish-copy" id="finish-copy"></p><div class="story-grid"><div><b id="finish-kills">0 / 6</b><small>Threats neutralised</small></div><div><b id="finish-intel">0 / 3</b><small>Intel secured</small></div><div><b id="finish-score">0000</b><small>Field score</small></div></div><button class="deploy-btn" id="restart-btn">REPLAY STORY ONE ↻</button><div class="story-foot">Your progress is local to this browser build. Cloud saves and real ad rewards are not connected yet.</div></div>
 </div>
 <script type="module">
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
+import * as THREE from 'three';
 
 const canvas = document.getElementById('game-canvas');
 const renderer = new THREE.WebGLRenderer({canvas, antialias: !matchMedia('(pointer: coarse)').matches, alpha: false, powerPreference: 'high-performance'});
