@@ -27,7 +27,7 @@
 <body>
 <div id="viewport"><canvas id="game-canvas" aria-label="Project Zero Hour 3D game"></canvas></div>
 <header class="topbar">
-  <div class="brand"><div class="brand-mark">ZH</div><div>PROJECT ZERO HOUR<small>STORY MODE / EPISODE 01</small></div></div>
+  <div class="brand"><div class="brand-mark">ZH</div><div>PROJECT ZERO HOUR<small id="episode-label">STORY MODE / EPISODE 01</small></div></div>
   <div class="top-status" id="mission-status">MISSION STANDBY</div>
 </header>
 <section class="hud-left">
@@ -114,7 +114,7 @@ renderer.shadowMap.enabled = false;
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x9dbbca);
-const chapter = (()=>{try{return Number(localStorage.getItem('zeroHourChapter')||1)===2?2:1;}catch(e){return 1;}})();
+const chapter = (()=>{try{const value=Number(localStorage.getItem('zeroHourChapter')||1);return [1,2,3].includes(value)?value:1;}catch(e){return 1;}})();
 const riverRipples=[];
 const riverSurgeState={phase:'idle',nextAt:0,phaseTime:0,waveZ:-32.6,hit:false,started:false,count:0};
 let riverWaveMesh=null;
@@ -158,7 +158,9 @@ const mat = {
   gravity:new THREE.MeshBasicMaterial({color:0xe28cff}),
   enemyShot:new THREE.MeshBasicMaterial({color:0xff6b5d}),
   bossShot:new THREE.MeshBasicMaterial({color:0xff39a9}),
-  intel:new THREE.MeshStandardMaterial({color:0xffd16d,emissive:0x9a4c09,emissiveIntensity:1.5,metalness:.4,roughness:.25})
+  intel:new THREE.MeshStandardMaterial({color:0xffd16d,emissive:0x9a4c09,emissiveIntensity:1.5,metalness:.4,roughness:.25}),
+  echoTop:new THREE.MeshStandardMaterial({color:0x6f4d9d,emissive:0x3d1d76,emissiveIntensity:.8,roughness:.35,metalness:.25}),
+  echoLegs:new THREE.MeshStandardMaterial({color:0x25213f,emissive:0x101027,roughness:.55,metalness:.2})
 };
 const sphereGeo = new THREE.SphereGeometry(.12,8,7);
 const smallSphereGeo = new THREE.SphereGeometry(.08,8,7);
@@ -250,8 +252,8 @@ const shieldBubble=new THREE.Mesh(new THREE.SphereGeometry(1.65,16,12),new THREE
 shieldBubble.position.y=1.1;shieldBubble.visible=false;playerModel.add(shieldBubble);
 function createActor(isHero,isBoss,role='gangster'){
   const g=new THREE.Group();
-  const top=isHero?mat.heroBlue:(isBoss?mat.enemyRed:(role==='thief'?mat.wall2:mat.enemyTop));
-  const legs=isHero?mat.heroBlue:(role==='thief'?mat.wall:mat.enemyPants);
+  const top=isHero?mat.heroBlue:(isBoss?mat.enemyRed:(role==='echo'?mat.echoTop:(role==='thief'?mat.wall2:mat.enemyTop)));
+  const legs=isHero?mat.heroBlue:(role==='echo'?mat.echoLegs:(role==='thief'?mat.wall:mat.enemyPants));
   const head=new THREE.Mesh(new THREE.SphereGeometry(isBoss?.34:.29,12,10),isHero?mat.skin:mat.skin);head.position.set(0,1.92,0);g.add(head);
   box(.68,.78,.38,top,0,1.28,0,g);
   box(.23,.78,.26,legs,-.22,.45,0,g);
@@ -277,12 +279,14 @@ const enemies=[];
 function addEnemy(x,z,boss=false,role='gangster'){
   const model=createActor(false,boss,role);model.position.set(x,0,z);scene.add(model);
   const shadow=new THREE.Mesh(actorShadowGeo,actorShadowMat);shadow.position.set(x,.004,z);scene.add(shadow);
-  enemies.push({model,shadow,hp:boss?190:(role==='thief'?36:52),maxHp:boss?190:(role==='thief'?36:52),boss,role,dead:false,nextShot:1.2+Math.random()*1.6,moveSpeed:boss?1.35:(role==='thief'?2.1:1.65),flash:0});
+  enemies.push({model,shadow,hp:boss?190:(role==='echo'?62:(role==='thief'?36:52)),maxHp:boss?190:(role==='echo'?62:(role==='thief'?36:52)),boss,role,dead:false,nextShot:1.2+Math.random()*1.6,moveSpeed:boss?1.35:(role==='echo'?1.9:(role==='thief'?2.1:1.65)),flash:0});
 }
 if(chapter===1){
   addEnemy(-2.1,-8,false,'gangster');addEnemy(2.5,-16,false,'thief');addEnemy(-3,-24,false,'gangster');addEnemy(2.2,-32,false,'thief');addEnemy(-1.2,-39,false,'gangster');addEnemy(0,-48,true,'gangster');
-}else{
+}else if(chapter===2){
   addEnemy(-3.5,-12,false,'gangster');addEnemy(3.2,-23,false,'thief');addEnemy(-2.8,-34,false,'gangster');addEnemy(2.5,-43,false,'thief');
+}else{
+  addEnemy(-3.6,-11,false,'echo');addEnemy(3.4,-19,false,'echo');addEnemy(-2.7,-28,false,'thief');addEnemy(3.0,-37,false,'echo');addEnemy(0,-45,false,'echo');
 }
 const pickups=[];
 function addIntel(x,z){
@@ -293,7 +297,7 @@ function addIntel(x,z){
 }
 if(chapter===1){
   addIntel(-2,-12);addIntel(2,-27);addIntel(-1.5,-36);
-}else{
+}else if(chapter===2){
   const survivorMat=new THREE.MeshStandardMaterial({color:0x9fd8c7,roughness:.85});
   function addSurvivor(x,z,index){
     const g=new THREE.Group();g.position.set(x,0,z);
@@ -327,11 +331,38 @@ if(chapter===1){
   riverWaveMesh.position.set(0,0,riverSurgeState.waveZ);riverWaveMesh.visible=false;scene.add(riverWaveMesh);
   for(let i=0;i<15;i++){const ripple=new THREE.Mesh(new THREE.TorusGeometry(.3+Math.random()*.6,.018,4,16),new THREE.MeshBasicMaterial({color:i%2?0x8bf8ff:0xe6ffff,transparent:true,opacity:.62}));ripple.rotation.x=Math.PI/2;ripple.position.set((Math.random()-.5)*90,-.025,-27+(Math.random()-.5)*6);scene.add(ripple);riverRipples.push({mesh:ripple,phase:Math.random()*Math.PI*2});}
   scene.background=new THREE.Color(0x7299a5);scene.fog=new THREE.Fog(0x628e91,30,105);
+}else{
+  // The County That Never Was: familiar rural forms survive as unstable, translucent duplicates.
+  scene.background=new THREE.Color(0x17172f);scene.fog=new THREE.Fog(0x28213e,16,86);
+  hemi.color.set(0xaacaff);hemi.groundColor.set(0x2c174a);hemi.intensity=1.7;
+  sun.color.set(0xa9c5ff);sun.intensity=1.35;
+  const phaseWall=new THREE.MeshBasicMaterial({color:0x91d9ff,wireframe:true,transparent:true,opacity:.28,depthWrite:false});
+  const phaseRoof=new THREE.MeshBasicMaterial({color:0xff8bd5,wireframe:true,transparent:true,opacity:.24,depthWrite:false});
+  const phaseGlow=new THREE.MeshBasicMaterial({color:0x9b7dff,transparent:true,opacity:.16,depthWrite:false,side:THREE.DoubleSide});
+  for(const site of [{x:-4.6,z:-13},{x:4.7,z:-24},{x:-4.6,z:-38},{x:4.4,z:-47}]){
+    const duplicate=new THREE.Group();duplicate.position.set(site.x,0,site.z);duplicate.rotation.y=(site.x<0?-.14:.14);
+    box(3.5,2.2,3.1,phaseWall,0,1.1,0,duplicate);
+    box(4.0,.16,3.6,phaseRoof,0,2.35,0,duplicate,.0,.16);
+    box(.75,1.25,.08,phaseGlow,-.75,.82,-1.58,duplicate);
+    scene.add(duplicate);
+    const echoCopy=duplicate.clone();echoCopy.position.set(-site.x*1.22,Math.sin(site.z)*.3,site.z-3.3);echoCopy.scale.set(.78,.86,.78);echoCopy.rotation.y+=Math.PI*.22;scene.add(echoCopy);
+  }
+  for(let i=0;i<9;i++){
+    const shard=new THREE.Mesh(new THREE.OctahedronGeometry(.45+Math.random()*.5,0),new THREE.MeshBasicMaterial({color:i%2?0x78eeff:0xff8dd7,wireframe:true,transparent:true,opacity:.72}));
+    shard.position.set((Math.random()-.5)*11,1.4+Math.random()*4,-7-i*5.3);shard.rotation.set(Math.random()*Math.PI,Math.random()*Math.PI,Math.random()*Math.PI);scene.add(shard);
+    riverRipples.push({mesh:shard,phase:Math.random()*Math.PI*2,phaseShard:true,baseY:shard.position.y});
+  }
+  for(const x of [-4.8,4.8]){
+    const arch=new THREE.Mesh(new THREE.TorusGeometry(2.4,.065,7,32),new THREE.MeshBasicMaterial({color:0x9ceeff,transparent:true,opacity:.58,wireframe:true}));
+    arch.position.set(x,2.9,-29);arch.rotation.y=x<0?.34:-.34;scene.add(arch);
+    const column=new THREE.Mesh(new THREE.CylinderGeometry(.1,.18,5.8,7),new THREE.MeshBasicMaterial({color:0xff8ed9,transparent:true,opacity:.43,wireframe:true}));column.position.set(x,2.8,-29);scene.add(column);
+  }
+  const phaseRoad=new THREE.Mesh(new THREE.PlaneGeometry(5.8,108),new THREE.MeshBasicMaterial({color:0x7e65cc,transparent:true,opacity:.11,side:THREE.DoubleSide}));phaseRoad.rotation.x=-Math.PI/2;phaseRoad.position.set(0,-.075,-36);scene.add(phaseRoad);
 }
 const extractionBeacon=new THREE.Group();extractionBeacon.position.set(0,0,-53);
 const extractionRing=new THREE.Mesh(new THREE.TorusGeometry(1.15,.065,8,32),new THREE.MeshBasicMaterial({color:0x7ff6ff,transparent:true,opacity:.92}));
 extractionRing.rotation.x=Math.PI/2;extractionRing.position.y=.12;extractionBeacon.add(extractionRing);
-const extractionCore=new THREE.Mesh(new THREE.CylinderGeometry(.07,.16,2.8,8),new THREE.MeshBasicMaterial({color:chapter===2?0xff8dce:0x86f7ff,transparent:true,opacity:.72}));
+const extractionCore=new THREE.Mesh(new THREE.CylinderGeometry(.07,.16,2.8,8),new THREE.MeshBasicMaterial({color:chapter===2?0xff8dce:(chapter===3?0xa98aff:0x86f7ff),transparent:true,opacity:.72}));
 extractionCore.position.y=1.45;extractionBeacon.add(extractionCore);
 const extractionHalo=new THREE.Mesh(new THREE.TorusGeometry(.48,.035,6,24),new THREE.MeshBasicMaterial({color:0xffd184,transparent:true,opacity:.95}));
 extractionHalo.position.y=2.55;extractionHalo.rotation.x=Math.PI/2;extractionBeacon.add(extractionHalo);
@@ -373,10 +404,10 @@ try{
   storyRunCount=Number(localStorage.getItem('zeroHourStoryRuns')||0);
   signalChoice=localStorage.getItem('zeroHourSignalChoice')||'';
 }catch(e){}
-if(chapter===2&&signalChoice==='trust'){
+if((chapter===2||chapter===3)&&signalChoice==='trust'){
   player.maxHealth=110;player.health=110;
   for(const enemy of enemies)enemy.moveSpeed*=1.15;
-}else if(chapter===2&&signalChoice==='sever'){
+}else if((chapter===2||chapter===3)&&signalChoice==='sever'){
   for(const enemy of enemies)enemy.moveSpeed*=.85;
 }
 
