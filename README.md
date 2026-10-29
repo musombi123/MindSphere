@@ -47,7 +47,7 @@ The Android build uses Capacitor to package the Vite-built game and its bundled 
 
 ### Build an APK in GitHub
 
-Open **Actions → Build Project Zero Hour Android APK → Run workflow**. When the job succeeds, open its run and download the `project-zero-hour-debug-apk` artifact. Extract it and install `app-debug.apk) on a compatible Android device. This is a debug APK for testing, not a signed release for distribution.
+Open **Actions → Build Project Zero Hour Android APK → Run workflow**. When the job succeeds, open its run and download the `project-zero-hour-debug-apk` artifact. Extract it and install `app-debug.apk` on a compatible Android device. This is a debug APK for testing, not a signed release for distribution.
 
 The workflow also runs on relevant pushes to `main). It installs dependencies, builds the web assets, generates the Capacitor Android project, and runs Gradle to assemble the APK.
 
