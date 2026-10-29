@@ -25,7 +25,7 @@ export class WorldManager {
     this.props = new Props({scene,terrain:this.terrain,textures:this.textures,quality:this.quality,camera});
     this.weather = new Weather({scene,quality:this.quality});
     this.audio = new AudioAmbience();
-    this.postprocessing = new Postprocessing({renderer,quality:this.quality});
+    this.postprocessing = new Postprocessing({renderer,scene,camera,sun,quality:this.quality});
     for (const modelPath of [
       '/assets/world/models/acacia.glb', '/assets/world/models/eucalyptus.glb',
       '/assets/world/models/mango_tree.glb', '/assets/world/models/fig_tree.glb',
@@ -41,6 +41,7 @@ export class WorldManager {
   createPhaseRoadOverlay(material) { this.phaseRoadMesh = this.road.createPhaseOverlay(material); return this.phaseRoadMesh; }
   update(dt, elapsed) { this.elapsed = elapsed; this.road.update(dt, elapsed); this.sky.update(dt,elapsed); this.vegetation.update(dt,elapsed); this.props.update(dt,elapsed); this.weather.update(dt,elapsed); }
   render(dt, elapsed) { this.update(dt, elapsed); this.postprocessing.render(this.scene,this.camera); }
+  resize(width=window.innerWidth,height=window.innerHeight){this.postprocessing.setSize(width,height);}
   setQuality(quality) {
     if (!['low','medium','high'].includes(quality) || quality === this.quality) return;
     this.quality = quality;

@@ -1118,6 +1118,7 @@ function animate(now){
 function resize(){
   camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth,window.innerHeight);
+  worldManager.resize(window.innerWidth,window.innerHeight);
 }
 window.addEventListener('resize',resize);
 playerModel.position.copy(player.pos);playerShadow.position.set(player.pos.x,.004,player.pos.z);

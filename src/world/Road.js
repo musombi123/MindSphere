@@ -100,9 +100,11 @@ export class Road {
   }
   buildPuddles() {
     const puddleMat = new THREE.MeshPhysicalMaterial({
-      color: 0x394d4f, roughness: 0.16, metalness: 0.12,
+      color: 0x8c9b96, map: this.textures.mud.albedo,
+      normalMap: this.textures.mud.normal, roughnessMap: this.textures.mud.roughness,
+      roughness: 0.22, metalness: 0.04,
       clearcoat: 0.8, clearcoatRoughness: 0.12, transparent: true,
-      opacity: 0.62, depthWrite: false
+      opacity: 0.68, depthWrite: false
     });
     const count = this.quality === 'high' ? 14 : this.quality === 'medium' ? 9 : 4;
     for (let i = 0; i < count; i++) {
