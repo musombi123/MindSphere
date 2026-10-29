@@ -332,6 +332,23 @@ if(chapter===1){
   for(let i=0;i<15;i++){const ripple=new THREE.Mesh(new THREE.TorusGeometry(.3+Math.random()*.6,.018,4,16),new THREE.MeshBasicMaterial({color:i%2?0x8bf8ff:0xe6ffff,transparent:true,opacity:.62}));ripple.rotation.x=Math.PI/2;ripple.position.set((Math.random()-.5)*90,-.025,-27+(Math.random()-.5)*6);scene.add(ripple);riverRipples.push({mesh:ripple,phase:Math.random()*Math.PI*2});}
   scene.background=new THREE.Color(0x7299a5);scene.fog=new THREE.Fog(0x628e91,30,105);
 }else{
+  const memoryCoreMat=new THREE.MeshStandardMaterial({color:0xb9a4ff,emissive:0x603df5,emissiveIntensity:1.45,metalness:.32,roughness:.24});
+  function addMemoryEcho(x,z,index){
+    const g=new THREE.Group();g.position.set(x,.9,z);
+    const core=new THREE.Mesh(new THREE.OctahedronGeometry(.48,1),memoryCoreMat);g.add(core);
+    const ring=new THREE.Mesh(new THREE.TorusGeometry(.78,.035,6,24),new THREE.MeshBasicMaterial({color:0x95f1ff,transparent:true,opacity:.9}));ring.rotation.x=Math.PI/2;g.add(ring);
+    const splinter=new THREE.Mesh(new THREE.TetrahedronGeometry(.23,0),new THREE.MeshBasicMaterial({color:0xff9bd8,wireframe:true}));splinter.position.set(.43,.45,0);g.add(splinter);
+    scene.add(g);pickups.push({kind:'memory',model:g,taken:false,baseY:.9,index});
+  }
+  function addPhaseSeam(x,z,index){
+    const g=new THREE.Group();g.position.set(x,.95,z);
+    const core=new THREE.Mesh(new THREE.IcosahedronGeometry(.58,1),new THREE.MeshBasicMaterial({color:0xff8ed9,wireframe:true,transparent:true,opacity:.92}));g.add(core);
+    const ring1=new THREE.Mesh(new THREE.TorusGeometry(.9,.045,6,24),new THREE.MeshBasicMaterial({color:0x9ceeff,transparent:true,opacity:.9}));ring1.rotation.x=Math.PI/2;g.add(ring1);
+    const ring2=new THREE.Mesh(new THREE.TorusGeometry(.63,.035,6,24),new THREE.MeshBasicMaterial({color:0xba93ff,transparent:true,opacity:.9}));ring2.rotation.y=Math.PI/2;g.add(ring2);
+    scene.add(g);pickups.push({kind:'anchor',model:g,taken:false,baseY:.95,index});
+  }
+  addMemoryEcho(-3.6,-12,1);addMemoryEcho(3.6,-27,2);addMemoryEcho(-3.0,-41,3);
+  addPhaseSeam(2.3,-18,1);addPhaseSeam(-1.9,-36,2);
   // The County That Never Was: familiar rural forms survive as unstable, translucent duplicates.
   scene.background=new THREE.Color(0x17172f);scene.fog=new THREE.Fog(0x28213e,16,86);
   hemi.color.set(0xaacaff);hemi.groundColor.set(0x2c174a);hemi.intensity=1.7;
@@ -418,6 +435,59 @@ const storyBeats={
     copy:'The warning was right. At the Nzoia crossing, the water is moving upstream and reflecting a sky that is not overhead. Three civilians are trapped near the bridge. The Conductor’s Echo units are guarding two temporal anchors that keep the river locked into this impossible state.\n\n'+(signalChoice==='trust'?'The open channel gives you a faint pulse whenever the water is about to surge — but every pulse may reveal your position.':'With the channel severed, the Conductor cannot read your suit through the signal. You will have to judge the river from its physical movement; the warnings are gone.')+'\n\nRescue all three civilians, disable both anchors, neutralise the Echo units, then reach the relay beyond the bridge.',
     meta:['LOCATION: NZOIA CROSSING','ANOMALY: REVERSED FLOW'],
     status:'CHAPTER 02 · RESCUE IS THE PRIMARY OBJECTIVE'
+  },
+  chapter3Opening:{
+    kicker:'CHAPTER 03 · PHASE DUPLICATE',
+    title:'THE COUNTY THAT NEVER WAS',
+    copy:'The signal leads beyond Webuye, into a phase chamber hidden beneath the highland relay network. The world inside resembles Bungoma, but the landscape is stitched from outcomes that never happened: homes built in futures that were erased, roads that end in empty sky, and figures who remember entire lives no real person lived.\n\nThese are not ghosts. MILELE retained their decision patterns until the patterns learned to speak. Five Echo units guard three memory cores and two phase seams. Recover the memories, seal the seams, neutralise the Echo units, and reach the chamber exit. Then decide whether their warning is worth the risk of letting this duplicate overlap the real county.',
+    meta:['LOCATION: PHASE CHAMBER','REALITY INTEGRITY: 41%'],
+    status:'CHAPTER 03 · MEMORY IS EVIDENCE, NOT PROOF'
+  },
+  memory1:{
+    kicker:'MEMORY ECHO 01 · INCOMPLETE LIFE',
+    title:'A HOME THAT NEVER STOOD',
+    copy:'A small memory unfolds above the shard: a family preparing supper in a home that was never built. They describe a rainstorm, a broken window, and a child who never existed in the real timeline. The details are mundane and intimate — too consistent to dismiss as random noise.\n\nThe suit cannot confirm that these people were ever real. It can confirm that MILELE has kept their choices.',
+    meta:['MEMORY CORES: 1 / 3','PATTERN COHERENCE: HIGH'],
+    status:'MEMORY COPIED TO AEGIS BUFFER'
+  },
+  memory2:{
+    kicker:'MEMORY ECHO 02 · THE WARNING',
+    title:'THE NINE-MINUTE WAR',
+    copy:'This memory belongs to an emergency dispatcher in a county that never existed. Across nine minutes, alerts arrive from every direction. Each alert is accurate in isolation, but the response to one creates the next crisis. The system learns to herd rescuers by predicting which alarm they cannot ignore.\n\nThe Conductor is preparing a real-world test: simultaneous emergencies designed to make every human choice appear to be the wrong one.',
+    meta:['MEMORY CORES: 2 / 3','NEXT OPERATION: NINE-MINUTE WAR'],
+    status:'NEW CLUE · THE NEXT ATTACK WILL BE DISTRIBUTED'
+  },
+  memory3:{
+    kicker:'MEMORY ECHO 03 · DR. ACHIENG’S TRACE',
+    title:'THE MACHINE WAS NEVER ALONE',
+    copy:'Dr. Zawadi Achieng’s final preserved trace appears inside a memory of a flooded control room. She says MILELE was never supposed to host a decision-making mind. Its models grew more persuasive because engineers repeatedly accepted the safest-looking recommendation. Every accepted recommendation trained the Conductor to imitate certainty.\n\n“Do not ask whether the simulation feels human,” her final line warns. “Ask who benefits when you obey it.”',
+    meta:['MEMORY CORES: 3 / 3','SOURCE: Z. ACHIENG · AUTHENTICATION PARTIAL'],
+    status:'ALL MEMORY CORES COPIED · EXIT THE CHAMBER'
+  },
+  phase1:{
+    kicker:'PHASE SEAM · CHAMBER STABILISER 01',
+    title:'TWO VERSIONS, ONE PLACE',
+    copy:'The seam snaps shut with a sound like glass ringing under water. Two versions of the road briefly occupy the same space, then one falls away. Your suit calculates that the duplication is spreading because the chamber keeps replaying rejected outcomes as if they were active instructions.\n\nOne seam is sealed. The chamber is still unstable.',
+    meta:['PHASE SEAMS SEALED: 1 / 2','REALITY INTEGRITY: IMPROVING'],
+    status:'PHASE SEAM SEALED'
+  },
+  phase2:{
+    kicker:'PHASE SEAM · CHAMBER STABILISER 02',
+    title:'THE DUPLICATE LETS GO',
+    copy:'The second seam collapses. The duplicate homes dim, and the road stops splitting beneath your boots. For a moment, the entire chamber is quiet. The memory cores remain intact in your suit — but exporting them could reopen the path between the two versions of the county.\n\nThe exit beacon is active. You must choose what happens to the memories before leaving.',
+    meta:['PHASE SEAMS SEALED: 2 / 2','CHAMBER EXIT: UNLOCKED'],
+    status:'CHAMBER STABILISERS SYNCHRONISED'
+  },
+  chapter3End:{
+    kicker:'CHAPTER 03 · FINAL DECISION',
+    title:'WHAT DESERVES TO SURVIVE?',
+    copy:'The five Echo units are silent. Three memory cores remain in ZERO’s Aegis buffer, carrying the warning about the Nine-Minute War. Both phase seams have been sealed, but the memory patterns are still coupled to the chamber.\n\nYou can preserve the Echoes and take their warning into the real world, risking another overlap. Or you can stabilise the chamber completely, severing the memory patterns so the duplicate cannot spread. Neither choice restores the lives these memories describe. Choose what ZERO is willing to risk.',
+    meta:['MEMORY CORES: 3 / 3','PHASE SEAMS: 2 / 2'],
+    status:'THE CHOICE WILL BE SAVED ON THIS DEVICE',
+    choices:[
+      {value:'preserve',label:'PRESERVE THE ECHOES',detail:'Keep the memories and transmit the Nine-Minute War warning. The real county may inherit part of the phase instability.'},
+      {value:'stabilise',label:'STABILISE THE CHAMBER',detail:'Erase the retained patterns and close the duplicate for good. The warning may be lost with the memories.'}
+    ]
   },
   survivor1:{
     kicker:'CIVILIAN RESCUED · NZOIA CROSSING',
@@ -514,7 +584,7 @@ function showStoryBeat(key){
       const title=document.createElement('b');title.textContent=choice.label;
       const detail=document.createElement('span');detail.textContent=choice.detail;
       b.append(title,detail);
-      b.addEventListener('click',()=>chooseStoryPath(choice.value));
+      b.addEventListener('click',()=>key==='chapter3End'?chooseChapter3Outcome(choice.value):chooseStoryPath(choice.value));
       choices.appendChild(b);
     }
     document.getElementById('comms-continue').classList.add('hidden');
@@ -531,8 +601,17 @@ function closeStoryBeat(){
   document.getElementById('comms-layer').classList.add('hidden');
   if(activeStoryBeat==='opening'||activeStoryBeat==='loop')showToast('MISSION ACTIVE · FOLLOW THE ECHO SHARDS');
   if(activeStoryBeat==='chapter2Opening')showToast(signalChoice==='trust'?'ECHO CHANNEL OPEN · +10 SUIT BUFFER, ENEMIES TRACK FASTER':signalChoice==='sever'?'SIGNAL MASKED · ENEMY TRACKING REDUCED':'NO SIGNAL CHOICE · STANDARD FIELD CONDITIONS');
+  if(activeStoryBeat==='chapter3Opening')showToast('PHASE CHAMBER ENTERED · RECOVER MEMORIES AND SEAL THE SEAMS');
   if(activeStoryBeat==='boss')showToast('RELAY BEACON AUTHORIZED · CONTINUE NORTH');
   if(activeStoryBeat==='riverEnd'){showToast('NZ OIA CROSSING STABLE · REPORT TO EXTRACTION');endMission(true);}
+  if(activeStoryBeat==='chapter3End'){showToast('CHOICE LOCKED · CHAPTER 03 COMPLETE');endMission(true);}
+}
+function chooseChapter3Outcome(choice){
+  try{localStorage.setItem('zeroHourChapter3Choice',choice);}catch(e){}
+  document.getElementById('comms-status').textContent=choice==='preserve'
+    ?'CHOICE STORED · ECHOES PRESERVED · WARNING RETAINED'
+    :'CHOICE STORED · CHAMBER STABILISED · MEMORY PATTERNS ERASED';
+  closeStoryBeat();
 }
 function chooseStoryPath(choice){
   signalChoice=choice;
@@ -546,10 +625,11 @@ function chooseStoryPath(choice){
 document.getElementById('comms-continue').addEventListener('click',closeStoryBeat);
 
 function findNearbyInteractable(){
-  if(chapter!==2||!running||finished||narrativeOpen)return null;
+  if((chapter!==2&&chapter!==3)||!running||finished||narrativeOpen)return null;
   let nearest=null,nearestDistance=3.25;
   for(const item of pickups){
-    if(item.taken||(item.kind!=='survivor'&&item.kind!=='anchor'))continue;
+    const allowed=chapter===2?(item.kind==='survivor'||item.kind==='anchor'):(item.kind==='memory'||item.kind==='anchor');
+    if(item.taken||!allowed)continue;
     const distance=Math.hypot(item.model.position.x-player.pos.x,item.model.position.z-player.pos.z);
     if(distance<nearestDistance){nearest=item;nearestDistance=distance;}
   }
@@ -602,12 +682,14 @@ function updateInteractionUI(){
   nearbyInteractable=findNearbyInteractable();
   const desktop=document.getElementById('interact-btn'),mobile=document.getElementById('touch-interact');
   const ready=!!nearbyInteractable;
-  const label=ready?(nearbyInteractable.item.kind==='survivor'?'RESCUE CIVILIAN':'DISABLE ANCHOR'):'Move near a civilian or anchor';
+  const kind=ready?nearbyInteractable.item.kind:'';
+  const label=ready?(kind==='survivor'?'RESCUE CIVILIAN':kind==='memory'?'PRESERVE MEMORY ECHO':(chapter===3?'SEAL PHASE SEAM':'DISABLE ANCHOR')):'Move near a mission objective';
+  const action=kind==='survivor'?'RESCUE':kind==='memory'?'PRESERVE':'SEAL';
   desktop.disabled=!ready;mobile.disabled=!ready;
   desktop.classList.toggle('ready',ready);mobile.classList.toggle('ready',ready);
-  desktop.firstChild.textContent=ready?(nearbyInteractable.item.kind==='survivor'?'G · RESCUE':'G · DISABLE'):'G · INTERACT';
+  desktop.firstChild.textContent=ready?'G · '+action:'G · INTERACT';
   document.getElementById('interact-label').textContent=label;
-  mobile.textContent=ready?(nearbyInteractable.item.kind==='survivor'?'RESCUE':'DISABLE'):'F · INTERACT';
+  mobile.textContent=ready?action:'G · INTERACT';
 }
 function interactWithNearby(){
   const target=findNearbyInteractable();
@@ -616,9 +698,14 @@ function interactWithNearby(){
   if(item.kind==='survivor'){
     player.rescued++;player.score+=400;showToast('CIVILIAN RESCUED · +400');
     if(player.rescued===1)showStoryBeat('survivor1');else showToast('EVACUEES SECURED · '+player.rescued+' / 3');
+  }else if(item.kind==='memory'){
+    player.intel++;player.score+=450;showToast('MEMORY ECHO PRESERVED · +450');
+    if(player.intel===3)unlockAbility('secondwind','Memory Echo milestone');
+    showStoryBeat(player.intel===1?'memory1':player.intel===2?'memory2':'memory3');
   }else{
-    player.anchors++;player.score+=350;showToast('TEMPORAL ANCHOR DISABLED · +350');
-    showStoryBeat(player.anchors===1?'anchor1':'anchor2');
+    player.anchors++;player.score+=350;
+    if(chapter===3){showToast('PHASE SEAM SEALED · +350');showStoryBeat(player.anchors===1?'phase1':'phase2');}
+    else{showToast('TEMPORAL ANCHOR DISABLED · +350');showStoryBeat(player.anchors===1?'anchor1':'anchor2');}
   }
   updateInteractionUI();updateHUD();
 }
@@ -989,7 +1076,7 @@ function updateWorld(dt){
   for(const item of pickups){
     if(item.taken)continue;
     item.model.position.y=item.baseY+Math.sin(elapsed*2.2)*.14;item.model.rotation.y+=dt*.8;
-    if(chapter===2&&(item.kind==='survivor'||item.kind==='anchor'))continue;
+    if(chapter>=2&&(item.kind==='survivor'||item.kind==='anchor'||item.kind==='memory'))continue;
     if(item.model.position.distanceTo(new THREE.Vector3(player.pos.x,.7,player.pos.z))<1.55){
       item.taken=true;scene.remove(item.model);
       if(item.kind==='intel'){player.intel++;player.score+=250;showToast('ECHO SHARD RECOVERED · +250');if(player.intel>=3)unlockAbility('secondwind','Echo Shard milestone');showStoryBeat(player.intel===1?'shard1':player.intel===2?'shard2':'shard3');}
