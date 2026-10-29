@@ -1,42 +1,56 @@
-# PROJECT ZERO HOUR
+# PROJECT ZERO HOUR — THE RED ROAD
 
-A browser-based 3D superhero action game prototype inspired by the rural roads, forest edges, wooden fences, and homesteads in the supplied environment reference.
+**A 3D superhero action-game prototype** inspired by the supplied rural environment video: red-earth roads, fenced homesteads, tall trees, and forest edges.
 
-## Story One — The Red Road
+## Story One
 
-Play as a local super-powered guardian protecting a settlement from the Black Viper gang and opportunistic thieves. Clear the road, rescue the neighbourhood, collect intel, unlock abilities, and face the gang lieutenant.
+The Black Viper gang has seized the settlement road. Play as the Guardian, push back five gang members and their lieutenant, recover three intelligence caches, and reach extraction.
 
-## Current milestone
+## Play
 
-The first playable vertical slice targets desktop and mobile browsers using Three.js. It includes movement, aiming/shooting, enemy AI, health, abilities, pickups, mission objectives, and a demo rewarded-ad flow.
+The game runs as a static web page using Three.js from a CDN. Serve the repository folder over HTTP rather than opening `index.html` as a `file://` URL.
 
-## Run locally
+```bash
+python -m http.server 8080
+```
 
-Open `index.html` in a modern browser or serve the folder with any static HTTP server. Internet access is required for the Three.js CDN dependency.
+Then open `http://localhost:8080` in a modern WebGL-capable browser. Internet access is needed for the Three.js CDN import.
 
-## Controls
+### Desktop controls
 
-- WASD / arrow keys: move
-- Mouse: aim
-- Left click / Space: fire
-- Shift: sprint
-- Q: shockwave ability
-- E: shield ability
-- R: reload
-- On-screen touch controls are available on mobile.
+- **WASD / arrow keys:** move; **Shift:** sprint
+- **Mouse:** aim; **hold left mouse button** or **Space:** fire
+- **1–4:** switch super-weapons; **R:** reload
+- **Q:** shockwave; **E:** Aegis shield
+- **F / C / X:** use Overdrive, Chain Lightning, or Second Wind after unlocking each ability
 
-## Ads and rewards
+Mobile browsers get on-screen movement, firing, shield, shockwave, reload, and unlocked-ability controls.
 
-The current rewarded-ad button is explicitly a development simulation. It cannot serve real ads or produce real revenue. Before release, connect a supported rewarded-ad SDK and grant abilities only from its verified reward callback, with server-side validation where available.
+## Weapons and abilities
 
-## Roadmap
+The prototype contains four fictional energy weapons: Pulse Rifle, Nova Cannon, Arc Lance, and Gravity Core. Guardian abilities include a close-range shockwave, damage-reducing Aegis shield, and three upgrade abilities obtainable through the development rewarded-ad flow.
 
-1. First playable mission and combat loop
-2. Character animation, audio, and richer models
-3. Save/progression backend and fair ad-reward limits
-4. Real rewarded ads and mobile packaging
-5. Additional story chapters, bosses, weapons, and locations
+## Ads, rewards, and saves
 
-## Project status
+**Rewarded ads are simulated in this prototype.** No real ad is served and no revenue is generated yet. The six-second demo flow grants one ability only when its timer completes. Unlocked demo abilities are stored locally in the browser. Before public monetisation, integrate a real rewarded-ad provider and award abilities only after its verified reward callback; use a backend to validate reward claims and progression where supported.
 
-Prototype / early development. Not a finished commercial game.
+## GitHub Pages deployment
+
+A workflow at `.github/workflows/deploy-pages.yml` validates the game JavaScript and publishes the static site on pushes to `main`. For first-time setup, open **Settings → Pages** and choose **GitHub Actions** as the build/deployment source if the repository has not enabled Pages yet. Then check the Actions tab for the deployment result.
+
+Expected project URL after a successful deployment: <https://musombi123.github.io/MindSphere/>
+
+## Current scope / next milestones
+
+- [x] Stylised 3D rural road, trees, fences, and homesteads
+- [x] Third-person hero, enemy pursuit, incoming fire, and boss fight
+- [x] Four fictional super-weapons, health, pickups, intel, and mission completion
+- [x] Shockwave, Aegis, and demo rewarded-ability unlock loop
+- [x] Desktop and mobile controls
+- [x] GitHub Pages workflow with JavaScript syntax validation
+- [ ] Character animations, richer environment art, voice/music, and sound design
+- [ ] Real rewarded-ad SDK, verified rewards, and cloud saves
+- [ ] More missions, thieves/rescue encounters, vehicles, and boss variants
+- [ ] Android packaging and device-performance testing
+
+This is an early playable prototype, not a finished commercial game. Models are built from procedural 3D shapes; no purchased or third-party game assets are included.
