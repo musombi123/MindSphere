@@ -691,7 +691,7 @@ function updateInteractionUI(){
   desktop.classList.toggle('ready',ready);mobile.classList.toggle('ready',ready);
   desktop.firstChild.textContent=ready?'G · '+action:'G · INTERACT';
   document.getElementById('interact-label').textContent=label;
-  mobile.textContent=ready?action:'G · INTERACT';
+  mobile.textContent=ready?action:'MOVE CLOSER';
 }
 function interactWithNearby(){
   const target=findNearbyInteractable();
