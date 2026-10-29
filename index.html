@@ -287,11 +287,12 @@ if(chapter===1){
   riverWaterMaterial=new THREE.MeshStandardMaterial({color:0x3a9eaf,metalness:.48,roughness:.22,emissive:0x073744,emissiveIntensity:.55,transparent:true,opacity:.88});
   const river=new THREE.Mesh(new THREE.PlaneGeometry(220,9),riverWaterMaterial);
   river.rotation.x=-Math.PI/2;river.position.set(0,worldManager.getHeightAt(0,-27)-.12,-27);scene.add(river);
-  const bankMat=new THREE.MeshStandardMaterial({color:0x435947,roughness:1});
-  for(const z of [-31.8,-22.2]){const bank=new THREE.Mesh(new THREE.BoxGeometry(220,.18,1.1),bankMat);bank.position.set(0,worldManager.getHeightAt(0,z)-.015,z);scene.add(bank);}
-  const bridge=new THREE.Mesh(new THREE.BoxGeometry(7.4,.28,10.2),new THREE.MeshStandardMaterial({color:0x6c7772,roughness:.9,metalness:.12}));bridge.position.set(0,worldManager.getHeightAt(0,-27)+.13,-27);scene.add(bridge);
-  const bridgeRailMat=new THREE.MeshStandardMaterial({color:0x2e4349,metalness:.4,roughness:.55});
-  for(const x of [-3.55,3.55]){const rail=new THREE.Mesh(new THREE.BoxGeometry(.16,.65,10),bridgeRailMat);rail.position.set(x,.43,-27);scene.add(rail);}
+  const bankMat=new THREE.MeshStandardMaterial({map:worldManager.textures.grass.albedo,normalMap:worldManager.textures.grass.normal,roughnessMap:worldManager.textures.grass.roughness,roughness:1});
+  for(const z of [-31.8,-22.2]){const bank=new THREE.Mesh(new THREE.PlaneGeometry(220,1.1),bankMat);bank.rotation.x=-Math.PI/2;bank.position.set(0,worldManager.getHeightAt(0,z)-.015,z);bank.receiveShadow=true;scene.add(bank);}
+  const bridgeMat=new THREE.MeshStandardMaterial({map:worldManager.textures.road.albedo,normalMap:worldManager.textures.road.normal,roughnessMap:worldManager.textures.road.roughness,roughness:.88,metalness:.01});
+  const bridge=new THREE.Mesh(new THREE.PlaneGeometry(7.4,10.2),bridgeMat);bridge.rotation.x=-Math.PI/2;bridge.position.set(0,worldManager.getHeightAt(0,-27)+.13,-27);bridge.receiveShadow=true;bridge.name='PHOTO_TEXTURED_RIVER_CROSSING';scene.add(bridge);
+  const bridgeRailMat=new THREE.MeshBasicMaterial({map:worldManager.textures.photo.fence,transparent:true,opacity:.92,side:THREE.DoubleSide,depthWrite:false});
+  for(const x of [-3.55,3.55]){const rail=new THREE.Mesh(new THREE.PlaneGeometry(10,.85),bridgeRailMat);rail.rotation.y=Math.PI/2;rail.position.set(x,worldManager.getHeightAt(0,-27)+.7,-27);rail.name='USER_PHOTO_BRIDGE_RAIL';scene.add(rail);}
   riverWaveMesh=new THREE.Group();
   const surgeFace=new THREE.Mesh(new THREE.BoxGeometry(7.8,1.55,.2),new THREE.MeshBasicMaterial({color:0xb9fbff,transparent:true,opacity:.82}));surgeFace.position.y=.84;riverWaveMesh.add(surgeFace);
   const surgeTop=new THREE.Mesh(new THREE.BoxGeometry(7.3,.11,.36),new THREE.MeshBasicMaterial({color:0xff9bd8,transparent:true,opacity:.95}));surgeTop.position.set(0,1.63,0);riverWaveMesh.add(surgeTop);
@@ -321,15 +322,15 @@ if(chapter===1){
   worldManager.sky.setMood('echo');scene.fog=new THREE.Fog(0x28213e,16,86);
   hemi.color.set(0xaacaff);hemi.groundColor.set(0x2c174a);hemi.intensity=1.7;
   sun.color.set(0xa9c5ff);sun.intensity=1.35;
-  phaseWallMaterial=new THREE.MeshBasicMaterial({color:0x91d9ff,wireframe:true,transparent:true,opacity:.28,depthWrite:false});
-  phaseRoofMaterial=new THREE.MeshBasicMaterial({color:0xff8bd5,wireframe:true,transparent:true,opacity:.24,depthWrite:false});
+  phaseWallMaterial=new THREE.MeshBasicMaterial({map:worldManager.textures.photo.homestead,color:0x91d9ff,transparent:true,opacity:.28,depthWrite:false,side:THREE.DoubleSide});
+  phaseRoofMaterial=new THREE.MeshBasicMaterial({map:worldManager.textures.photo.homestead,color:0xff8bd5,transparent:true,opacity:.24,depthWrite:false,side:THREE.DoubleSide});
   phaseGlowMaterial=new THREE.MeshBasicMaterial({color:0x9b7dff,transparent:true,opacity:.16,depthWrite:false,side:THREE.DoubleSide});
   const phaseWall=phaseWallMaterial,phaseRoof=phaseRoofMaterial,phaseGlow=phaseGlowMaterial;
   for(const site of [{x:-4.6,z:-13},{x:4.7,z:-24},{x:-4.6,z:-38},{x:4.4,z:-47}]){
     const duplicate=new THREE.Group();duplicate.position.set(site.x,0,site.z);duplicate.rotation.y=(site.x<0?-.14:.14);
-    box(3.5,2.2,3.1,phaseWall,0,1.1,0,duplicate);
-    box(4.0,.16,3.6,phaseRoof,0,2.35,0,duplicate,.0,.16);
-    box(.75,1.25,.08,phaseGlow,-.75,.82,-1.58,duplicate);
+    const photoWall=new THREE.Mesh(new THREE.PlaneGeometry(3.5,2.2),phaseWall);photoWall.position.set(0,1.1,1.58);duplicate.add(photoWall);
+    const photoRoof=new THREE.Mesh(new THREE.PlaneGeometry(4.0,.78),phaseRoof);photoRoof.position.set(0,2.30,1.58);photoRoof.rotation.z=.04;duplicate.add(photoRoof);
+    const photoDoor=new THREE.Mesh(new THREE.PlaneGeometry(.75,1.25),phaseGlow);photoDoor.position.set(-.75,.82,1.59);duplicate.add(photoDoor);
     scene.add(duplicate);
     const echoCopy=duplicate.clone();echoCopy.position.set(-site.x*1.22,Math.sin(site.z)*.3,site.z-3.3);echoCopy.scale.set(.78,.86,.78);echoCopy.rotation.y+=Math.PI*.22;scene.add(echoCopy);
   }
