@@ -6,14 +6,14 @@
 
 It is the year 2097. Following a 43-second blackout, radios around Bungoma begin receiving emergency messages from seventeen minutes in the future. The red-earth road beneath Mount Elgon is occupied by the Black Viper mercenaries, and a mysterious relay near Sang’alo is calling the experimental Aegis suit worn by Amani Wekesa, callsign **ZERO**.
 
-The playable first chapter asks ZERO to stop the raiders, recover three Echo Shards, defeat commander Kito, and reach the relay. Each shard opens a radio transmission and pauses combat while the story is read. The third shard presents a persistent local choice:
+Chapter 01 asks ZERO to stop the raiders, recover three Echo Shards, defeat commander Kito, and reach the relay. Each shard opens a radio transmission and pauses combat while the story is read. The third shard presents a persistent local choice:
 
 - **Trust the Echo:** keep the warning channel open, even if the intelligence on the other side can hear ZERO.
 - **Sever the Link:** cut the feedback, conceal ZERO’s location, and lose the guidance coming through the signal.
 
 The end report changes with that choice. When a chapter is replayed, the game acknowledges the previous attempt and the stored choice. That loop is a story mechanic; it is not a cloud save or a completed multi-mission campaign.
 
-Read the full premise and five-chapter arc in [STORY_BIBLE.md](STORY_BIBLE.md). **Chapter 01 is the playable chapter today. Chapters 02–05 are the planned narrative roadmap, not yet playable missions.**
+Read the full premise and five-chapter arc in [STORY_BIBLE.md](STORY_BIBLE.md). **Chapters 01 and 02 are now implemented as playable prototypes. Chapters 03–05 remain the narrative roadmap, not yet playable missions.**
 
 The setting uses real geographic anchors—including Mount Elgon, Sang’alo and Chetambe hills, and the Nzoia River—but the people, organisations, MILELE Engine, Conductor, technology, and events are fictional. The game does not claim that its speculative events or technology are real Bungoma history.
 
@@ -78,8 +78,10 @@ When you deliberately choose to test a native build later, the workflow packages
 - [x] Trust-the-Echo / Sever-the-Link branch persisted locally
 - [x] Replay dialogue recognises past attempts and the stored choice
 - [x] Illuminated Sang’alo relay beacon and Chapter 01 cliffhanger
+- [x] Chapter 02 Nzoia crossing with silver river, raised bridge, animated anomaly, three civilian rescues, two temporal anchors, and four Echo units
+- [x] Chapter 01 success transitions to Chapter 02; Chapter 02 ending carries the Trust/Sever signal choice into its dialogue
 - [x] Local Vite build configured for bundled Three.js
-- [ ] Chapter 02–05 playable missions and choices carried between them
+- [ ] Chapters 03–05 playable missions and deeper cross-chapter choice consequences
 - [ ] Character animation, richer environment assets, voice/music, and sound design
 - [ ] Low-end Android performance tests
 - [ ] Real rewarded-ad SDK, verified rewards, privacy/consent flow, and cloud saves
