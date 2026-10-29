@@ -1,0 +1,630 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#080d12">
+<meta name="description" content="Project Zero Hour — The Red Road. A browser-based 3D superhero action game prototype.">
+<title>Project Zero Hour — The Red Road</title>
+<style>
+:root{color-scheme:dark;--bg:#080d12;--panel:rgba(10,18,25,.88);--line:rgba(126,190,208,.22);--cyan:#77f2ff;--gold:#ffc66a;--red:#ff5d65;--muted:#9bb0b9}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#eef8fa}body{user-select:none;-webkit-user-select:none}button{font:inherit;color:inherit;cursor:pointer;border:1px solid var(--line);background:rgba(16,30,40,.93);border-radius:10px;padding:10px 13px;transition:transform .12s,border-color .12s,background .12s}button:hover{border-color:var(--cyan);background:rgba(27,54,66,.96)}button:active{transform:scale(.97)}button:disabled{opacity:.44;cursor:not-allowed}#viewport{position:fixed;inset:0}#game-canvas{display:block;width:100%;height:100%;outline:none;touch-action:none}
+.topbar{position:fixed;z-index:4;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:linear-gradient(180deg,rgba(5,10,15,.82),transparent);pointer-events:none;gap:12px}.brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.16em;font-size:12px}.brand-mark{width:34px;height:34px;border:1px solid #79efff;border-radius:9px;display:grid;place-items:center;color:var(--cyan);font-weight:1000;box-shadow:inset 0 0 18px #79efff22}.brand small{display:block;color:var(--muted);font-weight:650;font-size:9px;letter-spacing:.2em;margin-top:4px}.top-status{font-size:10px;letter-spacing:.17em;color:#c9dbe0;border:1px solid var(--line);border-radius:7px;padding:8px 11px;background:#07101699}
+.hud-left{position:fixed;z-index:4;top:72px;left:18px;width:min(290px,calc(100vw - 36px));display:grid;gap:9px;pointer-events:none}.hud-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;backdrop-filter:blur(12px);box-shadow:0 10px 40px #0002}.eyebrow{font-size:9px;letter-spacing:.22em;color:var(--muted);font-weight:800;text-transform:uppercase}.health-head{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-weight:850;font-size:12px}.bar{height:7px;background:#202c32;border-radius:99px;overflow:hidden;margin-top:7px}.bar-fill{height:100%;width:100%;border-radius:99px;transition:width .2s}.health-fill{background:linear-gradient(90deg,#28d6b0,#b6ff8b)}.shield-fill{background:linear-gradient(90deg,#31c9ff,#a6f8ff)}.boss-fill{background:linear-gradient(90deg,#ff485c,#ffbb75)}.stats{display:flex;gap:8px;margin-top:10px}.stat{flex:1;border:1px solid #d0e8ef13;padding:7px 8px;border-radius:8px;background:#ffffff05}.stat strong{display:block;font-size:17px;line-height:1.1}.stat span{display:block;color:var(--muted);font-size:9px;letter-spacing:.13em;margin-top:4px}.mission-card{max-width:290px}.mission-title{font-size:12px;font-weight:900;letter-spacing:.05em;margin:7px 0}.objective{font-size:11px;color:#d0e0e4;line-height:1.65}.objective b{color:var(--cyan);font-weight:800}.boss-card{display:none}.boss-card.active{display:block}
+.right-panel{position:fixed;z-index:4;right:18px;top:76px;width:225px;display:grid;gap:10px}.reward-card{background:linear-gradient(150deg,rgba(22,35,41,.94),rgba(9,16,21,.91));border:1px solid #ffca7a45;border-radius:13px;padding:14px;box-shadow:0 10px 40px #0003}.reward-card h3{font-size:13px;margin:7px 0 5px}.reward-card p{font-size:10px;color:#b6c6cc;line-height:1.55;margin:0 0 11px}.reward-card .eyebrow{color:var(--gold)}.reward-btn{width:100%;background:linear-gradient(110deg,#b66f2a,#f4c56a);border:0;color:#1a1208;font-weight:950;font-size:10px;letter-spacing:.1em}.reward-btn:hover{background:linear-gradient(110deg,#d88b3a,#ffe0a0)}.reward-note{font-size:9px!important;margin:9px 0 0!important;color:#93a7ae!important}.weapon-panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;backdrop-filter:blur(12px)}.weapon-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}.ammo-display{font-size:12px;font-weight:900;color:var(--cyan)}.weapon-select{width:100%;display:flex;align-items:center;gap:8px;padding:8px;margin-top:5px;text-align:left;border-color:transparent;background:#ffffff04}.weapon-select.active{border-color:#77f2ff7a;background:#77f2ff10}.weapon-icon{width:28px;height:28px;border-radius:7px;background:#ffffff09;display:grid;place-items:center;font-size:14px}.weapon-text{flex:1}.weapon-text b{display:block;font-size:10px;letter-spacing:.07em}.weapon-text small{display:block;font-size:9px;color:var(--muted);margin-top:2px}
+.bottom-dock{position:fixed;z-index:4;left:50%;bottom:18px;transform:translateX(-50%);display:flex;gap:8px;align-items:center;max-width:calc(100vw - 20px)}.action-btn{min-width:110px;background:rgba(8,15,21,.89);backdrop-filter:blur(8px);font-size:10px;font-weight:900;letter-spacing:.09em;border-color:#8ad7e73a}.action-btn span{display:block;font-weight:500;letter-spacing:0;color:var(--muted);font-size:9px;margin-top:3px}.action-btn.primary{border-color:#70ebff70;color:var(--cyan)}#bonus-power-list{display:flex;gap:6px}.bonus-btn{min-width:82px;border-color:#ffcb714f;color:#ffe0a1;font-size:9px;font-weight:900}
+.crosshair{position:fixed;z-index:2;pointer-events:none;width:22px;height:22px;border:1px solid #9fffff9c;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 10px #77f2ff2b;display:none}.crosshair:before,.crosshair:after{content:"";position:absolute;background:#9fffff9c}.crosshair:before{left:50%;top:-5px;height:30px;width:1px}.crosshair:after{top:50%;left:-5px;width:30px;height:1px}
+.toast{position:fixed;z-index:8;left:50%;top:18%;transform:translate(-50%,-8px);background:#07141beF;border:1px solid #75eafa69;color:#e8fbff;border-radius:9px;padding:10px 16px;font-size:11px;font-weight:800;letter-spacing:.05em;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;text-align:center;max-width:calc(100vw - 32px)}.toast.show{opacity:1;transform:translate(-50%,0)}
+.screen-layer{position:fixed;z-index:10;inset:0;display:flex;align-items:center;justify-content:center;padding:22px;background:radial-gradient(ellipse at 50% 40%,rgba(7,16,22,.44),rgba(3,8,12,.82));backdrop-filter:blur(4px)}.screen-layer.hidden{display:none}.story-card{width:min(600px,100%);padding:clamp(22px,5vw,42px);background:linear-gradient(145deg,rgba(13,26,33,.96),rgba(5,11,15,.97));border:1px solid #8be8f74b;border-radius:18px;box-shadow:0 30px 100px #0009;position:relative;overflow:hidden}.story-card:before{content:"";position:absolute;right:-80px;top:-100px;width:260px;height:260px;border:1px solid #7ff0ff20;border-radius:50%;box-shadow:0 0 0 30px #7ff0ff08,0 0 0 60px #7ff0ff05;pointer-events:none}.story-kicker{font-weight:950;font-size:10px;letter-spacing:.24em;color:var(--cyan);text-transform:uppercase}.story-card h1{font-size:clamp(32px,7vw,54px);letter-spacing:-.05em;line-height:.98;margin:16px 0 14px;position:relative}.story-card h1 em{font-style:normal;color:var(--gold)}.story-copy{max-width:480px;color:#b9cbd1;font-size:13px;line-height:1.75}.story-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:22px 0}.story-grid div{border:1px solid #c7e6ed18;border-radius:9px;padding:10px;background:#ffffff04}.story-grid b{display:block;font-size:11px}.story-grid small{display:block;color:var(--muted);font-size:9px;margin-top:5px;line-height:1.4}.deploy-btn{width:100%;border:0;border-radius:10px;padding:15px;background:linear-gradient(110deg,#78ecff,#a4f2cc);color:#071116;font-weight:1000;font-size:11px;letter-spacing:.16em}.story-foot{font-size:9px;color:#8197a0;margin-top:13px;line-height:1.6}.finish-title{font-size:34px!important}.finish-copy{font-size:12px;line-height:1.7;color:#b8c9cf}
+#touch-controls{display:none;position:fixed;z-index:5;inset:auto 12px 13px 12px;justify-content:space-between;align-items:flex-end;pointer-events:none;gap:10px}.touch-pad,.touch-actions{pointer-events:auto;display:grid;gap:6px}.touch-pad{grid-template-columns:repeat(3,42px);grid-template-rows:repeat(2,42px)}.touch-pad button,.touch-actions button{padding:0;display:grid;place-items:center;border-radius:12px;background:#06131bd9;border-color:#8de8f14a;font-size:15px;font-weight:900;touch-action:none;backdrop-filter:blur(6px)}.touch-pad .up{grid-column:2}.touch-pad .left{grid-column:1;grid-row:2}.touch-pad .down{grid-column:2;grid-row:2}.touch-pad .right{grid-column:3;grid-row:2}.touch-actions{grid-template-columns:repeat(2,49px);grid-template-rows:repeat(2,42px)}.touch-actions button{font-size:9px;color:var(--cyan)}.touch-actions .fire-touch{background:#9d342bbf;color:white;border-color:#ff8888}.touch-hint{display:none}
+@media(max-width:900px){.right-panel{right:10px;top:68px;width:185px}.hud-left{top:68px;left:10px;width:220px}.hud-card{padding:9px 11px}.reward-card{padding:10px}.weapon-panel{padding:8px}.weapon-select{padding:5px}.weapon-icon{width:24px;height:24px}.bottom-dock{bottom:100px}.action-btn{min-width:84px;padding:8px;font-size:9px}}
+@media(max-width:620px){.topbar{padding:10px}.brand{font-size:10px}.brand-mark{width:30px;height:30px}.top-status{font-size:8px;padding:7px}.hud-left{top:58px;left:8px;width:calc(100vw - 16px);grid-template-columns:1fr 1fr;gap:6px}.hud-left .mission-card{display:none}.hud-card{padding:8px 10px}.health-head{font-size:10px;margin-top:5px}.bar{height:5px;margin-top:5px}.stats{margin-top:6px}.stat{padding:5px}.stat strong{font-size:13px}.stat span{font-size:7px}.right-panel{top:auto;bottom:164px;right:8px;width:160px;gap:6px}.reward-card{padding:8px 9px}.reward-card h3{font-size:10px;margin:4px 0}.reward-card p{font-size:9px;line-height:1.4;margin-bottom:7px}.reward-btn{font-size:8px;padding:8px}.reward-note{display:none}.weapon-panel{padding:7px 8px}.weapon-heading .eyebrow{font-size:8px}.weapon-select{gap:5px;margin-top:3px;padding:4px}.weapon-icon{width:22px;height:22px;font-size:11px}.weapon-text b{font-size:8px}.weapon-text small{display:none}.ammo-display{font-size:10px}.bottom-dock{display:none}#touch-controls{display:flex}.story-card{padding:22px}.story-grid{gap:5px;margin:15px 0}.story-grid div{padding:8px}.story-grid b{font-size:10px}.story-grid small{font-size:8px}.story-copy{font-size:11px}.story-foot{font-size:8px}.crosshair{display:none!important}.boss-card{grid-column:1 / -1}.boss-card.active{display:block}.boss-card .bar{margin-top:6px}}
+@media(max-height:520px) and (orientation:landscape){.hud-left{top:53px;width:200px}.right-panel{width:148px;top:56px}.reward-card p{display:none}.reward-card{padding:7px}.weapon-panel{padding:5px}.weapon-select{padding:3px}.bottom-dock{bottom:6px}.action-btn{padding:6px;min-width:75px}.story-card{max-width:540px;padding:18px}.story-card h1{font-size:30px;margin:8px 0}.story-grid{margin:10px 0}.story-copy{font-size:10px}.story-grid small{display:none}}
+</style>
+</head>
+<body>
+<div id="viewport"><canvas id="game-canvas" aria-label="Project Zero Hour 3D game"></canvas></div>
+<header class="topbar">
+  <div class="brand"><div class="brand-mark">ZH</div><div>PROJECT ZERO HOUR<small>STORY MODE / EPISODE 01</small></div></div>
+  <div class="top-status" id="mission-status">MISSION STANDBY</div>
+</header>
+<section class="hud-left">
+  <div class="hud-card">
+    <div class="eyebrow">Guardian systems</div>
+    <div class="health-head"><span>VITALS</span><span id="health-value">100 / 100</span></div><div class="bar"><div class="bar-fill health-fill" id="health-fill"></div></div>
+    <div class="health-head"><span>AEGIS SHIELD</span><span id="shield-value">READY</span></div><div class="bar"><div class="bar-fill shield-fill" id="shield-fill" style="width:100%"></div></div>
+    <div class="stats"><div class="stat"><strong id="kill-count">0</strong><span>THREATS DOWN</span></div><div class="stat"><strong id="intel-count">0 / 3</strong><span>INTEL CACHES</span></div><div class="stat"><strong id="score-value">0000</strong><span>FIELD SCORE</span></div></div>
+  </div>
+  <div class="hud-card mission-card">
+    <div class="eyebrow">Field objective</div><div class="mission-title">THE RED ROAD</div>
+    <div class="objective" id="objective-text">Neutralise the Black Viper gang.<br>Recover <b>3 intel caches</b>.<br>Proceed to the extraction marker.</div>
+  </div>
+  <div class="hud-card boss-card" id="boss-card"><div class="eyebrow">High-value target</div><div class="health-head"><span id="boss-name">VIPER LIEUTENANT</span><span id="boss-value">180 HP</span></div><div class="bar"><div class="bar-fill boss-fill" id="boss-fill"></div></div></div>
+</section>
+<aside class="right-panel">
+  <div class="reward-card">
+    <div class="eyebrow">Field upgrade program</div><h3>Earn a new ability</h3><p>Complete a rewarded-ad slot to unlock a random guardian ability. Demo mode only; no real ad is served yet.</p>
+    <button class="reward-btn" id="reward-btn">▶ WATCH DEMO AD · + ABILITY</button><p class="reward-note" id="reward-note">Prototype simulation · unlock is granted at completion.</p>
+  </div>
+  <div class="weapon-panel">
+    <div class="weapon-heading"><span class="eyebrow">Super arsenal</span><span class="ammo-display" id="ammo-value">30 / 150</span></div>
+    <button class="weapon-select active" data-weapon="0"><span class="weapon-icon">ϟ</span><span class="weapon-text"><b>01 · PULSE RIFLE</b><small>Balanced energy fire</small></span></button>
+    <button class="weapon-select" data-weapon="1"><span class="weapon-icon">✺</span><span class="weapon-text"><b>02 · NOVA CANNON</b><small>Close-range burst</small></span></button>
+    <button class="weapon-select" data-weapon="2"><span class="weapon-icon">⌁</span><span class="weapon-text"><b>03 · ARC LANCE</b><small>Heavy chain energy</small></span></button>
+    <button class="weapon-select" data-weapon="3"><span class="weapon-icon">◉</span><span class="weapon-text"><b>04 · GRAVITY CORE</b><small>Area-impact weapon</small></span></button>
+  </div>
+</aside>
+<div class="bottom-dock">
+  <button class="action-btn primary" id="shockwave-btn">Q · SHOCKWAVE<span>Area burst · 12s cooldown</span></button>
+  <button class="action-btn" id="shield-btn">E · AEGIS<span>Absorb damage · 16s cooldown</span></button>
+  <div id="bonus-power-list"></div>
+  <button class="action-btn" id="reload-btn">R · RELOAD<span>Refill active weapon</span></button>
+</div>
+<div class="crosshair" id="crosshair"></div>
+<div class="toast" id="toast"></div>
+<div id="touch-controls">
+  <div class="touch-pad">
+    <button class="up" data-move="w" aria-label="Move forward">▲</button><button class="left" data-move="a" aria-label="Move left">◀</button><button class="down" data-move="s" aria-label="Move backward">▼</button><button class="right" data-move="d" aria-label="Move right">▶</button>
+  </div>
+  <div class="touch-actions">
+    <button class="fire-touch" id="touch-fire">FIRE</button><button id="touch-shock">Q<br>BURST</button><button id="touch-shield">E<br>AEGIS</button><button id="touch-reload">RELOAD</button>
+  </div>
+</div>
+<div class="screen-layer" id="intro-layer">
+  <div class="story-card">
+    <div class="story-kicker">Reconstructed rural combat zone · Chapter 01</div>
+    <h1>STORY ONE<br><em>THE RED ROAD</em></h1>
+    <p class="story-copy">The Black Viper gang has taken control of the settlement road, stealing supplies and leaving the community trapped between the forest and the homesteads. You are the Guardian: the only person with the power to push them back. Clear the route, retrieve the intelligence, and stop their field lieutenant before the convoy arrives.</p>
+    <div class="story-grid"><div><b>01 / CLEAR</b><small>Take down 5 gang members and their lieutenant.</small></div><div><b>02 / RECOVER</b><small>Find 3 amber intel caches along the road.</small></div><div><b>03 / EXTRACT</b><small>Reach the marker after the route is secure.</small></div></div>
+    <button class="deploy-btn" id="start-btn">DEPLOY TO THE RED ROAD ↗</button>
+    <div class="story-foot">DESKTOP: WASD / mouse / click / Q E R · MOBILE: on-screen controls · Fictional sci-fi combat · Early prototype</div>
+  </div>
+</div>
+<div class="screen-layer hidden" id="finish-layer">
+  <div class="story-card"><div class="story-kicker" id="finish-kicker">MISSION REPORT</div><h1 class="finish-title" id="finish-title">MISSION COMPLETE</h1><p class="finish-copy" id="finish-copy"></p><div class="story-grid"><div><b id="finish-kills">0 / 6</b><small>Threats neutralised</small></div><div><b id="finish-intel">0 / 3</b><small>Intel secured</small></div><div><b id="finish-score">0000</b><small>Field score</small></div></div><button class="deploy-btn" id="restart-btn">REPLAY STORY ONE ↻</button><div class="story-foot">Your progress is local to this browser build. Cloud saves and real ad rewards are not connected yet.</div></div>
+</div>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
+
+const canvas = document.getElementById('game-canvas');
+const renderer = new THREE.WebGLRenderer({canvas, antialias: !matchMedia('(pointer: coarse)').matches, alpha: false, powerPreference: 'high-performance'});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.35));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.18;
+renderer.shadowMap.enabled = false;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x9dbbca);
+scene.fog = new THREE.Fog(0x9dbb9a, 48, 128);
+const camera = new THREE.PerspectiveCamera(62, window.innerWidth / window.innerHeight, 0.1, 150);
+camera.position.set(0, 7, 20);
+const hemi = new THREE.HemisphereLight(0xd8f2ff, 0x334326, 2.0); scene.add(hemi);
+const sun = new THREE.DirectionalLight(0xffe5bd, 2.2); sun.position.set(-24, 42, 20); scene.add(sun);
+
+const mat = {
+  grass:new THREE.MeshStandardMaterial({color:0x46563a,roughness:1}),
+  grass2:new THREE.MeshStandardMaterial({color:0x627347,roughness:1}),
+  road:new THREE.MeshStandardMaterial({color:0x9a5634,roughness:1}),
+  roadEdge:new THREE.MeshStandardMaterial({color:0x775039,roughness:1}),
+  track:new THREE.MeshStandardMaterial({color:0xc0824a,roughness:1}),
+  soil:new THREE.MeshStandardMaterial({color:0x604634,roughness:1}),
+  trunk:new THREE.MeshStandardMaterial({color:0x5b3d28,roughness:1}),
+  leaf1:new THREE.MeshStandardMaterial({color:0x2e5738,roughness:1}),
+  leaf2:new THREE.MeshStandardMaterial({color:0x416842,roughness:1}),
+  leaf3:new THREE.MeshStandardMaterial({color:0x6c8147,roughness:1}),
+  fence:new THREE.MeshStandardMaterial({color:0x94734d,roughness:1}),
+  fenceDark:new THREE.MeshStandardMaterial({color:0x654b34,roughness:1}),
+  wall:new THREE.MeshStandardMaterial({color:0xb18a61,roughness:1}),
+  wall2:new THREE.MeshStandardMaterial({color:0x80694c,roughness:1}),
+  roof:new THREE.MeshStandardMaterial({color:0x655344,roughness:1}),
+  window:new THREE.MeshStandardMaterial({color:0x253a3f,roughness:.7}),
+  heroBlue:new THREE.MeshStandardMaterial({color:0x142b42,roughness:.45,metalness:.25}),
+  heroBright:new THREE.MeshStandardMaterial({color:0x36d2dc,roughness:.35,metalness:.38,emissive:0x073f46}),
+  heroGold:new THREE.MeshStandardMaterial({color:0xffc86e,roughness:.4,metalness:.25,emissive:0x3e2100}),
+  cape:new THREE.MeshStandardMaterial({color:0x96394b,roughness:.75}),
+  enemyTop:new THREE.MeshStandardMaterial({color:0x302630,roughness:.85}),
+  enemyRed:new THREE.MeshStandardMaterial({color:0x9b3540,roughness:.65}),
+  enemyPants:new THREE.MeshStandardMaterial({color:0x3a3938,roughness:.95}),
+  skin:new THREE.MeshStandardMaterial({color:0x8f654b,roughness:.9}),
+  gun:new THREE.MeshStandardMaterial({color:0x1c2a30,metalness:.55,roughness:.35}),
+  windowGlow:new THREE.MeshStandardMaterial({color:0x81d6cf,emissive:0x174e4c}),
+  pulse:new THREE.MeshBasicMaterial({color:0x79f4ff}),
+  nova:new THREE.MeshBasicMaterial({color:0xffba65}),
+  arc:new THREE.MeshBasicMaterial({color:0x77acff}),
+  gravity:new THREE.MeshBasicMaterial({color:0xe28cff}),
+  enemyShot:new THREE.MeshBasicMaterial({color:0xff6b5d}),
+  bossShot:new THREE.MeshBasicMaterial({color:0xff39a9}),
+  intel:new THREE.MeshStandardMaterial({color:0xffd16d,emissive:0x9a4c09,emissiveIntensity:1.5,metalness:.4,roughness:.25})
+};
+const sphereGeo = new THREE.SphereGeometry(.12,8,7);
+const smallSphereGeo = new THREE.SphereGeometry(.08,8,7);
+const dirtGeo = new THREE.BoxGeometry(1,1,1);
+const actorShadowGeo = new THREE.CylinderGeometry(.55,.7,.035,12);
+const actorShadowMat = new THREE.MeshBasicMaterial({color:0x18201b,transparent:true,opacity:.42});
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(220,220),mat.grass);
+ground.rotation.x = -Math.PI/2; ground.position.y = -.18; scene.add(ground);
+const road = new THREE.Mesh(new THREE.PlaneGeometry(12,120),mat.road);
+road.rotation.x = -Math.PI/2; road.position.set(0,-.1,-36); scene.add(road);
+const roadLeft = new THREE.Mesh(new THREE.PlaneGeometry(1.2,120),mat.roadEdge);
+roadLeft.rotation.x=-Math.PI/2; roadLeft.position.set(-6.5,-.09,-36); scene.add(roadLeft);
+const roadRight = roadLeft.clone(); roadRight.position.x=6.5; scene.add(roadRight);
+const centerTrack = new THREE.Mesh(new THREE.PlaneGeometry(.18,112),mat.track);
+centerTrack.rotation.x=-Math.PI/2; centerTrack.position.set(0,-.085,-36); centerTrack.material=mat.road; scene.add(centerTrack);
+function box(w,h,d,material,x,y,z,parent=scene,ry=0,rz=0){
+  const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);mesh.position.set(x,y,z);mesh.rotation.y=ry;mesh.rotation.z=rz;parent.add(mesh);return mesh;
+}
+function cylinder(rt,rb,h,material,x,y,z,parent=scene,segments=8){
+  const mesh=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,segments),material);mesh.position.set(x,y,z);parent.add(mesh);return mesh;
+}
+function makeTree(x,z,scale=1){
+  const g=new THREE.Group();g.position.set(x,0,z);g.scale.setScalar(scale);scene.add(g);
+  cylinder(.22,.36,4.2,mat.trunk,0,2.1,0,g,7);
+  const f1=new THREE.Mesh(new THREE.ConeGeometry(2.0,4.5,7),mat.leaf1);f1.position.set(0,4.45,0);g.add(f1);
+  const f2=new THREE.Mesh(new THREE.ConeGeometry(1.55,3.7,7),mat.leaf2);f2.position.set(.1,6.3,.05);g.add(f2);
+  const f3=new THREE.Mesh(new THREE.IcosahedronGeometry(1.2,0),mat.leaf3);f3.scale.set(1,1.2,.95);f3.position.set(-.3,7.4,.15);g.add(f3);
+  return g;
+}
+function makeHouse(x,z,variant=0){
+  const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);
+  box(4.5,2.7,4,variant?mat.wall2:mat.wall,0,1.35,0,g);
+  box(.9,1.05,.09,mat.window,-.95,1.28,-2.05,g);
+  box(.9,1.05,.09,mat.window,1.05,1.28,-2.05,g);
+  box(1.15,2,.16,mat.roof,0,1,-2.08,g);
+  const r1=box(2.6,.22,4.8,mat.roof,-1.05,3.0,0,g,0,.46);
+  const r2=box(2.6,.22,4.8,mat.roof,1.05,3.0,0,g,0,-.46);
+  box(1.25,.1,1.15,mat.fenceDark,0,2.1,2.08,g);
+  box(5,.12,.35,mat.soil,0,.16,2.18,g);
+}
+function makeFence(){
+  for(let side of [-1,1]){
+    const x=side*7.3;
+    for(let z=9;z>-83;z-=2.25){
+      box(.17,1.45,.17,mat.fence,x,.72,z,scene,0,0);
+      if(Math.round(z)%9===0) box(.25,1.58,.22,mat.fenceDark,x,.78,z,scene);
+      box(.13,.13,2.25,mat.fence,x,.53,z-1.1,scene);
+      box(.13,.13,2.25,mat.fence,x,.98,z-1.1,scene);
+    }
+  }
+}
+makeFence();
+makeHouse(-14,-12,0);makeHouse(15,-25,1);makeHouse(-16,-44,1);makeHouse(17,0,0);
+for(let z=10;z>-79;z-=6){
+  for(let side of [-1,1]){
+    const scale=.74+Math.random()*.65;
+    makeTree(side*(10+Math.random()*14),z+(Math.random()*3-1.5),scale);
+  }
+}
+for(let i=0;i<90;i++){
+  const x=(Math.random()<.5?-1:1)*(7.8+Math.random()*9);
+  const z=12-Math.random()*95;
+  const h=.08+Math.random()*.26,w=.15+Math.random()*.55;
+  box(w,h,.12,Math.random()>.45?mat.grass2:mat.leaf1,x,h/2-.04,z,scene,Math.random()*Math.PI);
+}
+for(let i=0;i<70;i++){
+  const x=(Math.random()-.5)*9.5,z=8-Math.random()*88;
+  const pebble=box(.12+Math.random()*.5,.025,.08+Math.random()*.35,Math.random()>.5?mat.roadEdge:mat.track,x,-.055,z,scene,Math.random()*Math.PI);
+  pebble.rotation.y=Math.random()*Math.PI;
+}
+
+const player = {pos:new THREE.Vector3(0,0,9),health:100,maxHealth:100,score:0,kills:0,intel:0,shieldTime:0,overdriveTime:0,dead:false};
+const playerModel = createActor(true,false);
+scene.add(playerModel);
+const playerShadow=new THREE.Mesh(actorShadowGeo,actorShadowMat);playerShadow.position.y=.005;scene.add(playerShadow);
+const shieldBubble=new THREE.Mesh(new THREE.SphereGeometry(1.65,16,12),new THREE.MeshBasicMaterial({color:0x62eaff,wireframe:true,transparent:true,opacity:.22,depthWrite:false}));
+shieldBubble.position.y=1.1;shieldBubble.visible=false;playerModel.add(shieldBubble);
+function createActor(isHero,isBoss){
+  const g=new THREE.Group();
+  const top=isHero?mat.heroBlue:(isBoss?mat.enemyRed:mat.enemyTop);
+  const legs=isHero?mat.heroBlue:mat.enemyPants;
+  const head=new THREE.Mesh(new THREE.SphereGeometry(isBoss?.34:.29,12,10),isHero?mat.skin:mat.skin);head.position.set(0,1.92,0);g.add(head);
+  box(.68,.78,.38,top,0,1.28,0,g);
+  box(.23,.78,.26,legs,-.22,.45,0,g);
+  box(.23,.78,.26,legs,.22,.45,0,g);
+  box(.3,.16,.42,mat.gun,-.22,.1,-.07,g);
+  box(.3,.16,.42,mat.gun,.22,.1,-.07,g);
+  box(.2,.75,.24,top,-.52,1.28,0,g,0,-.12);
+  box(.2,.75,.24,top,.52,1.28,0,g,0,.12);
+  box(.13,.19,.13,isHero?mat.heroBright:mat.enemyRed,0,1.63,-.205,g);
+  if(isHero){
+    const cape=new THREE.Mesh(new THREE.BoxGeometry(.78,1.05,.1),mat.cape);cape.position.set(0,1.08,.28);cape.rotation.x=-.12;g.add(cape);
+    box(.14,.18,.42,mat.heroGold,0,1.28,-.23,g);
+  }else{
+    box(.62,.11,.07,isBoss?mat.heroGold:mat.enemyRed,0,1.65,-.23,g);
+  }
+  box(.15,.14,.5,mat.gun,.42,1.35,-.34,g,.12);
+  box(.1,.11,.63,mat.gun,.42,1.35,-.72,g,.12);
+  g.userData.legs=g.children.filter((m,i)=>i===2||i===3);
+  g.userData.isHero=isHero;return g;
+}
+
+const enemies=[];
+function addEnemy(x,z,boss=false){
+  const model=createActor(false,boss);model.position.set(x,0,z);scene.add(model);
+  const shadow=new THREE.Mesh(actorShadowGeo,actorShadowMat);shadow.position.set(x,.004,z);scene.add(shadow);
+  enemies.push({model,shadow,hp:boss?190:52,maxHp:boss?190:52,boss,dead:false,nextShot:1.2+Math.random()*1.6,moveSpeed:boss?1.35:1.65,flash:0});
+}
+addEnemy(-2.1,-8,false);addEnemy(2.5,-16,false);addEnemy(-3,-24,false);addEnemy(2.2,-32,false);addEnemy(-1.2,-39,false);addEnemy(0,-48,true);
+
+const pickups=[];
+function addIntel(x,z){
+  const g=new THREE.Group();g.position.set(x,.72,z);
+  const core=new THREE.Mesh(new THREE.OctahedronGeometry(.45,0),mat.intel);g.add(core);
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(.64,.035,6,24),new THREE.MeshBasicMaterial({color:0xffd886}));ring.rotation.x=Math.PI/2;g.add(ring);scene.add(g);
+  pickups.push({kind:'intel',model:g,taken:false,baseY:.72});
+}
+addIntel(-2,-12);addIntel(2,-27);addIntel(-1.5,-36);
+function addHealthPickup(x,z){
+  const g=new THREE.Group();g.position.set(x,.65,z);
+  box(.42,.42,.42,new THREE.MeshStandardMaterial({color:0x71ffb8,emissive:0x175535}),0,0,0,g);
+  box(.13,.48,.12,new THREE.MeshBasicMaterial({color:0xe0fff0}),0,0,0,g);
+  box(.48,.13,.12,new THREE.MeshBasicMaterial({color:0xe0fff0}),0,0,0,g);
+  scene.add(g);pickups.push({kind:'health',model:g,taken:false,baseY:.65});
+}
+
+const weapons=[
+ {name:'PULSE RIFLE',damage:24,rate:.24,capacity:30,reserve:150,speed:54,splash:0,spread:0,color:0,pellets:1},
+ {name:'NOVA CANNON',damage:10,rate:.72,capacity:18,reserve:90,speed:43,splash:0,spread:.09,color:1,pellets:6},
+ {name:'ARC LANCE',damage:47,rate:.85,capacity:12,reserve:48,speed:64,splash:0,spread:0,color:2,pellets:1,chain:true},
+ {name:'GRAVITY CORE',damage:33,rate:1.05,capacity:6,reserve:24,speed:32,splash:3.4,spread:0,color:3,pellets:1}
+];
+const ammo=weapons.map(w=>({mag:w.capacity,reserve:w.reserve}));
+let activeWeapon=0,lastShot=0,reloading=false,reloadEnds=0;
+let running=false,finished=false,firePressed=false,adRemaining=0,adBusy=false;
+let shockCooldown=0,shieldCooldown=0;
+let elapsed=0,lastFrame=performance.now();
+const keys={w:false,a:false,s:false,d:false,shift:false};
+const projectiles=[],effects=[];
+const targetPlane=new THREE.Plane(new THREE.Vector3(0,1,0),0);
+const raycaster=new THREE.Raycaster();
+const pointer=new THREE.Vector2(0,0);
+const aimPoint=new THREE.Vector3(0,0,-24);
+const clockEl=document.getElementById('mission-status');
+const toastEl=document.getElementById('toast');
+let toastTimeout=0;
+
+function showToast(message){
+  toastEl.textContent=message;toastEl.classList.add('show');
+  clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>toastEl.classList.remove('show'),1850);
+}
+function setWeapon(index){
+  activeWeapon=Math.max(0,Math.min(weapons.length-1,index));
+  document.querySelectorAll('.weapon-select').forEach(b=>b.classList.toggle('active',Number(b.dataset.weapon)===activeWeapon));
+  updateHUD();
+}
+document.querySelectorAll('.weapon-select').forEach(b=>b.addEventListener('click',()=>setWeapon(Number(b.dataset.weapon))));
+function createProjectile(pos,dir,team,weapon,damageOverride){
+  const material=team==='enemy'?(weapon==='boss'?mat.bossShot:mat.enemyShot):[mat.pulse,mat.nova,mat.arc,mat.gravity][weapon.color];
+  const mesh=new THREE.Mesh(team==='enemy'?smallSphereGeo:sphereGeo,material);
+  mesh.position.copy(pos);scene.add(mesh);
+  projectiles.push({mesh,dir:dir.clone().normalize(),team,weapon,damage:damageOverride??weapon.damage,life:team==='enemy'?3:2.8,dead:false});
+}
+function pointAim(){
+  raycaster.setFromCamera(pointer,camera);
+  const hit=raycaster.ray.intersectPlane(targetPlane,new THREE.Vector3());
+  if(hit){aimPoint.copy(hit);aimPoint.x=THREE.MathUtils.clamp(aimPoint.x,-45,45);aimPoint.z=THREE.MathUtils.clamp(aimPoint.z,-80,25);}
+}
+function fire(){
+  if(!running||finished||player.dead||reloading)return;
+  const w=weapons[activeWeapon],a=ammo[activeWeapon];
+  if(a.mag<=0){showToast('MAGAZINE EMPTY · PRESS R TO RELOAD');firePressed=false;return;}
+  if(elapsed-lastShot<w.rate)return;
+  lastShot=elapsed;a.mag--;
+  const dx=aimPoint.x-player.pos.x,dz=aimPoint.z-player.pos.z;
+  let base=new THREE.Vector3(dx,0,dz);
+  if(base.length()<1){
+    const candidate=enemies.filter(e=>!e.dead).sort((a,b)=>a.model.position.distanceTo(player.pos)-b.model.position.distanceTo(player.pos))[0];
+    if(candidate)base.set(candidate.model.position.x-player.pos.x,0,candidate.model.position.z-player.pos.z);else base.set(0,0,-1);
+  }
+  base.normalize();
+  const facing=Math.atan2(-base.x,-base.z);playerModel.rotation.y=facing;
+  for(let i=0;i<w.pellets;i++){
+    const angle=w.spread?(Math.random()-.5)*w.spread*2:0;
+    const dir=base.clone().applyAxisAngle(new THREE.Vector3(0,1,0),angle);
+    createProjectile(new THREE.Vector3(player.pos.x,1.35,player.pos.z-.5),dir,'player',w);
+  }
+  updateHUD();
+}
+function beginReload(){
+  if(!running||finished||reloading)return;
+  const a=ammo[activeWeapon],w=weapons[activeWeapon];
+  if(a.mag>=w.capacity||a.reserve<=0){showToast(a.reserve<=0?'NO RESERVE AMMO':'MAGAZINE READY');return;}
+  reloading=true;reloadEnds=elapsed+1.35;firePressed=false;showToast('RELOADING '+w.name);
+}
+function hurtPlayer(amount){
+  if(player.dead||finished)return;
+  const real=player.shieldTime>0?Math.max(1,Math.round(amount*.18)):amount;
+  player.health=Math.max(0,player.health-real);
+  if(player.health<=0){player.dead=true;endMission(false);}
+  updateHUD();
+}
+function damageEnemy(e,amount){
+  if(e.dead)return;
+  e.hp=Math.max(0,e.hp-amount);e.flash=.12;
+  player.score+=Math.round(amount);
+  if(e.hp<=0){
+    e.dead=true;e.model.visible=false;e.shadow.visible=false;
+    player.kills++;player.score+=e.boss?500:150;
+    showToast(e.boss?'VIPER LIEUTENANT DOWN':'THREAT NEUTRALISED');
+    if(Math.random()<.3)addHealthPickup(e.model.position.x,e.model.position.z);
+  }
+  updateHUD();
+}
+function explosion(x,z,radius,color=0x8af8ff){
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(1,.095,8,42),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.9}));
+  ring.rotation.x=Math.PI/2;ring.position.set(x,.12,z);ring.scale.setScalar(.15);scene.add(ring);
+  effects.push({mesh:ring,life:.55,max:.55,kind:'ring',radius});
+}
+function shockwave(){
+  if(!running||finished)return;
+  if(shockCooldown>0){showToast('SHOCKWAVE RECHARGING · '+Math.ceil(shockCooldown)+'s');return;}
+  shockCooldown=12;explosion(player.pos.x,player.pos.z,10);
+  for(const e of enemies){
+    if(!e.dead&&e.model.position.distanceTo(player.pos)<10)damageEnemy(e,e.boss?38:66);
+  }
+  showToast('SHOCKWAVE RELEASED');updateHUD();
+}
+function aegis(){
+  if(!running||finished)return;
+  if(shieldCooldown>0){showToast('AEGIS RECHARGING · '+Math.ceil(shieldCooldown)+'s');return;}
+  shieldCooldown=16;player.shieldTime=4;shieldBubble.visible=true;showToast('AEGIS ONLINE · DAMAGE REDUCED');updateHUD();
+}
+
+const abilityCatalog={
+  overdrive:{name:'OVERDRIVE',key:'F',description:'Move 70% faster for 6 seconds',cooldown:14},
+  chain:{name:'CHAIN LIGHTNING',key:'C',description:'Strike up to three nearby enemies',cooldown:18},
+  secondwind:{name:'SECOND WIND',key:'X',description:'Restore up to 40 vitality',cooldown:22}
+};
+let unlocked=[];
+try{unlocked=JSON.parse(localStorage.getItem('zeroHourAbilities')||'[]').filter(k=>abilityCatalog[k]);}catch(e){unlocked=[];}
+const abilityCooldowns={overdrive:0,chain:0,secondwind:0};
+let overdriveTime=0;
+function saveAbilities(){try{localStorage.setItem('zeroHourAbilities',JSON.stringify(unlocked));}catch(e){}}
+function useAbility(key){
+  if(!running||finished)return;
+  const a=abilityCatalog[key];if(!a||!unlocked.includes(key))return;
+  if(abilityCooldowns[key]>0){showToast(a.name+' · '+Math.ceil(abilityCooldowns[key])+'s');return;}
+  abilityCooldowns[key]=a.cooldown;
+  if(key==='overdrive'){overdriveTime=6;showToast('OVERDRIVE ACTIVE · 6 SECONDS');}
+  if(key==='secondwind'){
+    const before=player.health;player.health=Math.min(player.maxHealth,player.health+40);
+    if(player.health===before)showToast('VITALS ALREADY FULL');else showToast('SECOND WIND · +'+(player.health-before)+' VITALITY');
+  }
+  if(key==='chain'){
+    const targets=enemies.filter(e=>!e.dead&&e.model.position.distanceTo(player.pos)<22).sort((a,b)=>a.model.position.distanceTo(player.pos)-b.model.position.distanceTo(player.pos)).slice(0,3);
+    if(!targets.length){abilityCooldowns.chain=2;showToast('NO TARGET IN CHAIN RANGE');return;}
+    targets.forEach((e,i)=>{
+      const from=new THREE.Vector3(player.pos.x,1.45,player.pos.z-.3);
+      const to=new THREE.Vector3(e.model.position.x,1.4,e.model.position.z);
+      const geo=new THREE.BufferGeometry().setFromPoints([from,to]);
+      const line=new THREE.Line(geo,new THREE.LineBasicMaterial({color:0x91f4ff,transparent:true,opacity:1}));
+      scene.add(line);effects.push({mesh:line,life:.24,max:.24,kind:'line'});
+      damageEnemy(e,[65,42,28][i]);
+    });
+    showToast('CHAIN LIGHTNING · '+targets.length+' TARGETS');
+  }
+  updateBonusButtons();updateHUD();
+}
+function renderBonusButtons(){
+  const root=document.getElementById('bonus-power-list');root.innerHTML='';
+  for(const key of unlocked){
+    const a=abilityCatalog[key];if(!a)continue;
+    const b=document.createElement('button');b.className='bonus-btn';b.textContent=a.key+' · '+a.name;
+    b.title=a.description;b.addEventListener('click',()=>useAbility(key));root.appendChild(b);
+  }
+  updateBonusButtons();
+}
+function updateBonusButtons(){
+  document.querySelectorAll('#bonus-power-list button').forEach(b=>{
+    const key=Object.keys(abilityCatalog).find(k=>b.textContent.startsWith(abilityCatalog[k].key));
+    if(key&&abilityCooldowns[key]>0)b.textContent=abilityCatalog[key].key+' · '+Math.ceil(abilityCooldowns[key])+'s';
+    else if(key)b.textContent=abilityCatalog[key].key+' · '+abilityCatalog[key].name;
+  });
+  const remaining=Object.keys(abilityCatalog).filter(k=>!unlocked.includes(k)).length;
+  const b=document.getElementById('reward-btn');
+  if(adBusy)b.textContent='DEMO AD PLAYING · '+Math.ceil(adRemaining)+'s';
+  else if(!remaining){b.textContent='ALL DEMO ABILITIES UNLOCKED';b.disabled=true;document.getElementById('reward-note').textContent='All prototype abilities unlocked on this device.';}
+  else{b.textContent='▶ WATCH DEMO AD · + ABILITY';b.disabled=false;}
+}
+function startDemoAd(){
+  if(adBusy||Object.keys(abilityCatalog).every(k=>unlocked.includes(k)))return;
+  adBusy=true;adRemaining=6;document.getElementById('reward-note').textContent='Demo playback running. Keep this panel open until it completes.';updateBonusButtons();
+  showToast('DEMO AD STARTED · REWARD ON COMPLETION');
+}
+document.getElementById('reward-btn').addEventListener('click',startDemoAd);
+
+function updateHUD(){
+  document.getElementById('health-value').textContent=Math.ceil(player.health)+' / '+player.maxHealth;
+  document.getElementById('health-fill').style.width=(player.health/player.maxHealth*100)+'%';
+  document.getElementById('shield-value').textContent=player.shieldTime>0?player.shieldTime.toFixed(1)+'s':(shieldCooldown>0?Math.ceil(shieldCooldown)+'s':'READY');
+  document.getElementById('shield-fill').style.width=(player.shieldTime>0?100:Math.max(0,100-shieldCooldown/16*100))+'%';
+  document.getElementById('kill-count').textContent=player.kills;
+  document.getElementById('intel-count').textContent=player.intel+' / 3';
+  document.getElementById('score-value').textContent=String(player.score).padStart(4,'0');
+  const a=ammo[activeWeapon];document.getElementById('ammo-value').textContent=a.mag+' / '+a.reserve;
+  document.getElementById('objective-text').innerHTML='Neutralise gang: <b>'+player.kills+' / 6</b><br>Recover intel: <b>'+player.intel+' / 3</b><br>Reach extraction after both are complete.';
+  const boss=enemies.find(e=>e.boss);
+  if(boss&&!boss.dead){
+    document.getElementById('boss-card').classList.add('active');
+    document.getElementById('boss-value').textContent=Math.ceil(boss.hp)+' HP';
+    document.getElementById('boss-fill').style.width=(boss.hp/boss.maxHp*100)+'%';
+  }else document.getElementById('boss-card').classList.remove('active');
+  clockEl.textContent=finished?'MISSION REPORT':(running?'COMBAT LIVE · STORY 01':'MISSION STANDBY');
+}
+function endMission(success){
+  if(finished)return;finished=true;running=false;firePressed=false;
+  document.getElementById('finish-kicker').textContent=success?'SETTLEMENT SECURED':'GUARDIAN DOWN';
+  document.getElementById('finish-title').textContent=success?'MISSION COMPLETE':'MISSION FAILED';
+  document.getElementById('finish-copy').textContent=success?'The road is open, the intelligence is recovered, and the Black Viper lieutenant can no longer hold the settlement. Story One is complete.':'The Black Viper gang still controls the road. Refit your loadout, use your powers, and try another approach.';
+  document.getElementById('finish-kills').textContent=player.kills+' / 6';
+  document.getElementById('finish-intel').textContent=player.intel+' / 3';
+  document.getElementById('finish-score').textContent=String(player.score).padStart(4,'0');
+  document.getElementById('finish-layer').classList.remove('hidden');updateHUD();
+}
+document.getElementById('start-btn').addEventListener('click',()=>{
+  document.getElementById('intro-layer').classList.add('hidden');running=true;showToast('MISSION ACTIVE · KEEP THE ROAD CLEAR');updateHUD();
+});
+document.getElementById('restart-btn').addEventListener('click',()=>location.reload());
+document.getElementById('shockwave-btn').addEventListener('click',shockwave);
+document.getElementById('shield-btn').addEventListener('click',aegis);
+document.getElementById('reload-btn').addEventListener('click',beginReload);
+document.getElementById('touch-shock').addEventListener('click',shockwave);
+document.getElementById('touch-shield').addEventListener('click',aegis);
+document.getElementById('touch-reload').addEventListener('click',beginReload);
+document.getElementById('touch-fire').addEventListener('pointerdown',e=>{e.preventDefault();firePressed=true;});
+document.getElementById('touch-fire').addEventListener('pointerup',()=>firePressed=false);
+document.getElementById('touch-fire').addEventListener('pointerleave',()=>firePressed=false);
+document.querySelectorAll('[data-move]').forEach(b=>{
+  const k=b.dataset.move;
+  b.addEventListener('pointerdown',e=>{e.preventDefault();keys[k]=true;b.setPointerCapture?.(e.pointerId);});
+  const release=()=>keys[k]=false;
+  b.addEventListener('pointerup',release);b.addEventListener('pointercancel',release);b.addEventListener('pointerleave',release);
+});
+window.addEventListener('keydown',e=>{
+  const k=e.key.toLowerCase();
+  if(['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright',' ','shift'].includes(k))e.preventDefault();
+  if(k==='w'||k==='arrowup')keys.w=true;if(k==='s'||k==='arrowdown')keys.s=true;
+  if(k==='a'||k==='arrowleft')keys.a=true;if(k==='d'||k==='arrowright')keys.d=true;
+  if(k==='shift')keys.shift=true;
+  if(k===' ')firePressed=true;
+  if(k==='q')shockwave();if(k==='e')aegis();if(k==='r')beginReload();
+  if(k>='1'&&k<='4')setWeapon(Number(k)-1);
+  if(k==='f')useAbility('overdrive');if(k==='c')useAbility('chain');if(k==='x')useAbility('secondwind');
+});
+window.addEventListener('keyup',e=>{
+  const k=e.key.toLowerCase();
+  if(k==='w'||k==='arrowup')keys.w=false;if(k==='s'||k==='arrowdown')keys.s=false;
+  if(k==='a'||k==='arrowleft')keys.a=false;if(k==='d'||k==='arrowright')keys.d=false;
+  if(k==='shift')keys.shift=false;if(k===' ')firePressed=false;
+});
+canvas.addEventListener('pointermove',e=>{
+  pointer.x=(e.clientX/window.innerWidth)*2-1;
+  pointer.y=-(e.clientY/window.innerHeight)*2+1;
+  const cross=document.getElementById('crosshair');cross.style.left=e.clientX+'px';cross.style.top=e.clientY+'px';
+});
+canvas.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button!==0)return;firePressed=true;});
+window.addEventListener('pointerup',()=>firePressed=false);
+window.addEventListener('blur',()=>{for(const k of Object.keys(keys))keys[k]=false;firePressed=false;});
+
+function updateWorld(dt){
+  if(!running||finished)return;
+  elapsed+=dt;
+  shockCooldown=Math.max(0,shockCooldown-dt);shieldCooldown=Math.max(0,shieldCooldown-dt);
+  if(player.shieldTime>0){player.shieldTime=Math.max(0,player.shieldTime-dt);shieldBubble.visible=player.shieldTime>0;}
+  if(overdriveTime>0)overdriveTime=Math.max(0,overdriveTime-dt);
+  for(const key of Object.keys(abilityCooldowns))abilityCooldowns[key]=Math.max(0,abilityCooldowns[key]-dt);
+  if(adBusy){
+    adRemaining-=dt;
+    if(adRemaining<=0){
+      adBusy=false;const next=Object.keys(abilityCatalog).find(k=>!unlocked.includes(k));
+      if(next){unlocked.push(next);saveAbilities();renderBonusButtons();showToast('ABILITY UNLOCKED · '+abilityCatalog[next].name);document.getElementById('reward-note').textContent='Demo reward delivered locally. Real ad SDK not connected.';}
+      updateBonusButtons();
+    }else updateBonusButtons();
+  }
+  if(reloading&&elapsed>=reloadEnds){
+    const a=ammo[activeWeapon],w=weapons[activeWeapon],need=w.capacity-a.mag,take=Math.min(need,a.reserve);
+    a.mag+=take;a.reserve-=take;reloading=false;showToast('RELOAD COMPLETE');
+  }
+  const move=new THREE.Vector3((keys.d?1:0)-(keys.a?1:0),0,(keys.s?1:0)-(keys.w?1:0));
+  if(move.lengthSq()>0){
+    move.normalize();let speed=overdriveTime>0?9.2:5.4;if(keys.shift)speed*=1.35;
+    player.pos.addScaledVector(move,speed*dt);
+    player.pos.x=THREE.MathUtils.clamp(player.pos.x,-5.3,5.3);
+    player.pos.z=THREE.MathUtils.clamp(player.pos.z,-56,13);
+    playerModel.rotation.y=Math.atan2(-move.x,-move.z);
+    const walk=Math.sin(elapsed*12)*.22;
+    if(playerModel.userData.legs.length===2){playerModel.userData.legs[0].rotation.x=walk;playerModel.userData.legs[1].rotation.x=-walk;}
+    playerModel.position.copy(player.pos);playerShadow.position.set(player.pos.x,.004,player.pos.z);
+  }
+  pointAim();
+  const desiredCamera=new THREE.Vector3(player.pos.x,player.pos.y+6.4,player.pos.z+10.6);
+  camera.position.lerp(desiredCamera,Math.min(1,dt*4.5));
+  camera.lookAt(player.pos.x,1.15,player.pos.z-4.5);
+  if(firePressed&&elapsed-lastShot>=weapons[activeWeapon].rate)fire();
+
+  for(const e of enemies){
+    if(e.dead)continue;
+    e.nextShot-=dt;
+    const dx=player.pos.x-e.model.position.x,dz=player.pos.z-e.model.position.z;
+    const dist=Math.sqrt(dx*dx+dz*dz);
+    e.model.rotation.y=Math.atan2(-dx,-dz);
+    if(dist>4.4){
+      const factor=e.boss?1.05:1;
+      e.model.position.x+=dx/(dist||1)*e.moveSpeed*dt*factor;
+      e.model.position.z+=dz/(dist||1)*e.moveSpeed*dt*factor;
+      e.shadow.position.set(e.model.position.x,.004,e.model.position.z);
+    }
+    if(dist<21&&e.nextShot<=0){
+      const v=new THREE.Vector3(dx,0,dz).normalize();
+      const origin=new THREE.Vector3(e.model.position.x,1.3,e.model.position.z-.25);
+      createProjectile(origin,v,'enemy',e.boss?'boss':'regular',e.boss?12:7);
+      e.nextShot=e.boss?1.05:1.65+Math.random()*.55;
+    }
+  }
+  for(const p of projectiles){
+    if(p.dead)continue;
+    p.mesh.position.addScaledVector(p.dir,(p.team==='enemy'?(p.weapon==='boss'?22:19):weapons[p.weapon.color].speed)*dt);
+    p.life-=dt;
+    if(p.team==='player'){
+      for(const e of enemies){
+        if(e.dead)continue;
+        const target=new THREE.Vector3(e.model.position.x,1.25,e.model.position.z);
+        if(p.mesh.position.distanceTo(target)<(e.boss?1.25:1.05)){
+          damageEnemy(e,p.damage);
+          if(p.weapon.splash>0){
+            explosion(e.model.position.x,e.model.position.z,p.weapon.splash,0xd98aff);
+            for(const other of enemies)if(!other.dead&&other!==e&&other.model.position.distanceTo(e.model.position)<p.weapon.splash)damageEnemy(other,Math.max(10,p.damage*.6));
+          }
+          if(p.weapon.chain){
+            const other=enemies.filter(o=>!o.dead&&o!==e&&o.model.position.distanceTo(e.model.position)<10).sort((a,b)=>a.model.position.distanceTo(e.model.position)-b.model.position.distanceTo(e.model.position))[0];
+            if(other){damageEnemy(other,24);const geo=new THREE.BufferGeometry().setFromPoints([target,new THREE.Vector3(other.model.position.x,1.4,other.model.position.z)]);const line=new THREE.Line(geo,new THREE.LineBasicMaterial({color:0x87bdff}));scene.add(line);effects.push({mesh:line,life:.16,max:.16,kind:'line'});}
+          }
+          p.dead=true;break;
+        }
+      }
+    }else if(p.mesh.position.distanceTo(new THREE.Vector3(player.pos.x,1.2,player.pos.z))<1.05){
+      hurtPlayer(p.damage);p.dead=true;
+    }
+    if(p.life<=0||Math.abs(p.mesh.position.x)>70||p.mesh.position.z<-100||p.mesh.position.z>35)p.dead=true;
+  }
+  for(let i=projectiles.length-1;i>=0;i--)if(projectiles[i].dead){scene.remove(projectiles[i].mesh);projectiles.splice(i,1);}
+  for(const fx of effects){
+    fx.life-=dt;
+    if(fx.kind==='ring'){const k=1+(1-fx.life/fx.max)*9;fx.mesh.scale.set(k,k,k);fx.mesh.material.opacity=Math.max(0,fx.life/fx.max);}
+    else if(fx.kind==='line')fx.mesh.material.opacity=Math.max(0,fx.life/fx.max);
+  }
+  for(let i=effects.length-1;i>=0;i--)if(effects[i].life<=0){scene.remove(effects[i].mesh);effects[i].mesh.geometry.dispose();if(effects[i].mesh.material)effects[i].mesh.material.dispose();effects.splice(i,1);}
+  for(const item of pickups){
+    if(item.taken)continue;
+    item.model.position.y=item.baseY+Math.sin(elapsed*2.2)*.14;item.model.rotation.y+=dt*.8;
+    if(item.model.position.distanceTo(new THREE.Vector3(player.pos.x,.7,player.pos.z))<1.55){
+      item.taken=true;scene.remove(item.model);
+      if(item.kind==='intel'){player.intel++;player.score+=250;showToast('INTEL CACHE RECOVERED · +250');}
+      else{const before=player.health;player.health=Math.min(player.maxHealth,player.health+30);showToast('SUPPLY CELL · +'+(player.health-before)+' VITALITY');}
+      updateHUD();
+    }
+  }
+  updateBonusButtons();
+  const allDown=enemies.every(e=>e.dead);
+  if(allDown&&player.intel>=3&&player.pos.z<-51){endMission(true);return;}
+  if(elapsed%0.25<dt)updateHUD();
+}
+
+function animate(now){
+  requestAnimationFrame(animate);
+  const dt=Math.min(.04,Math.max(0,(now-lastFrame)/1000));lastFrame=now;
+  updateWorld(dt);
+  renderer.render(scene,camera);
+}
+function resize(){
+  camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth,window.innerHeight);
+}
+window.addEventListener('resize',resize);
+playerModel.position.copy(player.pos);playerShadow.position.set(player.pos.x,.004,player.pos.z);
+camera.lookAt(0,1,-4.5);
+renderBonusButtons();updateHUD();animate(performance.now());
+</script>
+</body>
+</html>
