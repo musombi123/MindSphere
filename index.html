@@ -669,14 +669,14 @@ function updateHUD(){
     document.getElementById('start-btn').textContent='DEPLOY TO NZOIA CROSSING ↗';
     document.getElementById('mission-status').textContent='CHAPTER 02 · NZOIA ANOMALY';
     document.getElementById('intel-count').textContent=player.rescued+' / 3';
-    document.querySelector('#intel-count').previousElementSibling.textContent='CIVILIANS';
+    document.getElementById('intel-count').parentElement.querySelector('span').textContent='CIVILIANS';
   }
   document.getElementById('health-fill').style.width=(player.health/player.maxHealth*100)+'%';
   document.getElementById('shield-value').textContent=player.shieldTime>0?player.shieldTime.toFixed(1)+'s':(shieldCooldown>0?Math.ceil(shieldCooldown)+'s':'READY');
   document.getElementById('shield-fill').style.width=(player.shieldTime>0?100:Math.max(0,100-shieldCooldown/16*100))+'%';
   document.getElementById('kill-count').textContent=player.kills;
   document.getElementById('intel-count').textContent=chapter===2?player.rescued+' / 3':player.intel+' / 3';
-  if(chapter===2)document.querySelector('#intel-count').previousElementSibling.textContent='CIVILIANS';
+  if(chapter===2)document.getElementById('intel-count').parentElement.querySelector('span').textContent='CIVILIANS';
   document.getElementById('score-value').textContent=String(player.score).padStart(4,'0');
   const a=ammo[activeWeapon];document.getElementById('ammo-value').textContent=a.mag+' / '+a.reserve;
   document.getElementById('objective-text').innerHTML=chapter===2
