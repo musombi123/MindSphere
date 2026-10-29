@@ -81,7 +81,7 @@
     <p class="story-copy" id="intro-copy">The blackout lasted forty-three seconds. Across Bungoma, solar pumps started in reverse, radios broadcast tomorrow’s weather, and a voice called for help seventeen minutes before anyone sent it. Now the Black Viper mercenaries control a red-earth road beneath the shadow of Mount Elgon. You are Amani Wekesa, callsign ZERO — a rescue engineer wearing an experimental Aegis suit. Your mission is to recover three glowing signal fragments before the crew reaches the old relay above Sang’alo.</p>
     <div class="story-grid" id="intro-grid"><div><b>01 / SURVIVE</b><small>Stop the raiders and their commander, Kito.</small></div><div><b>02 / LISTEN</b><small>Recover three Echo Shards. They contain messages from futures that never happened.</small></div><div><b>03 / CHOOSE</b><small>Decide whether to trust the voice or sever the signal.</small></div></div>
     <button class="deploy-btn" id="start-btn">BEGIN CHAPTER 01 ↗</button>
-    <div class="story-foot">DESKTOP: WASD / mouse / click / Q E R · MOBILE: on-screen controls · This is speculative fiction set around real Bungoma landscapes.</div>
+    <div class="story-foot">DESKTOP: WASD / mouse / click / Q E R G · F/C/X abilities · MOBILE: on-screen controls · Fiction set around real Bungoma landscapes.</div>
   </div>
 </div>
 <div class="screen-layer hidden comms-layer" id="comms-layer" role="dialog" aria-modal="true" aria-labelledby="comms-title">
@@ -287,7 +287,7 @@ if(chapter===1){
 }else if(chapter===2){
   addEnemy(-3.5,-12,false,'gangster');addEnemy(3.2,-23,false,'thief');addEnemy(-2.8,-34,false,'gangster');addEnemy(2.5,-43,false,'thief');
 }else{
-  addEnemy(-3.6,-11,false,'echo');addEnemy(3.4,-19,false,'echo');addEnemy(-2.7,-28,false,'thief');addEnemy(3.0,-37,false,'echo');addEnemy(0,-45,false,'echo');
+  addEnemy(-3.6,-11,false,'echo');addEnemy(3.4,-19,false,'echo');addEnemy(-2.7,-28,false,'echo');addEnemy(3.0,-37,false,'echo');addEnemy(0,-45,false,'echo');
 }
 const pickups=[];
 function addIntel(x,z){
