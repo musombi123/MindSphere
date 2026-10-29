@@ -1,16 +1,8 @@
 name: Build Project Zero Hour Android APK
 
+# Manual-only by design: story/game commits must not start APK builds automatically.
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - 'index.html'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'vite.config.js'
-      - 'capacitor.config.json'
-      - '.github/workflows/build-android-apk.yml'
 
 permissions:
   contents: read
