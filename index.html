@@ -877,60 +877,81 @@ document.getElementById('reward-btn').addEventListener('click',startDemoAd);
 
 function updateHUD(){
   document.getElementById('health-value').textContent=Math.ceil(player.health)+' / '+player.maxHealth;
-  document.getElementById('intro-kicker').textContent=chapter===2?'Bungoma County, Kenya · Year 2097 · Episode 02 / 05':'Bungoma County, Kenya · Year 2097 · Episode 01 / 05';
+  document.getElementById('intro-kicker').textContent='Bungoma County, Kenya · Year 2097 · Episode '+String(chapter).padStart(2,'0')+' / 05';
+  const episodeLabel=document.getElementById('episode-label');
+  if(episodeLabel)episodeLabel.textContent='STORY MODE / EPISODE '+String(chapter).padStart(2,'0');
   if(chapter===2){
     document.getElementById('intro-title').innerHTML='NZOIA HAS NO<br><em>SHADOW</em>';
     document.getElementById('intro-copy').textContent='The warning has come true. At the Nzoia crossing, the river is flowing upstream and reflecting a sky that is not overhead. Three civilians are trapped near the bridge, while two temporal anchors keep the impossible current locked in place. Amani Wekesa — callsign ZERO — must rescue the survivors, disable the anchors and stop the Conductor’s Echo units before the anomaly spreads toward Webuye.';
     document.getElementById('intro-grid').innerHTML='<div><b>01 / RESCUE</b><small>Find and evacuate three civilians trapped near the silver river.</small></div><div><b>02 / DISRUPT</b><small>Disable both temporal anchors sustaining the false current.</small></div><div><b>03 / ESCAPE</b><small>Stop the Echo units and reach the far-side relay.</small></div>';
     document.getElementById('start-btn').textContent='DEPLOY TO NZOIA CROSSING ↗';
     document.getElementById('mission-status').textContent='CHAPTER 02 · NZOIA ANOMALY';
-    document.getElementById('intel-count').textContent=player.rescued+' / 3';
-    document.getElementById('intel-count').parentElement.querySelector('span').textContent='CIVILIANS';
+  }else if(chapter===3){
+    document.getElementById('intro-title').innerHTML='THE COUNTY THAT<br><em>NEVER WAS</em>';
+    document.getElementById('intro-copy').textContent='Enter a phase duplicate of Bungoma assembled from outcomes MILELE discarded. Homes and roads exist here that never existed in the real county, and Echo figures carry memories of lives that never happened. Preserve three memory echoes, seal two phase seams, stop five Echo units, then choose whether to preserve the warning or stabilise the chamber.';
+    document.getElementById('intro-grid').innerHTML='<div><b>01 / REMEMBER</b><small>Preserve three memory echoes and recover the Nine-Minute War warning.</small></div><div><b>02 / SEAL</b><small>Interact with both phase seams to reduce reality overlap.</small></div><div><b>03 / DECIDE</b><small>Stop five Echo units and choose what survives inside the chamber.</small></div>';
+    document.getElementById('start-btn').textContent='ENTER THE PHASE CHAMBER ↗';
+    document.getElementById('mission-status').textContent='CHAPTER 03 · PHASE DUPLICATE';
   }
   document.getElementById('health-fill').style.width=(player.health/player.maxHealth*100)+'%';
   document.getElementById('shield-value').textContent=player.shieldTime>0?player.shieldTime.toFixed(1)+'s':(shieldCooldown>0?Math.ceil(shieldCooldown)+'s':'READY');
   document.getElementById('shield-fill').style.width=(player.shieldTime>0?100:Math.max(0,100-shieldCooldown/16*100))+'%';
   document.getElementById('kill-count').textContent=player.kills;
+  const intelLabel=document.getElementById('intel-count').parentElement.querySelector('span');
   document.getElementById('intel-count').textContent=chapter===2?player.rescued+' / 3':player.intel+' / 3';
-  if(chapter===2)document.getElementById('intel-count').parentElement.querySelector('span').textContent='CIVILIANS';
+  intelLabel.textContent=chapter===2?'CIVILIANS':chapter===3?'MEMORY ECHOES':'INTEL CACHES';
   document.getElementById('score-value').textContent=String(player.score).padStart(4,'0');
   const a=ammo[activeWeapon];document.getElementById('ammo-value').textContent=a.mag+' / '+a.reserve;
   document.getElementById('objective-text').innerHTML=chapter===2
     ?'Rescue civilians: <b>'+player.rescued+' / 3</b><br>Temporal anchors: <b>'+player.anchors+' / 2</b><br>Echo units stopped: <b>'+player.kills+' / 4</b><br>'+(player.rescued>=3&&player.anchors>=2&&enemies.every(e=>e.dead)?'Reach the <b>Nzoia relay beacon</b>.':'Stabilise the crossing and protect the survivors.')
-    :(player.intel<3?'Recover Echo Shards: <b>'+player.intel+' / 3</b><br>':'Echo Shards secured: <b>3 / 3</b><br>')+'Black Viper raiders: <b>'+player.gangDown+' / 3</b><br>Scavengers stopped: <b>'+player.thievesStopped+' / 2</b><br>'+(enemies.find(e=>e.boss&&!e.dead)?'Defeat <b>Kito</b>.':'Commander: <b>stopped</b>.')+'<br>'+(enemies.every(e=>e.dead)&&player.intel>=3?'Reach the <b>Sang’alo relay beacon</b>.':'Trace the signal along the red road.');
+    :chapter===3
+      ?'Memory echoes: <b>'+player.intel+' / 3</b><br>Phase seams sealed: <b>'+player.anchors+' / 2</b><br>Echo units stopped: <b>'+player.kills+' / 5</b><br>'+(player.intel>=3&&player.anchors>=2&&enemies.every(e=>e.dead)?'Reach the <b>phase chamber exit</b>.':'Recover the memories, seal the seams, and stop the Echo units.')
+      :(player.intel<3?'Recover Echo Shards: <b>'+player.intel+' / 3</b><br>':'Echo Shards secured: <b>3 / 3</b><br>')+'Black Viper raiders: <b>'+player.gangDown+' / 3</b><br>Scavengers stopped: <b>'+player.thievesStopped+' / 2</b><br>'+(enemies.find(e=>e.boss&&!e.dead)?'Defeat <b>Kito</b>.':'Commander: <b>stopped</b>.')+'<br>'+(enemies.every(e=>e.dead)&&player.intel>=3?'Reach the <b>Sang’alo relay beacon</b>.':'Trace the signal along the red road.');
   const boss=enemies.find(e=>e.boss);
   if(boss&&!boss.dead){
     document.getElementById('boss-card').classList.add('active');
     document.getElementById('boss-value').textContent=Math.ceil(boss.hp)+' HP';
     document.getElementById('boss-fill').style.width=(boss.hp/boss.maxHp*100)+'%';
   }else document.getElementById('boss-card').classList.remove('active');
-  clockEl.textContent=finished?'MISSION REPORT':(!running?'MISSION STANDBY':chapter===2&&riverSurgeState.phase==='warning'?'RIVER SURGE IN '+riverSurgeState.phaseTime.toFixed(1)+'s':chapter===2&&riverSurgeState.phase==='wave'?'TEMPORAL SURGE ACTIVE':chapter===2&&riverSurgeState.phase==='stable'?'RIVER ANOMALY STABILIZED':'COMBAT LIVE · CHAPTER 0'+chapter);
+  clockEl.textContent=finished?'MISSION REPORT':(!running?'MISSION STANDBY':chapter===2&&riverSurgeState.phase==='warning'?'RIVER SURGE IN '+riverSurgeState.phaseTime.toFixed(1)+'s':chapter===2&&riverSurgeState.phase==='wave'?'TEMPORAL SURGE ACTIVE':chapter===2&&riverSurgeState.phase==='stable'?'RIVER ANOMALY STABILIZED':chapter===3?'PHASE CHAMBER · '+player.anchors+'/2 SEAMS SEALED':'COMBAT LIVE · CHAPTER 0'+chapter);
 }
 function endMission(success){
   if(finished)return;finished=true;running=false;firePressed=false;
-  document.getElementById('finish-kicker').textContent=success?(chapter===2?'CHAPTER 02 REPORT · NZOIA CROSSING':'CHAPTER 01 REPORT · BUNGOMA COUNTY'):'TEMPORAL ECHO · RUN INTERRUPTED';
-  document.getElementById('finish-title').textContent=success?(chapter===2?'CHAPTER 02 COMPLETE':'CHAPTER 01 COMPLETE'):'SIGNAL LOST';
-  document.getElementById('finish-copy').textContent=success?(chapter===2?'The survivors are safe, both anchors are disabled, and the Echo units are silent. The river has resumed its proper direction — but the next signal is already moving toward Webuye.':'At the Sang’alo beacon, the signal recognises ZERO. The next warning comes from the Nzoia River — and it is travelling upstream.'):'The world folds into static. The Engine records another possible failure, but your suit keeps the knowledge and upgrades earned in this timeline. Start again; the signal has changed.';
-  document.getElementById('finish-kills').textContent=player.kills+' / '+(chapter===2?4:6);
+  const chapterName=chapter===3?'THE COUNTY THAT NEVER WAS':chapter===2?'NZOIA CROSSING':'THE RED ROAD';
+  document.getElementById('finish-kicker').textContent=success?'CHAPTER 0'+chapter+' REPORT · '+chapterName:'TEMPORAL ECHO · RUN INTERRUPTED';
+  document.getElementById('finish-title').textContent=success?'CHAPTER 0'+chapter+' COMPLETE':'SIGNAL LOST';
+  const chapter3Choice=(()=>{try{return localStorage.getItem('zeroHourChapter3Choice')||'';}catch(e){return '';}})();
+  const copy1='At the Sang’alo beacon, the signal recognises ZERO. The next warning comes from the Nzoia River — and it is travelling upstream.';
+  const copy2='The survivors are safe, both anchors are disabled, and the Echo units are silent. The river has resumed its proper direction — but the next signal is already moving toward Webuye.';
+  const copy3=chapter3Choice==='preserve'
+    ?'ZERO preserves all three memory cores and transmits the Nine-Minute War warning. The patterns inside the Aegis buffer flicker as the chamber closes. The real county has been warned, but a thin seam may have followed the signal across. Next objective: prepare for the Nine-Minute War.'
+    :'ZERO stabilises the chamber and erases the retained memory patterns. The duplicate folds inward and stops spreading, but the warning about the Nine-Minute War is lost with the lives that existed only here. The Conductor still has the real-world initiative.';
+  document.getElementById('finish-copy').textContent=success?(chapter===3?copy3:(chapter===2?copy2:copy1)):'The world folds into static. The Engine records another possible failure, but your suit keeps the knowledge and upgrades earned in this timeline. Start again; the signal has changed.';
+  document.getElementById('finish-kills').textContent=player.kills+' / '+(chapter===3?5:(chapter===2?4:6));
   document.getElementById('finish-intel').textContent=chapter===2?player.rescued+' / 3':player.intel+' / 3';
-  document.getElementById('finish-kills-label').textContent=chapter===2?'Echo units stopped':'Threats stopped';
-  document.getElementById('finish-intel-label').textContent=chapter===2?'Civilians rescued':'Echo Shards secured';
-  document.getElementById('finish-anchors').textContent=chapter===2?player.anchors+' / 2':(signalChoice==='trust'?'TRUST':signalChoice==='sever'?'SEVER':'NONE');
-  document.getElementById('finish-anchors-label').textContent=chapter===2?'Anchors disabled':'Signal choice';
+  document.getElementById('finish-kills-label').textContent=chapter===3?'Echo units stopped':chapter===2?'Echo units stopped':'Threats stopped';
+  document.getElementById('finish-intel-label').textContent=chapter===3?'Memory echoes preserved':chapter===2?'Civilians rescued':'Echo Shards secured';
+  document.getElementById('finish-anchors').textContent=chapter>=2?player.anchors+' / 2':(signalChoice==='trust'?'TRUST':signalChoice==='sever'?'SEVER':'NONE');
+  document.getElementById('finish-anchors-label').textContent=chapter===3?'Phase seams sealed':chapter===2?'Anchors disabled':'Signal choice';
   document.getElementById('finish-score').textContent=String(player.score).padStart(4,'0');
-  document.getElementById('restart-btn').textContent=success&&chapter===1?'CONTINUE TO CHAPTER 02 ↗':(chapter===2?'REPLAY CHAPTER 02 ↻':'REPLAY CHAPTER 01 ↻');
+  document.getElementById('restart-btn').textContent=success&&chapter===1?'CONTINUE TO CHAPTER 02 ↗':success&&chapter===2?'CONTINUE TO CHAPTER 03 ↗':(chapter===2?'REPLAY CHAPTER 02 ↻':chapter===3?'REPLAY CHAPTER 03 ↻':'REPLAY CHAPTER 01 ↻');
   if(success&&chapter===1){try{localStorage.setItem('zeroHourChapter1Complete','true');}catch(e){}}
   if(success&&chapter===2){try{localStorage.setItem('zeroHourChapter2Complete','true');}catch(e){}}
+  if(success&&chapter===3){try{localStorage.setItem('zeroHourChapter3Complete','true');}catch(e){}}
   document.getElementById('finish-layer').classList.remove('hidden');updateHUD();
 }
 document.getElementById('start-btn').addEventListener('click',()=>{
   document.getElementById('intro-layer').classList.add('hidden');running=true;
   const priorRuns=storyRunCount;storyRunCount=priorRuns+1;
   try{localStorage.setItem('zeroHourStoryRuns',String(storyRunCount));}catch(e){}
-  showStoryBeat(chapter===2?'chapter2Opening':(priorRuns>0?'loop':'opening'));updateHUD();
+  showStoryBeat(chapter===2?'chapter2Opening':chapter===3?'chapter3Opening':(priorRuns>0?'loop':'opening'));updateHUD();
 });
 document.getElementById('restart-btn').addEventListener('click',()=>{
-  try{localStorage.setItem('zeroHourChapter',String(finished&&chapter===1&&document.getElementById('finish-title').textContent==='CHAPTER 01 COMPLETE'?2:chapter));}catch(e){}
+  try{
+    const completed=document.getElementById('finish-title').textContent.includes('COMPLETE');
+    const nextChapter=completed?Math.min(3,chapter+1):chapter;
+    localStorage.setItem('zeroHourChapter',String(nextChapter));
+  }catch(e){}
   location.reload();
 });
 document.getElementById('shockwave-btn').addEventListener('click',shockwave);
@@ -1087,9 +1108,10 @@ function updateWorld(dt){
   updateInteractionUI();
   updateBonusButtons();
   const allDown=enemies.every(e=>e.dead);
-  const objectivesComplete=chapter===2?(player.rescued>=3&&player.anchors>=2):(player.intel>=3);
+  const objectivesComplete=chapter===2?(player.rescued>=3&&player.anchors>=2):chapter===3?(player.intel>=3&&player.anchors>=2):(player.intel>=3);
   if(!narrativeOpen&&allDown&&objectivesComplete&&player.pos.z<-51){
     if(chapter===2){showStoryBeat('riverEnd');return;}
+    if(chapter===3){showStoryBeat('chapter3End');return;}
     endMission(true);return;
   }
   if(elapsed%0.25<dt)updateHUD();
