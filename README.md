@@ -79,7 +79,7 @@ When you deliberately choose to test a native build later, the workflow packages
 - [x] Replay dialogue recognises past attempts and the stored choice
 - [x] Illuminated Sang’alo relay beacon and Chapter 01 cliffhanger
 - [x] Chapter 02 Nzoia crossing with silver river, raised bridge, animated anomaly, three civilian rescues, two temporal anchors, and four Echo units
-- [x] Chapter 01 success transitions to Chapter 02; Chapter 02 ending carries the Trust/Sever signal choice into its dialogue
+- [x] Chapter 01 success transitions to Chapter 02; the Trust/Sever choice changes Chapter 02 enemy tracking versus suit health and alters the finale dialogue
 - [x] Local Vite build configured for bundled Three.js
 - [ ] Chapters 03–05 playable missions and deeper cross-chapter choice consequences
 - [ ] Character animation, richer environment assets, voice/music, and sound design
