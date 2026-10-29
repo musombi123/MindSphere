@@ -18,7 +18,7 @@
 .screen-layer{position:fixed;z-index:10;inset:0;display:flex;align-items:center;justify-content:center;padding:22px;background:radial-gradient(ellipse at 50% 40%,rgba(7,16,22,.44),rgba(3,8,12,.82));backdrop-filter:blur(4px)}.screen-layer.hidden{display:none}.story-card{width:min(600px,100%);padding:clamp(22px,5vw,42px);background:linear-gradient(145deg,rgba(13,26,33,.96),rgba(5,11,15,.97));border:1px solid #8be8f74b;border-radius:18px;box-shadow:0 30px 100px #0009;position:relative;overflow:hidden}.story-card:before{content:"";position:absolute;right:-80px;top:-100px;width:260px;height:260px;border:1px solid #7ff0ff20;border-radius:50%;box-shadow:0 0 0 30px #7ff0ff08,0 0 0 60px #7ff0ff05;pointer-events:none}.story-kicker{font-weight:950;font-size:10px;letter-spacing:.24em;color:var(--cyan);text-transform:uppercase}.story-card h1{font-size:clamp(32px,7vw,54px);letter-spacing:-.05em;line-height:.98;margin:16px 0 14px;position:relative}.story-card h1 em{font-style:normal;color:var(--gold)}.story-copy{max-width:480px;color:#b9cbd1;font-size:13px;line-height:1.75}.story-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:22px 0}.story-grid div{border:1px solid #c7e6ed18;border-radius:9px;padding:10px;background:#ffffff04}.story-grid b{display:block;font-size:11px}.story-grid small{display:block;color:var(--muted);font-size:9px;margin-top:5px;line-height:1.4}.deploy-btn{width:100%;border:0;border-radius:10px;padding:15px;background:linear-gradient(110deg,#78ecff,#a4f2cc);color:#071116;font-weight:1000;font-size:11px;letter-spacing:.16em}.story-foot{font-size:9px;color:#8197a0;margin-top:13px;line-height:1.6}.finish-title{font-size:34px!important}.finish-copy{font-size:12px;line-height:1.7;color:#b8c9cf}
 .comms-layer{z-index:12}.comms-card{width:min(650px,100%)}.comms-title{font-size:clamp(27px,6vw,43px)!important;line-height:1.02!important;letter-spacing:-.04em!important}.comms-copy{font-size:13px;line-height:1.8;color:#d1e0e5;white-space:pre-line;position:relative}.comms-copy strong{color:var(--cyan)}.comms-meta{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}.comms-meta span{border:1px solid #8be8f72e;border-radius:7px;padding:7px 9px;color:#8faab4;font-size:9px;letter-spacing:.12em}.comms-actions{display:grid;gap:9px;margin-top:18px}.comms-continue{width:100%;border:0;background:linear-gradient(110deg,#78ecff,#a4f2cc);color:#071116;font-weight:1000;font-size:10px;letter-spacing:.14em;padding:14px}.comms-choices{display:grid;grid-template-columns:1fr 1fr;gap:9px}.comms-choices.hidden{display:none}.comms-choice{padding:13px;text-align:left;border-color:#82e6f24a;background:#0b2029}.comms-choice b{display:block;color:var(--cyan);font-size:10px;letter-spacing:.08em;margin-bottom:6px}.comms-choice span{display:block;color:#b2c8ce;font-size:10px;line-height:1.5;font-weight:500;letter-spacing:0}.comms-choice:last-child{border-color:#ffc66a5e}.comms-choice:last-child b{color:var(--gold)}.comms-status{font-size:9px;color:#8197a0;letter-spacing:.12em;line-height:1.6;margin-top:12px}
 @media(max-width:620px){.comms-card{padding:21px}.comms-title{font-size:29px!important}.comms-copy{font-size:11px;line-height:1.7}.comms-meta{gap:5px;margin:12px 0}.comms-meta span{font-size:8px;padding:6px}.comms-choices{grid-template-columns:1fr}.comms-choice{padding:10px}}
-#touch-controls{display:none;position:fixed;z-index:5;inset:auto 12px 13px 12px;justify-content:space-between;align-items:flex-end;pointer-events:none;gap:10px}.touch-pad,.touch-actions{pointer-events:auto;display:grid;gap:6px}.touch-pad{grid-template-columns:repeat(3,42px);grid-template-rows:repeat(2,42px)}.touch-pad button,.touch-actions button{padding:0;display:grid;place-items:center;border-radius:12px;background:#06131bd9;border-color:#8de8f14a;font-size:15px;font-weight:900;touch-action:none;backdrop-filter:blur(6px)}.touch-pad .up{grid-column:2}.touch-pad .left{grid-column:1;grid-row:2}.touch-pad .down{grid-column:2;grid-row:2}.touch-pad .right{grid-column:3;grid-row:2}.touch-actions{grid-template-columns:repeat(3,49px);grid-template-rows:repeat(2,42px)}.touch-actions button{font-size:9px;color:var(--cyan)}#touch-interact:disabled{opacity:.35}#touch-interact.ready{border-color:#83ffe2;background:#123c39;color:#aaffec}.touch-actions .fire-touch{background:#9d342bbf;color:white;border-color:#ff8888}.touch-bonus-list{display:grid;gap:5px;pointer-events:auto;align-content:end;width:48px}.touch-bonus-list button{font-size:7px;padding:7px 2px;border-radius:9px;background:#07141ad9;border-color:#ffcb7166;color:#ffe0a1;font-weight:900;line-height:1.25;touch-action:manipulation}.touch-hint{display:none}
+#surge-alert{position:fixed;z-index:8;top:calc(env(safe-area-inset-top,0px) + 76px);left:50%;transform:translateX(-50%);padding:9px 15px;border:1px solid #ff65d7a8;border-radius:999px;background:rgba(33,8,35,.9);color:#ffd8f7;font:900 11px/1.2 system-ui,sans-serif;letter-spacing:.12em;text-align:center;box-shadow:0 0 22px #ff4dcb3d;pointer-events:none;white-space:nowrap;max-width:calc(100vw - 24px)}#surge-alert[hidden]{display:none}#game-root.surge-warning{animation:surgeWarn .22s ease-in-out 3}#game-root.surge-impact{animation:surgeImpact .12s linear 4}@keyframes surgeWarn{0%,100%{filter:none}50%{filter:drop-shadow(0 0 9px #ff4fc9)}}@keyframes surgeImpact{0%,100%{transform:translate(0,0);filter:none}25%{transform:translate(-3px,1px);filter:drop-shadow(0 0 13px #ff386d)}75%{transform:translate(3px,-1px);filter:drop-shadow(0 0 13px #ff386d)}}@media(prefers-reduced-motion:reduce){#game-root.surge-warning,#game-root.surge-impact{animation:none}}#touch-controls{display:none;position:fixed;z-index:5;inset:auto 12px 13px 12px;justify-content:space-between;align-items:flex-end;pointer-events:none;gap:10px}.touch-pad,.touch-actions{pointer-events:auto;display:grid;gap:6px}.touch-pad{grid-template-columns:repeat(3,42px);grid-template-rows:repeat(2,42px)}.touch-pad button,.touch-actions button{padding:0;display:grid;place-items:center;border-radius:12px;background:#06131bd9;border-color:#8de8f14a;font-size:15px;font-weight:900;touch-action:none;backdrop-filter:blur(6px)}.touch-pad .up{grid-column:2}.touch-pad .left{grid-column:1;grid-row:2}.touch-pad .down{grid-column:2;grid-row:2}.touch-pad .right{grid-column:3;grid-row:2}.touch-actions{grid-template-columns:repeat(3,49px);grid-template-rows:repeat(2,42px)}.touch-actions button{font-size:9px;color:var(--cyan)}#touch-interact:disabled{opacity:.35}#touch-interact.ready{border-color:#83ffe2;background:#123c39;color:#aaffec}.touch-actions .fire-touch{background:#9d342bbf;color:white;border-color:#ff8888}.touch-bonus-list{display:grid;gap:5px;pointer-events:auto;align-content:end;width:48px}.touch-bonus-list button{font-size:7px;padding:7px 2px;border-radius:9px;background:#07141ad9;border-color:#ffcb7166;color:#ffe0a1;font-weight:900;line-height:1.25;touch-action:manipulation}.touch-hint{display:none}
 @media(max-width:900px){.right-panel{right:10px;top:68px;width:185px}.hud-left{top:68px;left:10px;width:220px}.hud-card{padding:9px 11px}.reward-card{padding:10px}.weapon-panel{padding:8px}.weapon-select{padding:5px}.weapon-icon{width:24px;height:24px}.bottom-dock{bottom:100px}.action-btn{min-width:84px;padding:8px;font-size:9px}}
 @media(max-width:620px){.topbar{padding:10px}.brand{font-size:10px}.brand-mark{width:30px;height:30px}.top-status{font-size:8px;padding:7px}.hud-left{top:58px;left:8px;width:calc(100vw - 16px);grid-template-columns:1fr 1fr;gap:6px}.hud-left .mission-card{display:none}.hud-card{padding:8px 10px}.health-head{font-size:10px;margin-top:5px}.bar{height:5px;margin-top:5px}.stats{margin-top:6px}.stat{padding:5px}.stat strong{font-size:13px}.stat span{font-size:7px}.right-panel{top:auto;bottom:164px;right:8px;width:160px;gap:6px}.reward-card{padding:8px 9px}.reward-card h3{font-size:10px;margin:4px 0}.reward-card p{font-size:9px;line-height:1.4;margin-bottom:7px}.reward-btn{font-size:8px;padding:8px}.reward-note{display:none}.weapon-panel{padding:7px 8px}.weapon-heading .eyebrow{font-size:8px}.weapon-select{gap:5px;margin-top:3px;padding:4px}.weapon-icon{width:22px;height:22px;font-size:11px}.weapon-text b{font-size:8px}.weapon-text small{display:none}.ammo-display{font-size:10px}.bottom-dock{display:none}#touch-controls{display:flex;inset:auto 8px 13px 8px;gap:6px}.story-card{padding:22px}.story-grid{gap:5px;margin:15px 0}.story-grid div{padding:8px}.story-grid b{font-size:10px}.story-grid small{font-size:8px}.finish-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.story-copy{font-size:11px}.story-foot{font-size:8px}.crosshair{display:none!important}.boss-card{grid-column:1 / -1}.boss-card.active{display:block}.boss-card .bar{margin-top:6px}}
 @media(max-height:520px) and (orientation:landscape){.hud-left{top:53px;width:200px}.right-panel{width:148px;top:56px}.reward-card p{display:none}.reward-card{padding:7px}.weapon-panel{padding:5px}.weapon-select{padding:3px}.bottom-dock{bottom:6px}.action-btn{padding:6px;min-width:75px}.story-card{max-width:540px;padding:18px}.story-card h1{font-size:30px;margin:8px 0}.story-grid{margin:10px 0}.story-copy{font-size:10px}.story-grid small{display:none}}
@@ -30,6 +30,7 @@
 </style>
 </head>
 <body>
+<div id="surge-alert" role="status" aria-live="polite" hidden>TEMPORAL SURGE</div>
 <div id="viewport"><canvas id="game-canvas" aria-label="Project Zero Hour 3D game"></canvas></div>
 <div class="character-loader" id="character-loader" role="status" aria-live="polite">
   <strong>AEGIS CHARACTER SYSTEM</strong>
@@ -134,6 +135,12 @@ let phaseWallMaterial=null,phaseRoofMaterial=null,phaseGlowMaterial=null,phaseRo
 const riverSurgeState={phase:'idle',nextAt:0,phaseTime:0,waveZ:-32.6,hit:false,started:false,count:0};
 let riverWaveMesh=null;
 let riverWaterMaterial=null;
+let surgeCueGroup=null;
+let surgeCueLight=null;
+let surgeCueRings=[];
+let surgeAudioContext=null;
+let surgeAudioEnabled=true;
+let surgeCuePulse=0;
 scene.fog = new THREE.Fog(0x9dbb9a, 48, 128);
 const camera = new THREE.PerspectiveCamera(62, window.innerWidth / window.innerHeight, 0.1, 150);
 camera.position.set(0, 7, 20);
@@ -299,6 +306,11 @@ if(chapter===1){
   const surgeFace=new THREE.Mesh(new THREE.BoxGeometry(7.8,1.55,.2),new THREE.MeshBasicMaterial({color:0xb9fbff,transparent:true,opacity:.82}));surgeFace.position.y=.84;riverWaveMesh.add(surgeFace);
   const surgeTop=new THREE.Mesh(new THREE.BoxGeometry(7.3,.11,.36),new THREE.MeshBasicMaterial({color:0xff9bd8,transparent:true,opacity:.95}));surgeTop.position.set(0,1.63,0);riverWaveMesh.add(surgeTop);
   const surgeBase=new THREE.Mesh(new THREE.BoxGeometry(7.6,.12,.34),new THREE.MeshBasicMaterial({color:0x79f3ff,transparent:true,opacity:.95}));surgeBase.position.set(0,.12,0);riverWaveMesh.add(surgeBase);
+  surgeCueGroup=new THREE.Group();
+  const cueRingMat=new THREE.MeshBasicMaterial({color:0xff5bcb,transparent:true,opacity:.75,wireframe:true});
+  for(let i=0;i<3;i++){const ring=new THREE.Mesh(new THREE.TorusGeometry(1.15+i*.58,.035,5,32),cueRingMat.clone());ring.rotation.x=Math.PI/2;ring.position.y=.14+i*.015;surgeCueGroup.add(ring);surgeCueRings.push(ring);}
+  surgeCueLight=new THREE.PointLight(0xff4fca,0,9,2);surgeCueLight.position.set(0,2.5,0);surgeCueGroup.add(surgeCueLight);
+  surgeCueGroup.position.set(0,worldManager.getHeightAt(0,-27)+.03,-27);surgeCueGroup.visible=false;scene.add(surgeCueGroup);
   riverWaveMesh.position.set(0,worldManager.getHeightAt(0,-27),riverSurgeState.waveZ);riverWaveMesh.visible=false;scene.add(riverWaveMesh);
   for(let i=0;i<15;i++){const ripple=new THREE.Mesh(new THREE.TorusGeometry(.3+Math.random()*.6,.018,4,16),new THREE.MeshBasicMaterial({color:i%2?0x8bf8ff:0xe6ffff,transparent:true,opacity:.62}));ripple.rotation.x=Math.PI/2;const rippleX=(Math.random()-.5)*90,rippleZ=-27+(Math.random()-.5)*6;ripple.position.set(rippleX,worldManager.getHeightAt(rippleX,rippleZ)-.07,rippleZ);scene.add(ripple);riverRipples.push({mesh:ripple,phase:Math.random()*Math.PI*2});}
   worldManager.sky.setMood('river');scene.fog=new THREE.Fog(0x628e91,30,105);
@@ -607,6 +619,52 @@ function findNearbyInteractable(){
   }
   return nearest?{item:nearest,distance:nearestDistance}:null;
 }
+function playSurgeSound(kind){
+  if(!surgeAudioEnabled)return;
+  try{
+    const AudioContextClass=window.AudioContext||window.webkitAudioContext;
+    if(!AudioContextClass)return;
+    if(!surgeAudioContext)surgeAudioContext=new AudioContextClass();
+    if(surgeAudioContext.state==='suspended')surgeAudioContext.resume();
+    const ctx=surgeAudioContext,now=ctx.currentTime;
+    const osc=ctx.createOscillator(),gain=ctx.createGain(),filter=ctx.createBiquadFilter();
+    osc.type=kind==='impact'?'sawtooth':'sine';
+    osc.frequency.setValueAtTime(kind==='warning'?390:kind==='impact'?92:180,now);
+    osc.frequency.exponentialRampToValueAtTime(kind==='warning'?760:kind==='impact'?42:95,now+(kind==='impact'?.38:.7));
+    filter.type='lowpass';filter.frequency.value=kind==='impact'?260:1400;
+    gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(kind==='impact'?.22:.095,now+.035);gain.gain.exponentialRampToValueAtTime(.0001,now+(kind==='impact'?.48:.78));
+    osc.connect(filter);filter.connect(gain);gain.connect(ctx.destination);osc.start(now);osc.stop(now+(kind==='impact'?.5:.8));
+  }catch(error){console.debug('Surge audio unavailable',error);}
+}
+function triggerSurgeFeedback(kind){
+  const root=document.getElementById('game-root')||document.body;
+  root.classList.remove('surge-warning','surge-impact');
+  void root.offsetWidth;
+  root.classList.add(kind==='impact'?'surge-impact':'surge-warning');
+  setTimeout(()=>root.classList.remove('surge-warning','surge-impact'),kind==='impact'?520:650);
+  if(kind==='warning'){
+    const cue=document.getElementById('surge-alert');
+    if(cue){cue.hidden=false;cue.textContent='TEMPORAL SURGE · '+Math.max(0,riverSurgeState.phaseTime).toFixed(1)+'s';}
+  }else{
+    const cue=document.getElementById('surge-alert');if(cue){cue.hidden=false;cue.textContent='SURGE IMPACT · STABILISE';}
+    setTimeout(()=>{const el=document.getElementById('surge-alert');if(el)el.hidden=true;},1200);
+  }
+}
+function updateSurgeCue(dt){
+  if(!surgeCueGroup)return;
+  const active=chapter===2&&running&&!finished&&riverSurgeState.started&&riverSurgeState.phase!=='stable';
+  surgeCueGroup.visible=active;
+  if(!active){if(surgeCueLight)surgeCueLight.intensity=0;return;}
+  surgeCuePulse+=dt;
+  const warning=riverSurgeState.phase==='warning',wave=riverSurgeState.phase==='wave';
+  const speed=warning?8:wave?13:2.3;
+  surgeCueGroup.position.z=wave?riverSurgeState.waveZ: -27;
+  const terrainY=worldManager.getHeightAt(0,surgeCueGroup.position.z);
+  surgeCueGroup.position.y=terrainY+.03;
+  surgeCueGroup.scale.setScalar(warning?1+Math.sin(surgeCuePulse*speed)*.16:wave?1+Math.sin(surgeCuePulse*speed)*.08:1+Math.sin(surgeCuePulse*2)*.04);
+  surgeCueRings.forEach((ring,i)=>{ring.rotation.z+=dt*(warning?1.7:wave?3.2:.45);ring.material.opacity=warning?.45+Math.abs(Math.sin(surgeCuePulse*speed+i))*.5:wave?.9:.24;});
+  if(surgeCueLight)surgeCueLight.intensity=warning?2+Math.abs(Math.sin(surgeCuePulse*speed))*3:wave?4:0.55;
+}
 function updateRiverSurge(dt){
   if(chapter!==2||!riverWaveMesh||finished)return;
   const state=riverSurgeState;
@@ -623,6 +681,7 @@ function updateRiverSurge(dt){
   if(state.phase==='idle'&&elapsed>=state.nextAt){
     state.phase='warning';state.phaseTime=signalChoice==='trust'?3.35:(signalChoice==='sever'?1.55:2.0);state.hit=false;state.count++;
     showToast(signalChoice==='trust'?'ECHO PREDICTION · RIVER SURGE IN 3 SECONDS':'RIVER SPIKE · MOVE TO THE EDGE OR RAISE AEGIS');
+    triggerSurgeFeedback('warning');playSurgeSound('warning');
   }
   if(state.phase==='warning'){
     state.phaseTime=Math.max(0,state.phaseTime-dt);
@@ -635,6 +694,7 @@ function updateRiverSurge(dt){
     riverWaveMesh.rotation.y=Math.sin(elapsed*7)*.035;
     if(!state.hit&&player.pos.z>=previousZ-.95&&player.pos.z<=state.waveZ+.95&&Math.abs(player.pos.x)<3.95){
       state.hit=true;player.riverDisruptTime=Math.max(player.riverDisruptTime,1.7);
+      triggerSurgeFeedback('impact');playSurgeSound('impact');
       const damage=signalChoice==='trust'?15:(signalChoice==='sever'?12:13);
       hurtPlayer(damage);
       showToast(player.shieldTime>0?'AEGIS ABSORBED PART OF THE SURGE · MOVEMENT DISRUPTED':'SURGE IMPACT · VITALITY LOST, MOVEMENT DISRUPTED');
@@ -986,6 +1046,7 @@ function updateWorld(dt){
   elapsed+=dt;
   player.riverDisruptTime=Math.max(0,player.riverDisruptTime-dt);
   if(chapter===2)updateRiverSurge(dt);
+  updateSurgeCue(dt);
   shockCooldown=Math.max(0,shockCooldown-dt);shieldCooldown=Math.max(0,shieldCooldown-dt);
   if(player.shieldTime>0){player.shieldTime=Math.max(0,player.shieldTime-dt);shieldBubble.visible=player.shieldTime>0;}
   if(overdriveTime>0)overdriveTime=Math.max(0,overdriveTime-dt);
