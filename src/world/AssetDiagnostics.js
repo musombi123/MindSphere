@@ -20,3 +20,5 @@ export function installWorldDebugPanel(){
 export function recordPhotoUsed(path,role,status='loading'){const d=installWorldDebugPanel();const old=d.photos.find(p=>p.path===path&&p.role===role);if(old)old.status=status;else d.photos.push({path,role,status});d.render?.();}
 export function recordModelLoaded(path){const d=installWorldDebugPanel();if(!d.modelsLoaded.some(m=>m.path===path))d.modelsLoaded.push({path,status:'loaded'});d.render?.();}
 export function registerMissingAsset(path,reason='Required file is not present in the repository'){const d=installWorldDebugPanel();if(!d.missingAssets.some(x=>x.path===path))d.missingAssets.push({path,reason});d.render?.();}
+
+export function recordWorldNote(note){const d=installWorldDebugPanel();if(!d.primitives.includes(note))d.primitives.push(note);d.render?.();}
