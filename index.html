@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#080d12">
-<meta name="description" content="Project Zero Hour — The Red Road. A browser-based 3D superhero action game prototype.">
+<meta name="description" content="Project Zero Hour — The Red Road. Offline-first 3D superhero action game for Android and web.">
 <title>Project Zero Hour — The Red Road</title>
 <style>
 :root{color-scheme:dark;--bg:#080d12;--panel:rgba(10,18,25,.88);--line:rgba(126,190,208,.22);--cyan:#77f2ff;--gold:#ffc66a;--red:#ff5d65;--muted:#9bb0b9}
@@ -43,8 +43,8 @@
 </section>
 <aside class="right-panel">
   <div class="reward-card">
-    <div class="eyebrow">Field upgrade program</div><h3>Earn a new ability</h3><p>Complete a rewarded-ad slot to unlock a random guardian ability. Demo mode only; no real ad is served yet.</p>
-    <button class="reward-btn" id="reward-btn">▶ WATCH DEMO AD · + ABILITY</button><p class="reward-note" id="reward-note">Prototype simulation · unlock is granted at completion.</p>
+    <div class="eyebrow">Field upgrade program</div><h3>Earn a new ability</h3><p>Play the full mission offline. Earn abilities through combat, or use a rewarded-ad slot online when a real ad provider is connected. Demo mode only for now.</p>
+    <button class="reward-btn" id="reward-btn">▶ WATCH DEMO AD · + ABILITY</button><p class="reward-note" id="reward-note">Offline progression is always available. Online demo only · no real ad served yet.</p>
   </div>
   <div class="weapon-panel">
     <div class="weapon-heading"><span class="eyebrow">Super arsenal</span><span class="ammo-display" id="ammo-value">30 / 150</span></div>
@@ -348,6 +348,9 @@ function damageEnemy(e,amount){
     e.dead=true;e.model.visible=false;e.shadow.visible=false;
     player.kills++;if(!e.boss&&e.role==='thief')player.thievesStopped++;else if(!e.boss)player.gangDown++;player.score+=e.boss?500:150;
     showToast(e.boss?'VIPER LIEUTENANT DOWN':(e.role==='thief'?'THIEF STOPPED':'GANG FIGHTER NEUTRALISED'));
+    if(player.kills>=2)unlockAbility('overdrive','Combat milestone');
+    if(player.kills>=4)unlockAbility('chain','Combat milestone');
+    if(player.intel>=3)unlockAbility('secondwind','Intel milestone');
     if(Math.random()<.3)addHealthPickup(e.model.position.x,e.model.position.z);
   }
   updateHUD();
@@ -382,6 +385,14 @@ try{unlocked=JSON.parse(localStorage.getItem('zeroHourAbilities')||'[]').filter(
 const abilityCooldowns={overdrive:0,chain:0,secondwind:0};
 let overdriveTime=0;
 function saveAbilities(){try{localStorage.setItem('zeroHourAbilities',JSON.stringify(unlocked));}catch(e){}}
+function unlockAbility(key,source='FIELD PROGRESSION'){
+  if(!abilityCatalog[key]||unlocked.includes(key))return false;
+  unlocked.push(key);saveAbilities();renderBonusButtons();
+  showToast('ABILITY UNLOCKED · '+abilityCatalog[key].name);
+  const note=document.getElementById('reward-note');
+  if(note)note.textContent=source+' unlocked '+abilityCatalog[key].name+'.';
+  return true;
+}
 function useAbility(key){
   if(!running||finished)return;
   const a=abilityCatalog[key];if(!a||!unlocked.includes(key))return;
@@ -428,9 +439,10 @@ function updateBonusButtons(){
   const b=document.getElementById('reward-btn');
   if(adBusy)b.textContent='DEMO AD PLAYING · '+Math.ceil(adRemaining)+'s';
   else if(!remaining){b.textContent='ALL DEMO ABILITIES UNLOCKED';b.disabled=true;document.getElementById('reward-note').textContent='All prototype abilities unlocked on this device.';}
-  else{b.textContent='▶ WATCH DEMO AD · + ABILITY';b.disabled=false;}
+  else{b.textContent=navigator.onLine?'▶ WATCH DEMO AD · + ABILITY':'OFFLINE · EARN IN MISSION';b.disabled=false;}
 }
 function startDemoAd(){
+  if(!navigator.onLine){showToast('OFFLINE MODE · EARN ABILITIES THROUGH COMBAT');document.getElementById('reward-note').textContent='You are offline. Defeat enemies and collect all three intel caches to unlock abilities.';return;}
   if(!running||finished){showToast('DEPLOY TO THE ROAD BEFORE CLAIMING FIELD UPGRADES');return;}
   if(adBusy||Object.keys(abilityCatalog).every(k=>unlocked.includes(k)))return;
   adBusy=true;adRemaining=6;document.getElementById('reward-note').textContent='Demo playback running. Keep this panel open until it completes.';updateBonusButtons();
@@ -604,7 +616,7 @@ function updateWorld(dt){
     item.model.position.y=item.baseY+Math.sin(elapsed*2.2)*.14;item.model.rotation.y+=dt*.8;
     if(item.model.position.distanceTo(new THREE.Vector3(player.pos.x,.7,player.pos.z))<1.55){
       item.taken=true;scene.remove(item.model);
-      if(item.kind==='intel'){player.intel++;player.score+=250;showToast('INTEL CACHE RECOVERED · +250');}
+      if(item.kind==='intel'){player.intel++;player.score+=250;showToast('INTEL CACHE RECOVERED · +250');if(player.intel>=3)unlockAbility('secondwind','Intel milestone');}
       else{const before=player.health;player.health=Math.min(player.maxHealth,player.health+30);showToast('SUPPLY CELL · +'+(player.health-before)+' VITALITY');}
       updateHUD();
     }
