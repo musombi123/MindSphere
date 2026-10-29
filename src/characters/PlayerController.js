@@ -11,7 +11,7 @@ const TARGET_HEIGHT_METRES = 1.88;
 const BASE_URL = import.meta.env.BASE_URL || './';
 
 function publicAssetUrl(path) {
-  const cleanPath = String(path || '').replace(/^\\/+/, '');
+  const cleanPath = String(path || '').replace(/^\/+/, '');
   return new URL(cleanPath, new URL(BASE_URL, window.location.href)).href;
 }
 
@@ -120,7 +120,7 @@ export class PlayerController {
 
   async load(url = CHARACTER_URL) {
     if (!this.root) throw new Error('PlayerController.attachRoot(root) must be called before load().');
-    const modelUrl = /^https?:\\/\\//i.test(url) ? url : publicAssetUrl(url);
+    const modelUrl = /^https?:\/\//i.test(url) ? url : publicAssetUrl(url);
     this.reportProgress(2, 'SEARCHING FOR RIGGED PLAYER MODEL');
 
     const manager = new THREE.LoadingManager();
@@ -224,7 +224,7 @@ export class PlayerController {
       const results = await Promise.all(entries.map(async ([key, value]) => {
         const definition = typeof value === 'string' ? { file: value } : value;
         if (!definition || !definition.file) return null;
-        const file = /^https?:\\/\\//i.test(definition.file)
+        const file = /^https?:\/\//i.test(definition.file)
           ? definition.file
           : publicAssetUrl(definition.file.startsWith('/')
             ? definition.file.slice(1)

@@ -10,7 +10,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          const path = id.replace(/\\\\/g, '/');
+          const path = id.replace(/\\/g, '/');
           if (path.includes('/node_modules/three/examples/jsm/')) return 'three-addons';
           if (path.includes('/node_modules/three/')) return 'three-vendor';
         },
