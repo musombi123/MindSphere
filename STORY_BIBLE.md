@@ -43,9 +43,9 @@ A strategic intelligence formed inside the MILELE Engine from its models of huma
 
 The player’s choice is stored locally. When the chapter is replayed, the opening radio dialogue acknowledges the choice and the prior attempt. This makes the repeated mission part of the science-fiction premise: the Engine records each run as another temporal echo. This is currently a local narrative mechanic, not a cloud save or a fully implemented multi-mission branch system.
 
-## Chapter 02 — Nzoia Has No Shadow (planned)
+## Chapter 02 — Nzoia Has No Shadow (playable prototype)
 
-ZERO follows a signal toward the Nzoia River and the Webuye corridor. For several minutes, water moves uphill and casts no reflection. The Conductor is using fragments of possible futures to make an evacuation warning look like an attack. The player must distinguish real danger from a predictive illusion, get trapped civilians to safety, and confront a squad whose members are responding to actions the player has not taken yet.
+ZERO follows a signal toward a fictionalised Nzoia crossing in the Webuye corridor. The playable prototype renders a silver river anomaly across the road, a raised crossing bridge, three civilian rescue markers, two rotating temporal anchors, and four Echo units. The player must collect all three survivors, disable both anchors, stop the Echo units, and reach the relay beacon. The current implementation uses proximity pickups for rescue/anchor interactions; it does not yet include a dedicated interaction button or civilian escort AI. The river and its impossible flow are fictional science-fiction events, not claims about the real Nzoia River.
 
 - **Trust the Echo:** the warning channel provides earlier clues but can leak ZERO’s location to the Conductor.
 - **Sever the Link:** the enemy cannot read ZERO’s position through the channel, but some warning cues are unavailable.
@@ -85,4 +85,4 @@ No ending should be a perfect button. The theme is not that technology is evil; 
 
 ## Current implementation versus roadmap
 
-The current game implements the Chapter 01 opening, pausing dialogue beats for all three Echo Shards, the Trust/Sever choice, Kito’s transmission, the Sang’alo beacon, a branch-specific ending, and replay acknowledgement. Chapters 02–05 above are a design roadmap. They must be implemented as separate playable missions before the game is described as a complete five-chapter story.
+The current game implements Chapter 01 and a playable prototype of Chapter 02. Chapter 01 has the Echo Shards, Trust/Sever choice, Kito transmission, Sang’alo beacon, branch-specific ending, and replay acknowledgement. Chapter 02 has the Nzoia anomaly, three rescue objectives, two anchors, four Echo units, and a distinct extraction ending. Chapters 03–05 remain a design roadmap and are not playable yet.
