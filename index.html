@@ -686,11 +686,12 @@ function updateRiverSurge(dt){
   if(state.phase==='warning'){
     state.phaseTime=Math.max(0,state.phaseTime-dt);
     if(riverWaterMaterial){riverWaterMaterial.emissiveIntensity=.55+Math.abs(Math.sin(elapsed*10))*1.65;riverWaterMaterial.opacity=.82+Math.abs(Math.sin(elapsed*10))*.13;}
-    if(state.phaseTime<=0){state.phase='wave';state.waveZ=-32.7;state.hit=false;riverWaveMesh.position.z=state.waveZ;riverWaveMesh.visible=true;showToast('TEMPORAL SURGE CROSSING THE BRIDGE · DODGE LATERALLY');}
+    if(state.phaseTime<=0){state.phase='wave';state.waveZ=-32.7;state.hit=false;riverWaveMesh.position.z=state.waveZ;riverWaveMesh.position.y=worldManager.getHeightAt(0,state.waveZ);riverWaveMesh.visible=true;showToast('TEMPORAL SURGE CROSSING THE BRIDGE · DODGE LATERALLY');}
   }else if(state.phase==='wave'){
     const previousZ=state.waveZ;
     state.waveZ+=5.15*dt;
     riverWaveMesh.position.z=state.waveZ;
+    riverWaveMesh.position.y=worldManager.getHeightAt(0,state.waveZ);
     riverWaveMesh.rotation.y=Math.sin(elapsed*7)*.035;
     if(!state.hit&&player.pos.z>=previousZ-.95&&player.pos.z<=state.waveZ+.95&&Math.abs(player.pos.x)<3.95){
       state.hit=true;player.riverDisruptTime=Math.max(player.riverDisruptTime,1.7);
