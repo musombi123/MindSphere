@@ -116,6 +116,9 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x9dbbca);
 const chapter = (()=>{try{return Number(localStorage.getItem('zeroHourChapter')||1)===2?2:1;}catch(e){return 1;}})();
 const riverRipples=[];
+const riverSurgeState={phase:'idle',nextAt:0,phaseTime:0,waveZ:-32.6,hit:false,started:false,count:0};
+let riverWaveMesh=null;
+let riverWaterMaterial=null;
 scene.fog = new THREE.Fog(0x9dbb9a, 48, 128);
 const camera = new THREE.PerspectiveCamera(62, window.innerWidth / window.innerHeight, 0.1, 150);
 camera.position.set(0, 7, 20);
@@ -239,7 +242,7 @@ for(let i=0;i<70;i++){
   pebble.rotation.y=Math.random()*Math.PI;
 }
 
-const player = {pos:new THREE.Vector3(0,0,9),health:100,maxHealth:100,score:0,kills:0,gangDown:0,thievesStopped:0,intel:0,rescued:0,anchors:0,shieldTime:0,overdriveTime:0,dead:false};
+const player = {pos:new THREE.Vector3(0,0,9),health:100,maxHealth:100,score:0,kills:0,gangDown:0,thievesStopped:0,intel:0,rescued:0,anchors:0,shieldTime:0,overdriveTime:0,riverDisruptTime:0,dead:false};
 const playerModel = createActor(true,false);
 scene.add(playerModel);
 const playerShadow=new THREE.Mesh(actorShadowGeo,actorShadowMat);playerShadow.position.y=.005;scene.add(playerShadow);
@@ -309,13 +312,19 @@ if(chapter===1){
   }
   addSurvivor(-3.8,-10,1);addSurvivor(3.8,-28,2);addSurvivor(-3.3,-41,3);
   addTemporalAnchor(2,-17,1);addTemporalAnchor(-1.8,-36,2);
-  const river=new THREE.Mesh(new THREE.PlaneGeometry(220,9),new THREE.MeshStandardMaterial({color:0x3a9eaf,metalness:.48,roughness:.22,emissive:0x073744,emissiveIntensity:.55,transparent:true,opacity:.88}));
+  riverWaterMaterial=new THREE.MeshStandardMaterial({color:0x3a9eaf,metalness:.48,roughness:.22,emissive:0x073744,emissiveIntensity:.55,transparent:true,opacity:.88});
+  const river=new THREE.Mesh(new THREE.PlaneGeometry(220,9),riverWaterMaterial);
   river.rotation.x=-Math.PI/2;river.position.set(0,-.045,-27);scene.add(river);
   const bankMat=new THREE.MeshStandardMaterial({color:0x435947,roughness:1});
   for(const z of [-31.8,-22.2]){const bank=new THREE.Mesh(new THREE.BoxGeometry(220,.18,1.1),bankMat);bank.position.set(0,-.015,z);scene.add(bank);}
   const bridge=new THREE.Mesh(new THREE.BoxGeometry(7.4,.28,10.2),new THREE.MeshStandardMaterial({color:0x6c7772,roughness:.9,metalness:.12}));bridge.position.set(0,.04,-27);scene.add(bridge);
   const bridgeRailMat=new THREE.MeshStandardMaterial({color:0x2e4349,metalness:.4,roughness:.55});
   for(const x of [-3.55,3.55]){const rail=new THREE.Mesh(new THREE.BoxGeometry(.16,.65,10),bridgeRailMat);rail.position.set(x,.43,-27);scene.add(rail);}
+  riverWaveMesh=new THREE.Group();
+  const surgeFace=new THREE.Mesh(new THREE.BoxGeometry(7.8,1.55,.2),new THREE.MeshBasicMaterial({color:0xb9fbff,transparent:true,opacity:.82}));surgeFace.position.y=.84;riverWaveMesh.add(surgeFace);
+  const surgeTop=new THREE.Mesh(new THREE.BoxGeometry(7.3,.11,.36),new THREE.MeshBasicMaterial({color:0xff9bd8,transparent:true,opacity:.95}));surgeTop.position.set(0,1.63,0);riverWaveMesh.add(surgeTop);
+  const surgeBase=new THREE.Mesh(new THREE.BoxGeometry(7.6,.12,.34),new THREE.MeshBasicMaterial({color:0x79f3ff,transparent:true,opacity:.95}));surgeBase.position.set(0,.12,0);riverWaveMesh.add(surgeBase);
+  riverWaveMesh.position.set(0,0,riverSurgeState.waveZ);riverWaveMesh.visible=false;scene.add(riverWaveMesh);
   for(let i=0;i<15;i++){const ripple=new THREE.Mesh(new THREE.TorusGeometry(.3+Math.random()*.6,.018,4,16),new THREE.MeshBasicMaterial({color:i%2?0x8bf8ff:0xe6ffff,transparent:true,opacity:.62}));ripple.rotation.x=Math.PI/2;ripple.position.set((Math.random()-.5)*90,-.025,-27+(Math.random()-.5)*6);scene.add(ripple);riverRipples.push({mesh:ripple,phase:Math.random()*Math.PI*2});}
   scene.background=new THREE.Color(0x7299a5);scene.fog=new THREE.Fog(0x628e91,30,105);
 }
@@ -514,6 +523,49 @@ function findNearbyInteractable(){
     if(distance<nearestDistance){nearest=item;nearestDistance=distance;}
   }
   return nearest?{item:nearest,distance:nearestDistance}:null;
+}
+function updateRiverSurge(dt){
+  if(chapter!==2||!riverWaveMesh||finished)return;
+  const state=riverSurgeState;
+  if(player.anchors>=2){
+    state.phase='stable';state.phaseTime=0;riverWaveMesh.visible=false;
+    if(riverWaterMaterial){riverWaterMaterial.emissiveIntensity=.18;riverWaterMaterial.opacity=.72;}
+    return;
+  }
+  if(!state.started&&player.pos.z<=-15&&player.pos.z>=-45){
+    state.started=true;state.nextAt=elapsed+2.4;
+    showToast(signalChoice==='trust'?'ECHO CHANNEL: SURGE PREDICTED AHEAD':'CURRENT INSTABILITY DETECTED · WATCH THE WATER');
+  }
+  if(!state.started)return;
+  if(state.phase==='idle'&&elapsed>=state.nextAt){
+    state.phase='warning';state.phaseTime=signalChoice==='trust'?3.35:(signalChoice==='sever'?1.55:2.0);state.hit=false;state.count++;
+    showToast(signalChoice==='trust'?'ECHO PREDICTION · RIVER SURGE IN 3 SECONDS':'RIVER SPIKE · MOVE TO THE EDGE OR RAISE AEGIS');
+  }
+  if(state.phase==='warning'){
+    state.phaseTime=Math.max(0,state.phaseTime-dt);
+    if(riverWaterMaterial){riverWaterMaterial.emissiveIntensity=.55+Math.abs(Math.sin(elapsed*10))*1.65;riverWaterMaterial.opacity=.82+Math.abs(Math.sin(elapsed*10))*.13;}
+    if(state.phaseTime<=0){state.phase='wave';state.waveZ=-32.7;state.hit=false;riverWaveMesh.position.z=state.waveZ;riverWaveMesh.visible=true;showToast('TEMPORAL SURGE CROSSING THE BRIDGE · DODGE LATERALLY');}
+  }else if(state.phase==='wave'){
+    const previousZ=state.waveZ;
+    state.waveZ+=5.15*dt;
+    riverWaveMesh.position.z=state.waveZ;
+    riverWaveMesh.rotation.y=Math.sin(elapsed*7)*.035;
+    if(!state.hit&&player.pos.z>=previousZ-.95&&player.pos.z<=state.waveZ+.95&&Math.abs(player.pos.x)<3.95){
+      state.hit=true;player.riverDisruptTime=Math.max(player.riverDisruptTime,1.7);
+      const damage=signalChoice==='trust'?15:(signalChoice==='sever'?12:13);
+      hurtPlayer(damage);
+      showToast(player.shieldTime>0?'AEGIS ABSORBED PART OF THE SURGE · MOVEMENT DISRUPTED':'SURGE IMPACT · VITALITY LOST, MOVEMENT DISRUPTED');
+    }
+    if(state.waveZ>-20.5){
+      state.phase='idle';riverWaveMesh.visible=false;
+      state.nextAt=elapsed+(player.anchors===1?13.5:9.0);
+      if(riverWaterMaterial){riverWaterMaterial.emissiveIntensity=player.anchors===1?.36:.55;riverWaterMaterial.opacity=.88;}
+      showToast(player.anchors===1?'ONE ANCHOR DISABLED · SURGES LESS FREQUENT':'TEMPORAL CURRENT STILL UNSTABLE · WATCH FOR THE NEXT SURGE');
+    }
+  }
+  if(riverWaterMaterial&&state.phase!=='warning'&&state.phase!=='wave'){
+    riverWaterMaterial.emissiveIntensity=player.anchors===1?.36:.55;riverWaterMaterial.opacity=.88;
+  }
 }
 function updateInteractionUI(){
   nearbyInteractable=findNearbyInteractable();
@@ -734,7 +786,7 @@ function updateHUD(){
     document.getElementById('boss-value').textContent=Math.ceil(boss.hp)+' HP';
     document.getElementById('boss-fill').style.width=(boss.hp/boss.maxHp*100)+'%';
   }else document.getElementById('boss-card').classList.remove('active');
-  clockEl.textContent=finished?'MISSION REPORT':(running?'COMBAT LIVE · STORY 01':'MISSION STANDBY');
+  clockEl.textContent=finished?'MISSION REPORT':(!running?'MISSION STANDBY':chapter===2&&riverSurgeState.phase==='warning'?'RIVER SURGE IN '+riverSurgeState.phaseTime.toFixed(1)+'s':chapter===2&&riverSurgeState.phase==='wave'?'TEMPORAL SURGE ACTIVE':chapter===2&&riverSurgeState.phase==='stable'?'RIVER ANOMALY STABILIZED':'COMBAT LIVE · CHAPTER 0'+chapter);
 }
 function endMission(success){
   if(finished)return;finished=true;running=false;firePressed=false;
@@ -810,6 +862,8 @@ window.addEventListener('blur',()=>{for(const k of Object.keys(keys))keys[k]=fal
 function updateWorld(dt){
   if(!running||finished||narrativeOpen)return;
   elapsed+=dt;
+  player.riverDisruptTime=Math.max(0,player.riverDisruptTime-dt);
+  if(chapter===2)updateRiverSurge(dt);
   shockCooldown=Math.max(0,shockCooldown-dt);shieldCooldown=Math.max(0,shieldCooldown-dt);
   if(player.shieldTime>0){player.shieldTime=Math.max(0,player.shieldTime-dt);shieldBubble.visible=player.shieldTime>0;}
   if(overdriveTime>0)overdriveTime=Math.max(0,overdriveTime-dt);
@@ -828,7 +882,7 @@ function updateWorld(dt){
   }
   const move=new THREE.Vector3((keys.d?1:0)-(keys.a?1:0),0,(keys.s?1:0)-(keys.w?1:0));
   if(move.lengthSq()>0){
-    move.normalize();let speed=overdriveTime>0?9.2:5.4;if(keys.shift)speed*=1.35;
+    move.normalize();let speed=overdriveTime>0?9.2:5.4;if(player.riverDisruptTime>0)speed*=.52;if(keys.shift)speed*=1.35;
     player.pos.addScaledVector(move,speed*dt);
     player.pos.x=THREE.MathUtils.clamp(player.pos.x,-5.3,5.3);
     player.pos.z=THREE.MathUtils.clamp(player.pos.z,-56,13);
@@ -860,6 +914,8 @@ function updateWorld(dt){
       const origin=new THREE.Vector3(e.model.position.x,1.3,e.model.position.z-.25);
       createProjectile(origin,v,'enemy',e.boss?'boss':'regular',e.boss?12:7);
       e.nextShot=e.boss?1.05:1.65+Math.random()*.55;
+      if(chapter===2&&signalChoice==='trust')e.nextShot*=.9;
+      else if(chapter===2&&signalChoice==='sever')e.nextShot*=1.12;
     }
   }
   if(chapter===2){for(const fx of riverRipples){if(fx.mesh.parent){fx.mesh.position.x+=Math.sin(elapsed*.7+(fx.phase||0))*dt*1.4;fx.mesh.rotation.z+=dt*.35;}}}
