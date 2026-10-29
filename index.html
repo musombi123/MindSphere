@@ -574,7 +574,7 @@ function updateInteractionUI(){
   const label=ready?(nearbyInteractable.item.kind==='survivor'?'RESCUE CIVILIAN':'DISABLE ANCHOR'):'Move near a civilian or anchor';
   desktop.disabled=!ready;mobile.disabled=!ready;
   desktop.classList.toggle('ready',ready);mobile.classList.toggle('ready',ready);
-  desktop.firstChild.textContent=ready?(nearbyInteractable.item.kind==='survivor'?'F · RESCUE':'F · DISABLE'):'F · INTERACT';
+  desktop.firstChild.textContent=ready?(nearbyInteractable.item.kind==='survivor'?'G · RESCUE':'G · DISABLE'):'G · INTERACT';
   document.getElementById('interact-label').textContent=label;
   mobile.textContent=ready?(nearbyInteractable.item.kind==='survivor'?'RESCUE':'DISABLE'):'F · INTERACT';
 }
@@ -835,7 +835,7 @@ document.querySelectorAll('[data-move]').forEach(b=>{
 window.addEventListener('keydown',e=>{
   const k=e.key.toLowerCase();
   if(['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright',' ','shift'].includes(k))e.preventDefault();
-  if(k==='f'||k==='e'){interactWithNearby();return;}
+  if(k==='g'){interactWithNearby();return;}
   if(k==='w'||k==='arrowup')keys.w=true;if(k==='s'||k==='arrowdown')keys.s=true;
   if(k==='a'||k==='arrowleft')keys.a=true;if(k==='d'||k==='arrowright')keys.d=true;
   if(k==='shift')keys.shift=true;
