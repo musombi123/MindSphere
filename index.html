@@ -362,6 +362,12 @@ try{
   storyRunCount=Number(localStorage.getItem('zeroHourStoryRuns')||0);
   signalChoice=localStorage.getItem('zeroHourSignalChoice')||'';
 }catch(e){}
+if(chapter===2&&signalChoice==='trust'){
+  player.maxHealth=110;player.health=110;
+  for(const enemy of enemies)enemy.moveSpeed*=1.15;
+}else if(chapter===2&&signalChoice==='sever'){
+  for(const enemy of enemies)enemy.moveSpeed*=.85;
+}
 
 const storyBeats={
   chapter2Opening:{
@@ -395,7 +401,9 @@ const storyBeats={
   riverEnd:{
     kicker:'CHAPTER 02 · EXTRACTION TRANSMISSION',
     title:'THE RIVER REMEMBERS YOU',
-    copy:'The final Echo unit falls. The three survivors are safe, and both temporal anchors are disabled. The water returns to its proper direction — but for one second, every reflection on the riverbank shows ZERO standing somewhere else.\n\nThe open channel whispers, “You saved them in this version.” The severed channel stays silent, until a new message appears on the Aegis display without a network connection: NEXT STOP — WEBUYE.\n\nThe Conductor has learned that you will risk a mission to save strangers. It will use that knowledge.',
+    copy:signalChoice==='trust'
+      ?'The final Echo unit falls. The three survivors are safe, and both temporal anchors are disabled. The river returns to its proper direction — but every reflection shows ZERO standing somewhere else. The open channel whispers, “You saved them in this version.” Your suit has gained a small protective buffer, but the Echo units tracked your signal more aggressively.\n\nA new message arrives: NEXT STOP — WEBUYE. The Conductor has learned that you will risk a mission to save strangers. It will use that knowledge.'
+      :'The final Echo unit falls. The three survivors are safe, and both temporal anchors are disabled. The river returns to its proper direction — but every reflection shows ZERO standing somewhere else. Your masked signal kept the Echo units from closing in as quickly, though the suit received no predictive warning.\n\nA message appears on the Aegis display without a network connection: NEXT STOP — WEBUYE. The Conductor has learned that you will risk a mission to save strangers. It will use that knowledge.',
     meta:['CIVILIANS: 3 / 3','ANCHORS: 2 / 2'],
     status:'CHAPTER 02 COMPLETE · THE SIGNAL HAS MOVED'
   },
@@ -480,6 +488,7 @@ function closeStoryBeat(){
   narrativeOpen=false;
   document.getElementById('comms-layer').classList.add('hidden');
   if(activeStoryBeat==='opening'||activeStoryBeat==='loop')showToast('MISSION ACTIVE · FOLLOW THE ECHO SHARDS');
+  if(activeStoryBeat==='chapter2Opening')showToast(signalChoice==='trust'?'ECHO CHANNEL OPEN · +10 SUIT BUFFER, ENEMIES TRACK FASTER':signalChoice==='sever'?'SIGNAL MASKED · ENEMY TRACKING REDUCED':'NO SIGNAL CHOICE · STANDARD FIELD CONDITIONS');
   if(activeStoryBeat==='boss')showToast('RELAY BEACON AUTHORIZED · CONTINUE NORTH');
   if(activeStoryBeat==='riverEnd'){showToast('NZ OIA CROSSING STABLE · REPORT TO EXTRACTION');endMission(true);}
 }
