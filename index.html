@@ -116,6 +116,7 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x9dbbca);
 const chapter = (()=>{try{const value=Number(localStorage.getItem('zeroHourChapter')||1);return [1,2,3].includes(value)?value:1;}catch(e){return 1;}})();
 const riverRipples=[];
+let phaseWallMaterial=null,phaseRoofMaterial=null,phaseGlowMaterial=null,phaseRoadMesh=null;
 const riverSurgeState={phase:'idle',nextAt:0,phaseTime:0,waveZ:-32.6,hit:false,started:false,count:0};
 let riverWaveMesh=null;
 let riverWaterMaterial=null;
@@ -353,9 +354,10 @@ if(chapter===1){
   scene.background=new THREE.Color(0x17172f);scene.fog=new THREE.Fog(0x28213e,16,86);
   hemi.color.set(0xaacaff);hemi.groundColor.set(0x2c174a);hemi.intensity=1.7;
   sun.color.set(0xa9c5ff);sun.intensity=1.35;
-  const phaseWall=new THREE.MeshBasicMaterial({color:0x91d9ff,wireframe:true,transparent:true,opacity:.28,depthWrite:false});
-  const phaseRoof=new THREE.MeshBasicMaterial({color:0xff8bd5,wireframe:true,transparent:true,opacity:.24,depthWrite:false});
-  const phaseGlow=new THREE.MeshBasicMaterial({color:0x9b7dff,transparent:true,opacity:.16,depthWrite:false,side:THREE.DoubleSide});
+  phaseWallMaterial=new THREE.MeshBasicMaterial({color:0x91d9ff,wireframe:true,transparent:true,opacity:.28,depthWrite:false});
+  phaseRoofMaterial=new THREE.MeshBasicMaterial({color:0xff8bd5,wireframe:true,transparent:true,opacity:.24,depthWrite:false});
+  phaseGlowMaterial=new THREE.MeshBasicMaterial({color:0x9b7dff,transparent:true,opacity:.16,depthWrite:false,side:THREE.DoubleSide});
+  const phaseWall=phaseWallMaterial,phaseRoof=phaseRoofMaterial,phaseGlow=phaseGlowMaterial;
   for(const site of [{x:-4.6,z:-13},{x:4.7,z:-24},{x:-4.6,z:-38},{x:4.4,z:-47}]){
     const duplicate=new THREE.Group();duplicate.position.set(site.x,0,site.z);duplicate.rotation.y=(site.x<0?-.14:.14);
     box(3.5,2.2,3.1,phaseWall,0,1.1,0,duplicate);
@@ -374,7 +376,7 @@ if(chapter===1){
     arch.position.set(x,2.9,-29);arch.rotation.y=x<0?.34:-.34;scene.add(arch);
     const column=new THREE.Mesh(new THREE.CylinderGeometry(.1,.18,5.8,7),new THREE.MeshBasicMaterial({color:0xff8ed9,transparent:true,opacity:.43,wireframe:true}));column.position.set(x,2.8,-29);scene.add(column);
   }
-  const phaseRoad=new THREE.Mesh(new THREE.PlaneGeometry(5.8,108),new THREE.MeshBasicMaterial({color:0x7e65cc,transparent:true,opacity:.11,side:THREE.DoubleSide}));phaseRoad.rotation.x=-Math.PI/2;phaseRoad.position.set(0,-.075,-36);scene.add(phaseRoad);
+  phaseRoadMesh=new THREE.Mesh(new THREE.PlaneGeometry(5.8,108),new THREE.MeshBasicMaterial({color:0x7e65cc,transparent:true,opacity:.11,side:THREE.DoubleSide}));phaseRoadMesh.rotation.x=-Math.PI/2;phaseRoadMesh.position.set(0,-.075,-36);scene.add(phaseRoadMesh);
 }
 const extractionBeacon=new THREE.Group();extractionBeacon.position.set(0,0,-53);
 const extractionRing=new THREE.Mesh(new THREE.TorusGeometry(1.15,.065,8,32),new THREE.MeshBasicMaterial({color:0x7ff6ff,transparent:true,opacity:.92}));
@@ -693,7 +695,7 @@ function updateInteractionUI(){
 }
 function interactWithNearby(){
   const target=findNearbyInteractable();
-  if(!target){showToast('MOVE CLOSER TO A CIVILIAN OR TEMPORAL ANCHOR');return;}
+  if(!target){showToast(chapter===3?'MOVE CLOSER TO A MEMORY ECHO OR PHASE SEAM':'MOVE CLOSER TO A CIVILIAN OR TEMPORAL ANCHOR');return;}
   const item=target.item;item.taken=true;scene.remove(item.model);
   if(item.kind==='survivor'){
     player.rescued++;player.score+=400;showToast('CIVILIAN RESCUED · +400');
@@ -704,8 +706,17 @@ function interactWithNearby(){
     showStoryBeat(player.intel===1?'memory1':player.intel===2?'memory2':'memory3');
   }else{
     player.anchors++;player.score+=350;
-    if(chapter===3){showToast('PHASE SEAM SEALED · +350');showStoryBeat(player.anchors===1?'phase1':'phase2');}
-    else{showToast('TEMPORAL ANCHOR DISABLED · +350');showStoryBeat(player.anchors===1?'anchor1':'anchor2');}
+    if(chapter===3){
+      if(player.anchors>=2){
+        scene.background.set(0x303746);scene.fog.color.set(0x303746);scene.fog.near=24;scene.fog.far=112;
+        if(phaseWallMaterial)phaseWallMaterial.opacity=.12;
+        if(phaseRoofMaterial)phaseRoofMaterial.opacity=.1;
+        if(phaseGlowMaterial)phaseGlowMaterial.opacity=.07;
+        if(phaseRoadMesh)phaseRoadMesh.material.opacity=.035;
+        showToast('BOTH PHASE SEAMS SEALED · CHAMBER STABILISING');
+      }else showToast('PHASE SEAM SEALED · +350');
+      showStoryBeat(player.anchors===1?'phase1':'phase2');
+    }else{showToast('TEMPORAL ANCHOR DISABLED · +350');showStoryBeat(player.anchors===1?'anchor1':'anchor2');}
   }
   updateInteractionUI();updateHUD();
 }
@@ -1053,11 +1064,12 @@ function updateWorld(dt){
       const origin=new THREE.Vector3(e.model.position.x,1.3,e.model.position.z-.25);
       createProjectile(origin,v,'enemy',e.boss?'boss':'regular',e.boss?12:7);
       e.nextShot=e.boss?1.05:1.65+Math.random()*.55;
-      if(chapter===2&&signalChoice==='trust')e.nextShot*=.9;
-      else if(chapter===2&&signalChoice==='sever')e.nextShot*=1.12;
+      if((chapter===2||chapter===3)&&signalChoice==='trust')e.nextShot*=.9;
+      else if((chapter===2||chapter===3)&&signalChoice==='sever')e.nextShot*=1.12;
     }
   }
   if(chapter===2){for(const fx of riverRipples){if(fx.mesh.parent){fx.mesh.position.x+=Math.sin(elapsed*.7+(fx.phase||0))*dt*1.4;fx.mesh.rotation.z+=dt*.35;}}}
+  else if(chapter===3){for(const fx of riverRipples){if(fx.mesh.parent&&fx.phaseShard){fx.mesh.position.y=fx.baseY+Math.sin(elapsed*1.45+fx.phase)*.34;fx.mesh.rotation.y+=dt*.55;fx.mesh.rotation.z+=dt*.22;}}}
   for(const p of projectiles){
     if(p.dead)continue;
     p.mesh.position.addScaledVector(p.dir,(p.team==='enemy'?(p.weapon==='boss'?22:19):weapons[p.weapon.color].speed)*dt);
