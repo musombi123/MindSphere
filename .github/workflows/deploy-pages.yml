@@ -22,11 +22,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out source
-        uses: actions/checkout@v5
-      - name: Enable GitHub Pages
+        uses: actions/checkout@v6
+      - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
       - name: Upload static game
         uses: actions/upload-pages-artifact@v4
         with:
