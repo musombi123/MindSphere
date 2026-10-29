@@ -50,10 +50,17 @@ export class Vegetation {
   if(!this.camera||!this.billboards.length)return;
   const dummy=new THREE.Object3D(),touched=new Set();
   for(const card of this.billboards){
-   const yaw=Math.atan2(this.camera.position.x-card.position.x,this.camera.position.z-card.position.z);
+   const dx=this.camera.position.x-card.position.x,dz=this.camera.position.z-card.position.z;
+   const distance=Math.hypot(dx,dz);
    dummy.position.copy(card.position);
-   dummy.rotation.set(0,yaw+Math.sin(elapsed*.45+card.phase)*.009,Math.sin(elapsed*1.1+card.phase)*.008);
-   dummy.scale.set(card.width,card.height,1);dummy.updateMatrix();card.mesh.setMatrixAt(card.index,dummy.matrix);touched.add(card.mesh);
+   if(distance>96){dummy.scale.set(0,0,0);}
+   else{
+    const yaw=Math.atan2(dx,dz);
+    const lod=distance>54?1.18:distance>30?1.06:1;
+    dummy.rotation.set(0,yaw+Math.sin(elapsed*.45+card.phase)*.009,Math.sin(elapsed*1.1+card.phase)*.008);
+    dummy.scale.set(card.width*lod,card.height*lod,1);
+   }
+   dummy.updateMatrix();card.mesh.setMatrixAt(card.index,dummy.matrix);touched.add(card.mesh);
   }
   for(const mesh of touched)mesh.instanceMatrix.needsUpdate=true;
  }

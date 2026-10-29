@@ -188,6 +188,8 @@ function box(w,h,d,material,x,y,z,parent=scene,ry=0,rz=0){
 }
 const worldManager = new WorldManager({scene,renderer,camera,chapter,hemi,sun});
 worldManager.initialize();
+// Start optional ambience only after a real user gesture; missing audio is listed in the red asset diagnostics.
+canvas.addEventListener('pointerdown',()=>{worldManager.audio.enable().catch(()=>{});},{once:true});
 
 const player = {pos:new THREE.Vector3(0,worldManager.getHeightAt(0,9),9),health:100,maxHealth:100,score:0,kills:0,gangDown:0,thievesStopped:0,intel:0,rescued:0,anchors:0,shieldTime:0,overdriveTime:0,riverDisruptTime:0,dead:false};
 const playerController = new PlayerController({

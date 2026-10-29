@@ -23,17 +23,18 @@ export class Postprocessing {
   this.clock=0;this.setQuality(quality);
  }
  rebuildPasses(){
+  for(const pass of this.composer.passes){if(pass!==this.renderPass)pass.dispose?.();}
   this.composer.passes.length=0;
   this.composer.addPass(this.renderPass);
   this.ssaoPass=null;this.bloomPass=null;this.filmPass=null;this.smaaPass=null;this.outputPass=null;
+  if(this.quality==='high'){
+   this.ssaoPass=new SSAOPass(this.scene,this.camera,Math.max(1,Math.floor(window.innerWidth*.78)),Math.max(1,Math.floor(window.innerHeight*.78)));
+   this.ssaoPass.kernelRadius=7;this.ssaoPass.minDistance=.001;this.ssaoPass.maxDistance=.12;
+   this.composer.addPass(this.ssaoPass);
+  }
   if(this.quality==='medium'||this.quality==='high'){
    this.bloomPass=new UnrealBloomPass(new THREE.Vector2(window.innerWidth,window.innerHeight),this.quality==='high'?.22:.12,.42,.84);
    this.composer.addPass(this.bloomPass);
-  }
-  if(this.quality==='high'){
-   this.ssaoPass=new SSAOPass(this.scene,this.camera,Math.max(1,Math.floor(window.innerWidth*.8)),Math.max(1,Math.floor(window.innerHeight*.8)));
-   this.ssaoPass.kernelRadius=8;this.ssaoPass.minDistance=.001;this.ssaoPass.maxDistance=.12;
-   this.composer.addPass(this.ssaoPass);
   }
   this.filmPass=new ShaderPass(BungomaFilmShader);
   this.filmPass.uniforms.uVignette.value=this.quality==='high'?.14:this.quality==='medium'?.095:.045;
