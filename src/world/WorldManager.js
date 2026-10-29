@@ -33,6 +33,11 @@ export class WorldManager {
       '/assets/world/models/boda_boda.glb', '/assets/world/models/rusted_pickup.glb',
       '/assets/world/models/water_tank.glb'
     ]) registerMissingAsset(modelPath, 'Near-field licensed GLB not supplied. The game must not pretend a photo card is a 3D model.');
+    window.__worldQuality=this.quality;
+    window.__setWorldQuality=(preset)=>this.setQuality(preset);
+    for (const audioPath of ['/assets/world/audio/wind.ogg','/assets/world/audio/birds.ogg','/assets/world/audio/insects.ogg','/assets/world/audio/footsteps_soil.ogg','/assets/world/audio/footsteps_grass.ogg','/assets/world/audio/footsteps_wood.ogg','/assets/world/audio/footsteps_metal.ogg']) {
+      registerMissingAsset(audioPath, 'Licensed ambient/footstep audio is not bundled yet. Add this file to enable that sound.');
+    }
     this.phaseRoadMesh = null;
     this.elapsed = 0;
   }
@@ -44,7 +49,7 @@ export class WorldManager {
   resize(width=window.innerWidth,height=window.innerHeight){this.postprocessing.setSize(width,height);}
   setQuality(quality) {
     if (!['low','medium','high'].includes(quality) || quality === this.quality) return;
-    this.quality = quality;
+    this.quality = quality;window.__worldQuality=quality;
     try { localStorage.setItem('zeroHourWorldQuality', quality); } catch {}
     this.terrain.setQuality(quality);
     this.road.setQuality(quality);
