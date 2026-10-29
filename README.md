@@ -43,14 +43,24 @@ A modern browser with WebGL support is required.
 - **1–4:** switch weapons; **R:** reload
 - **Q:** Shockwave; **E:** Aegis shield
 - **F / C / X:** Overdrive, Chain Lightning, Second Wind after unlocking
-- **G:** interact with Chapter 02 civilians and temporal anchors when in range
+- **G:** interact with Chapter 02 civilians/anchors and Chapter 03 memory echoes/phase seams when in range
 
 ### Mobile browser
-On-screen movement, firing, shield, shockwave, reload, unlocked-ability controls, and a context-sensitive rescue/disable action are provided. The interface is still a prototype and needs further low-end Android device testing.
+On-screen movement, firing, shield, shockwave, reload, unlocked-ability controls, and context-sensitive rescue, preserve, and phase-seam actions are provided. The interface is still a prototype and needs further low-end Android device testing.
 
 ## Combat systems
 
 The prototype contains four fictional energy weapons: Pulse Rifle, Nova Cannon, Arc Lance, and Gravity Core. Abilities include Shockwave, Aegis, Overdrive, Chain Lightning, and Second Wind. In Chapter 02, timed river surges cross the Nzoia bridge; a hit damages ZERO and briefly disrupts movement. Trusting the Echo gives a longer warning but increases enemy pressure, while severing it gives a shorter warning and slower enemy response. Disabling both temporal anchors stops new surges. Combat milestones and shard collection can unlock abilities offline; unlocked abilities are saved locally by the browser.
+
+## Story chapters
+
+**Chapter 01 — The Red Road** introduces ZERO, the Echo Shards, Kito, and the player's Trust/Sever choice.
+
+**Chapter 02 — Nzoia Has No Shadow** adds timed river surges that damage and briefly slow ZERO if they connect. Trusting the Echo gives a longer warning but raises enemy pressure; severing the signal gives a shorter warning and slower enemy response. Interacting with both temporal anchors stabilises the crossing.
+
+**Chapter 03 — The County That Never Was** is a playable prototype featuring a phase-duplicate Bungoma environment, five Echo units, three memory echoes, two phase seams, and a final choice: preserve the memories and transmit the Nine-Minute War warning, or erase the patterns to stabilise the chamber. The ending is saved locally on the device.
+
+Chapters 04 and 05 are still planned, not playable. The game and story remain prototypes and need further gameplay and low-end Android device testing.
 
 ## Ads, rewards, and offline play
 
