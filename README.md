@@ -40,6 +40,24 @@ A workflow at `.github/workflows/deploy-pages.yml` validates the game JavaScript
 
 Expected project URL after a successful deployment: <https://musombi123.github.io/MindSphere/>
 
+
+## Android APK and offline-first gameplay
+
+The Android build uses Capacitor to package the Vite-built game and its bundled Three.js runtime into a native Android WebView. The core mission is designed to run without a network connection after installation; it does not need to download Three.js from a CDN at launch.
+
+### Build an APK in GitHub
+
+Open **Actions → Build Project Zero Hour Android APK → Run workflow**. When the job succeeds, open its run and download the `project-zero-hour-debug-apk` artifact. Extract it and install `app-debug.apk) on a compatible Android device. This is a debug APK for testing, not a signed release for distribution.
+
+The workflow also runs on relevant pushes to `main). It installs dependencies, builds the web assets, generates the Capacitor Android project, and runs Gradle to assemble the APK.
+
+### Offline and online progression
+
+- **Offline:** play the mission, fight enemies, collect intelligence, and unlock abilities through combat milestones. Your unlocked abilities are saved on the device.
+- **Online:** the current rewarded-ad button is still a clearly labelled demo simulation. No real ad network is integrated yet.
+- **Revenue reality:** ordinary ad networks need a network connection to request, verify, and report ad impressions. You should not count on earning ad revenue while fully offline. Some SDKs may cache limited ads in advance, but availability and reward validation depend on the provider and its rules. The safe design is full offline gameplay with mission-based unlocks, plus optional verified rewarded ads when online.
+- **Before release:** integrate a supported rewarded-ad SDK, verify reward callbacks, add a privacy policy/consent flow, and test the SDK's Android and offline behaviour. Never grant a paid/rewarded ability based only on a client-side timer.
+
 ## Current scope / next milestones
 
 - [x] Stylised 3D rural road, trees, fences, and homesteads
@@ -51,6 +69,6 @@ Expected project URL after a successful deployment: <https://musombi123.github.i
 - [ ] Character animations, richer environment art, voice/music, and sound design
 - [ ] Real rewarded-ad SDK, verified rewards, and cloud saves
 - [ ] More missions, thieves/rescue encounters, vehicles, and boss variants
-- [ ] Android packaging and device-performance testing
+- [x] Capacitor Android APK build workflow and locally bundled Three.js runtime\n- [ ] Android device-performance testing, release signing, and real rewarded-ad SDK
 
 This is an early playable prototype, not a finished commercial game. Models are built from procedural 3D shapes; no purchased or third-party game assets are included.
