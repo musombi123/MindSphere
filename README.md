@@ -43,13 +43,14 @@ A modern browser with WebGL support is required.
 - **1–4:** switch weapons; **R:** reload
 - **Q:** Shockwave; **E:** Aegis shield
 - **F / C / X:** Overdrive, Chain Lightning, Second Wind after unlocking
+- **G:** interact with Chapter 02 civilians and temporal anchors when in range
 
 ### Mobile browser
-On-screen movement, firing, shield, shockwave, reload, and unlocked-ability controls are provided. The interface is still a prototype and needs further low-end Android device testing.
+On-screen movement, firing, shield, shockwave, reload, unlocked-ability controls, and a context-sensitive rescue/disable action are provided. The interface is still a prototype and needs further low-end Android device testing.
 
 ## Combat systems
 
-The prototype contains four fictional energy weapons: Pulse Rifle, Nova Cannon, Arc Lance, and Gravity Core. Abilities include Shockwave, Aegis, Overdrive, Chain Lightning, and Second Wind. Combat milestones and shard collection can unlock abilities offline; unlocked abilities are saved locally by the browser.
+The prototype contains four fictional energy weapons: Pulse Rifle, Nova Cannon, Arc Lance, and Gravity Core. Abilities include Shockwave, Aegis, Overdrive, Chain Lightning, and Second Wind. In Chapter 02, timed river surges cross the Nzoia bridge; a hit damages ZERO and briefly disrupts movement. Trusting the Echo gives a longer warning but increases enemy pressure, while severing it gives a shorter warning and slower enemy response. Disabling both temporal anchors stops new surges. Combat milestones and shard collection can unlock abilities offline; unlocked abilities are saved locally by the browser.
 
 ## Ads, rewards, and offline play
 
