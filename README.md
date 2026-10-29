@@ -4,7 +4,7 @@
 
 ## Story One
 
-The Black Viper gang has seized the settlement road. Play as the Guardian, push back five gang members and their lieutenant, recover three intelligence caches, and reach extraction.
+The Black Viper gang has seized the settlement road and brought in a crew of thieves. Play as the Guardian, neutralise three gang fighters, stop two faster and less-armoured thieves, defeat their lieutenant, recover three intelligence caches, and reach extraction.
 
 ## Play
 
