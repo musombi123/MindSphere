@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { roadCenterX } from './Terrain.js';
-import { recordWorldNote } from './AssetDiagnostics.js';
+import { registerMissingAsset, recordWorldNote } from './AssetDiagnostics.js';
 
 function seeded(seed){let s=seed>>>0;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
 
@@ -21,7 +21,7 @@ export class Vegetation {
    minDistance:5.0,minX:6.5,maxX:32,minZ:-123,maxZ:20,minY:0.02,width:2.1,height:1.8
   });
   recordWorldNote('Near-range vegetation uses verified models from the world asset catalog where available; user-video foliage cutouts remain the distant layer.');
-  recordWorldNote('Trees and ground cover use extracted, alpha-keyed pixels from the user video as camera-facing billboards. Near-range tree GLBs are still missing and must not be mistaken for completed photogrammetry.');
+  recordWorldNote('User-video alpha cutouts provide distant tree and ground-cover layers; mapped near-field tree and crop GLBs are placed separately when available. This is a hybrid photo-reference environment, not a full photogrammetry reconstruction.');
  }
  addCutoutCards(texture,name,count,random,options){
   if(!texture){registerMissingAsset('/reference/world/video_frame_16s.webp','Required plant/tree photo cutout texture is unavailable.');return;}
