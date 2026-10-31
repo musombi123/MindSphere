@@ -3,5 +3,6 @@
   "character": {
     "playerModel": ""
   },
-  "worldModels": {}
+  "worldModels": {},
+  "weaponModels": {}
 }
