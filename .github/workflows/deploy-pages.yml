@@ -1,25 +1,21 @@
-name: Deploy Project Zero Hour
+name: Build and deploy Project Zero Hour
 
 on:
   push:
     branches: [main]
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
 concurrency:
-  group: github-pages
+  group: project-zero-hour-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build:
+    name: Build and validate game
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
     steps:
       - name: Check out source
         uses: actions/checkout@v6
@@ -27,16 +23,30 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 22
-      - name: Install dependencies
+          cache: npm
+      - name: Install locked dependencies
         run: npm ci
-      - name: Build self-contained game assets
+      - name: Prepare and build game
         run: npm run build
-      - name: Configure GitHub Pages
-        uses: actions/configure-pages@v5
-      - name: Upload built game
+      - name: Upload Pages-ready build artifact
         uses: actions/upload-pages-artifact@v4
         with:
           path: dist
+
+  deploy:
+    name: Publish GitHub Pages
+    if: ${{ vars.ENABLE_GITHUB_PAGES == 'true' }}
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
       - name: Publish game
         id: deployment
         uses: actions/deploy-pages@v4
