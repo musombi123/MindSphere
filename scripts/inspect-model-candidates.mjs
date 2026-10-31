@@ -100,13 +100,17 @@ function inspectFbx(buffer, filePath) {
   const rootScene = new FBXLoader().parse(array, basePath);
   const stats = { meshCount: 0, skinnedMeshCount: 0, boneCount: 0, nodes: 0, materials: 0 };
   const names = [];
+  const boneNames = [];
   let bounds = new THREE.Box3();
   rootScene.updateMatrixWorld(true);
   rootScene.traverse(object => {
     stats.nodes++;
     if (object.isMesh) stats.meshCount++;
     if (object.isSkinnedMesh) stats.skinnedMeshCount++;
-    if (object.isBone) stats.boneCount++;
+    if (object.isBone) {
+      stats.boneCount++;
+      if (object.name) boneNames.push(object.name);
+    }
     if (object.material) stats.materials += Array.isArray(object.material) ? object.material.length : 1;
     if (object.name && names.length < 40) names.push(object.name);
   });
@@ -115,8 +119,26 @@ function inspectFbx(buffer, filePath) {
   const dimensions = [size.x, size.y, size.z];
   return {
     ...stats,
+    boneNames,
     animationCount: rootScene.animations?.length || 0,
     animationNames: (rootScene.animations || []).map(x => x.name),
+    animationTracks: (rootScene.animations || []).map(clip => {
+      const targets = new Set();
+      for (const track of clip.tracks || []) {
+        try {
+          const parsed = THREE.PropertyBinding.parseTrackName(track.name);
+          if (parsed.nodeName) targets.add(parsed.nodeName);
+        } catch {
+          const fallback = String(track.name || '').split('.')[0];
+          if (fallback) targets.add(fallback);
+        }
+      }
+      return {
+        name: clip.name,
+        trackCount: clip.tracks?.length || 0,
+        targets: [...targets]
+      };
+    }),
     nodeNames: names,
     bounds: {
       min: bounds.min.toArray(),
@@ -156,6 +178,31 @@ for (const file of files) {
   } catch (error) {
     rows.push({ path: relative, sizeBytes: (await stat(file)).size, error: error.message });
   }
+}
+
+// Compare each FBX clip's actual animation track targets against the preferred Trellis rig.
+const rig = rows.find(row =>
+  row.path.includes('Female Basic Locomotion Pack/trellis-2387720894.fbx') &&
+  row.skinnedMeshCount > 0 &&
+  row.boneCount >= 8
+);
+if (rig && Array.isArray(rig.boneNames)) {
+  const rigBoneNames = new Set(rig.boneNames);
+  for (const row of rows) {
+    if (!Array.isArray(row.animationTracks) || !row.animationTracks.length) continue;
+    const trackTargets = new Set(row.animationTracks.flatMap(clip => clip.targets || []));
+    if (!trackTargets.size) continue;
+    const matched = [...trackTargets].filter(name => rigBoneNames.has(name));
+    row.trellisCompatibility = {
+      matchedTrackTargets: matched.length,
+      totalTrackTargets: trackTargets.size,
+      coverage: Number((matched.length / trackTargets.size).toFixed(3)),
+      likelyCompatible: matched.length / trackTargets.size >= 0.65
+    };
+  }
+  console.log('[Project Zero Hour] Trellis rig bone names:', rigBoneNames.size);
+} else {
+  console.warn('[Project Zero Hour] No structurally valid Trellis rig was found for clip compatibility scoring.');
 }
 
 await (await import('node:fs/promises')).mkdir(path.dirname(outputPath), { recursive: true });
