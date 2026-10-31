@@ -38,7 +38,7 @@ npm run preview
 
 A modern browser with WebGL support is required.
 
-See [docs/ASSET_PIPELINE.md](docs/ASSET_PIPELINE.md) for FBX staging, player-model import and asset validation; [docs/WORLD_ASSET_PIPELINE.md](docs/WORLD_ASSET_PIPELINE.md) for world/weapon GLB catalog mapping; and [docs/COMBAT_SYSTEMS.md](docs/COMBAT_SYSTEMS.md) for movement, enemy-role AI and control tuning. The build and dev server stage the selected FBX clips and validate runtime asset references automatically. Press F3 for asset diagnostics and F4 for performance counters.
+See [docs/ASSET_PIPELINE.md](docs/ASSET_PIPELINE.md) for FBX staging, player-model import and validation; [docs/SOURCE_MODEL_INSPECTION.md](docs/SOURCE_MODEL_INSPECTION.md) for the 31 October 2026 structural asset audit; [docs/WORLD_ASSET_PIPELINE.md](docs/WORLD_ASSET_PIPELINE.md) for world/weapon GLB catalog mapping; and [docs/COMBAT_SYSTEMS.md](docs/COMBAT_SYSTEMS.md) for movement and enemy AI. The build and dev server stage the selected FBX clips and validate runtime asset references automatically. Press F3 for asset diagnostics and F4 for performance counters.
 
 ## Controls
 
