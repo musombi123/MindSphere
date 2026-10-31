@@ -38,7 +38,7 @@ npm run preview
 
 A modern browser with WebGL support is required.
 
-See [docs/ASSET_PIPELINE.md](docs/ASSET_PIPELINE.md) for FBX animation staging and player-model extraction, and [docs/WORLD_ASSET_PIPELINE.md](docs/WORLD_ASSET_PIPELINE.md) for world and weapon GLB/GLTF extraction and catalog mapping. The build and dev server automatically stage the selected FBX clips into the public runtime animation manifest. Press F3 for asset diagnostics and F4 for performance counters.
+See [docs/ASSET_PIPELINE.md](docs/ASSET_PIPELINE.md) for FBX staging, player-model import and asset validation; [docs/WORLD_ASSET_PIPELINE.md](docs/WORLD_ASSET_PIPELINE.md) for world/weapon GLB catalog mapping; and [docs/COMBAT_SYSTEMS.md](docs/COMBAT_SYSTEMS.md) for movement, enemy-role AI and control tuning. The build and dev server stage the selected FBX clips and validate runtime asset references automatically. Press F3 for asset diagnostics and F4 for performance counters.
 
 ## Controls
 
@@ -107,6 +107,7 @@ When you deliberately choose to test a native build later, the workflow packages
 - [x] Crouch movement and mobile crouch toggle with imported crouch animation clips
 - [x] Jump physics, landing animation hook, dodge movement with brief invulnerability, and close-range melee using staged animation clips
 - [x] Selectable right-hand 3D weapon visual slots driven by the shared asset catalog
+- [x] Role-based enemy steering and predictive projectile aim for raiders, flankers, Echo units and commander
 - [ ] Low-end Android device profiling and frame-rate certification
 - [ ] Real rewarded-ad SDK, verified rewards, privacy/consent flow, and cloud saves
 
