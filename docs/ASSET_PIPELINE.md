@@ -25,10 +25,12 @@ The repository-owned FBX files in `Assets/` are copied into `public/assets/anima
 npm run assets:prepare
 ```
 
-The script updates `public/assets/animations/manifest.json`. The normal production build invokes this step automatically:
+The script updates `public/assets/animations/manifest.json`. The validator checks the clip files, catalog paths, GLB headers and GLTF dependencies; it also rejects LFS pointer text in mapped runtime assets. Empty player/world/weapon catalog sections are warnings until those assets have been imported. The normal production build invokes preparation and validation automatically:
 
 ```powershell
 npm ci
+npm run assets:prepare
+npm run assets:validate
 npm run build
 ```
 
