@@ -675,7 +675,7 @@ export class PlayerController {
     const allActions = new Set(this.actions.values());
     allActions.forEach((action) => {
       const targetWeight = action === aimingAction
-        ? (motion.aiming && (motion.crouching ? motion.crouching : !motion.crouching) ? 1 : 0)
+        ? (motion.aiming ? 1 : 0)
         : (locomotionTotal > 0 ? (desired.get(action) || 0) / locomotionTotal : 0);
       const currentWeight = this.actionWeights.get(action) || 0;
       const nextWeight = THREE.MathUtils.lerp(currentWeight, targetWeight, blend);
