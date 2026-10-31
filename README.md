@@ -38,12 +38,13 @@ npm run preview
 
 A modern browser with WebGL support is required.
 
-See [docs/ASSET_PIPELINE.md](docs/ASSET_PIPELINE.md) for the FBX animation staging and player-model extraction, and [docs/WORLD_ASSET_PIPELINE.md](docs/WORLD_ASSET_PIPELINE.md) for world GLB/GLTF extraction and catalog mapping. The build and dev server automatically stage the selected FBX clips into the public runtime animation manifest. Press F3 for asset diagnostics and F4 for performance counters.
+See [docs/ASSET_PIPELINE.md](docs/ASSET_PIPELINE.md) for FBX animation staging and player-model extraction, and [docs/WORLD_ASSET_PIPELINE.md](docs/WORLD_ASSET_PIPELINE.md) for world and weapon GLB/GLTF extraction and catalog mapping. The build and dev server automatically stage the selected FBX clips into the public runtime animation manifest. Press F3 for asset diagnostics and F4 for performance counters.
 
 ## Controls
 
 ### Desktop
 - **WASD / arrow keys:** move; **Shift:** sprint; **Ctrl:** crouch
+- **J:** jump; **V:** dodge with a short defensive window; **T:** close-range melee
 - **Mouse:** aim; **hold left mouse button** or **Space:** fire
 - **1–4:** switch weapons; **R:** reload
 - **Q:** Shockwave; **E:** Aegis shield
@@ -51,7 +52,7 @@ See [docs/ASSET_PIPELINE.md](docs/ASSET_PIPELINE.md) for the FBX animation stagi
 - **G:** interact with Chapter 02 civilians/anchors and Chapter 03 memory echoes/phase seams when in range
 
 ### Mobile browser
-On-screen movement, firing, shield, shockwave, reload, crouch toggle, unlocked-ability controls, and context-sensitive rescue, preserve, and phase-seam actions are provided. The interface is still a prototype and needs further low-end Android device testing.
+On-screen movement, firing, shield, shockwave, reload, jump, dodge, melee, crouch toggle, unlocked-ability controls, and context-sensitive rescue, preserve, and phase-seam actions are provided. The interface is still a prototype and needs further low-end Android device testing.
 
 ## Combat systems
 
@@ -104,6 +105,8 @@ When you deliberately choose to test a native build later, the workflow packages
 - [ ] Separate enemy faction silhouettes/equipment, finish combat VFX/audio and profile Android devices
 - [x] Asset-catalog loader for verified world GLB/GLTF models, terrain-height placement and distance-culled real vegetation
 - [x] Crouch movement and mobile crouch toggle with imported crouch animation clips
+- [x] Jump physics, landing animation hook, dodge movement with brief invulnerability, and close-range melee using staged animation clips
+- [x] Selectable right-hand 3D weapon visual slots driven by the shared asset catalog
 - [ ] Low-end Android device profiling and frame-rate certification
 - [ ] Real rewarded-ad SDK, verified rewards, privacy/consent flow, and cloud saves
 
