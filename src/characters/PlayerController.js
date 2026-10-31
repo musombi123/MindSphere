@@ -232,7 +232,7 @@ export class PlayerController {
       this.animationClips = clips.slice();
       const externalClips = await this.loadExternalAnimationClips(loader);
       this.animationClips.push(...externalClips);
-      this.createAnimationActions(this.animationClips);
+      this.animationClips = this.createAnimationActions(this.animationClips);
       recordModelLoaded(modelUrl);
       resolveMissingAsset(CHARACTER_URL);
       resolveMissingAsset('/' + CHARACTER_URL);
@@ -388,7 +388,13 @@ export class PlayerController {
   createAnimationActions(clips) {
     this.actions.clear();
     this.actionWeights.clear();
-    if (!this.avatar) return;
+    if (!this.avatar) return [];
+
+    // Build one normalised node-name index for fast per-clip skeleton validation.
+    const avatarNodeNames = new Set();
+    this.avatar.traverse((object) => {
+      if (object.name) avatarNodeNames.add(normaliseName(object.name));
+    });
 
     this.avatarMixer = new THREE.AnimationMixer(this.avatar);
     this.avatarMixer.addEventListener('finished', (event) => {
@@ -402,9 +408,35 @@ export class PlayerController {
       }
     });
 
+    const acceptedClips = [];
+    const rejectedClips = [];
+    const seenKeys = new Set();
     (clips || []).forEach((clip) => {
       const key = resolveClipKey(clip.name);
-      if (!key || this.actions.has(key)) return;
+      if (!key || seenKeys.has(key)) return;
+
+      const targets = new Set();
+      for (const track of clip.tracks || []) {
+        try {
+          const parsed = THREE.PropertyBinding.parseTrackName(track.name);
+          if (parsed.nodeName) targets.add(parsed.nodeName);
+        } catch {
+          const fallback = String(track.name || '').split('.')[0].split('/').pop();
+          if (fallback) targets.add(fallback);
+        }
+      }
+      const matched = [...targets].filter((name) => avatarNodeNames.has(normaliseName(name)));
+      const coverage = targets.size ? matched.length / targets.size : 0;
+      if (coverage < 0.65) {
+        rejectedClips.push({ key, coverage, targets: targets.size, matched: matched.length });
+        console.warn(
+          '[Project Zero Hour] Rejected incompatible animation clip "' + key +
+          '": ' + matched.length + ' / ' + targets.size +
+          ' track targets match the active player rig. Minimum required coverage is 65%.'
+        );
+        return;
+      }
+
       let mappedClip = clip;
       if (key === 'aimIdle' || key === 'crouchAimIdle') {
         const upperBodyTracks = clip.tracks.filter((track) => {
@@ -414,20 +446,31 @@ export class PlayerController {
         if (upperBodyTracks.length) {
           mappedClip = new THREE.AnimationClip(clip.name + '_UPPER_BODY', clip.duration, upperBodyTracks, clip.blendMode);
         } else {
-          console.warn('[Project Zero Hour] Aim clip has no recognisable upper-body bone tracks; using the supplied clip as-is:', clip.name);
+          console.warn('[Project Zero Hour] Aim clip has no recognisable upper-body tracks; using the supplied clip as-is:', clip.name);
         }
       }
+
       this.actions.set(key, this.avatarMixer.clipAction(mappedClip));
+      acceptedClips.push(clip);
+      seenKeys.add(key);
     });
 
     const missing = REQUIRED_CLIPS.filter((key) => !this.actions.has(key));
     if (missing.length) {
       console.warn(
-        '[Project Zero Hour] player.glb loaded, but these animation states have no matching clips: ' +
-        missing.join(', ') + '. Embed named clips in player.glb or register compatible GLB clips in public/assets/animations/manifest.json.'
+        '[Project Zero Hour] These animation states have no compatible clip on the active rig: ' +
+        missing.join(', ') + '. Add a matching FBX/GLB clip or use the same humanoid skeleton.'
       );
     }
-    this.onStatus({ type: 'animations', message: this.actions.size + ' animation states mapped' });
+    this.onStatus({
+      type: 'animations',
+      message: acceptedClips.length + ' compatible animation states mapped',
+      rejected: rejectedClips.length
+    });
+    if (rejectedClips.length) {
+      console.warn('[Project Zero Hour] Rejected ' + rejectedClips.length + ' incompatible animation clips:', rejectedClips);
+    }
+    return acceptedClips;
   }
 
   createWeaponSocket() {
