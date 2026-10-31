@@ -139,15 +139,6 @@ export class PlayerController {
     });
   }
 
-  async assetExists(url) {
-    try {
-      const response = await fetch(url, { method: 'HEAD', cache: 'no-store' });
-      return response.ok;
-    } catch (error) {
-      return false;
-    }
-  }
-
   async resolveCharacterUrl(requested = '') {
     if (requested) {
       return /^https?:\/\//i.test(requested) ? requested : publicAssetUrl(requested);
@@ -196,10 +187,6 @@ export class PlayerController {
     loader.setMeshoptDecoder(MeshoptDecoder);
 
     try {
-      if (!(await this.assetExists(modelUrl))) {
-        throw new Error('Required asset is missing: ' + modelUrl);
-      }
-
       this.reportProgress(5, 'DECODING HUMANOID MESH');
       const progress = (event) => {
         if (event && event.total > 0) {
