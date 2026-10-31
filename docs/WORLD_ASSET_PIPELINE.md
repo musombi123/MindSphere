@@ -56,3 +56,29 @@ The script extracts all supported referenced model and texture files below `publ
 Mapping a model key is an explicit statement about the model's role. Do not map a random prop to a house/tree key just to clear an F3 warning. Check the model in-game for identity, silhouette, PBR maps, local origin, forward axis, ground contact, scale, LOD cost and mobile draw calls. Confirm creator, source, exact license, attribution and redistribution rights before a public build. A file existing in Git/Git LFS does not grant redistribution permission.
 
 The world is still hybrid: the uploaded 320×180 photographs drive distant photo references and source-derived surfaces; GLBs provide the near-field geometry where mapped. This does not claim full photogrammetry or a fully scanned Bungoma landscape.
+
+## Weapon models
+
+The active combat weapons can each display a catalog-mapped GLB in the player's right-hand socket. Runtime keys are `pulseRifle`, `novaCannon`, `arcLance` and `gravityCore`.
+
+For a standalone weapon GLB already stored in `Assets/`:
+
+```powershell
+git lfs pull --include="Assets/rifle__awp_weapon_model_cs2.glb"
+.\scripts\prepare-weapon-assets.ps1 -SourceFile "Assets/rifle__awp_weapon_model_cs2.glb" -ModelKey pulseRifle
+```
+
+For an archive, first list the GLB/GLTF candidates:
+
+```powershell
+git lfs pull --include="Assets/weapons-crate.zip"
+.\scripts\prepare-weapon-assets.ps1 -Archive "weapons-crate.zip" -ListOnly
+```
+
+After reviewing the model and license, map the exact selected archive entry:
+
+```powershell
+.\scripts\prepare-weapon-assets.ps1 -Archive "weapons-crate.zip" -ModelKey novaCannon -ModelEntry "exact/path/from/listing/weapon.glb"
+```
+
+The importer merges `weaponModels` into the shared asset catalog without deleting the player or world model mappings. Each weapon entry may contain a `transform` object with `targetLength`, `scale`, `position` and `rotation`. The initial grip transform is only a starting point; inspect the rendered weapon on the actual player rig, then tune its local offset and orientation. Do not map a source weapon to a fictional weapon key unless its silhouette and role are appropriate.
