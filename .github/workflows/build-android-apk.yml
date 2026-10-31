@@ -13,6 +13,10 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v6
+      - name: Fetch only committed runtime models from Git LFS
+        run: |
+          git lfs install
+          git lfs pull --include="public/assets/characters/imported/**,public/assets/world/imported/**"
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
@@ -23,7 +27,7 @@ jobs:
           distribution: temurin
           java-version: '21'
       - name: Install dependencies
-        run: npm install
+        run: npm ci
       - name: Build self-contained game assets
         run: npm run build
       - name: Generate Android project
