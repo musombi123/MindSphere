@@ -1,0 +1,43 @@
+name: Audit Project Zero Hour source models
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Assets/**'
+      - 'scripts/audit-source-assets.ps1'
+      - '.github/workflows/audit-source-assets.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: source-asset-audit-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  inventory:
+    name: Extract source model inventory
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+      - name: Fetch source assets from Git LFS
+        shell: pwsh
+        run: |
+          git lfs install
+          git lfs pull --include="Assets/**,*.zip,*.exr,*.wav,*.glb"
+      - name: Inventory standalone and ZIP model files
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force artifacts | Out-Null
+          .\scripts\audit-source-assets.ps1 -IncludeAnimationOnly -OutputCsv "artifacts\source-assets.csv" -OutputJson "artifacts\source-assets.json"
+      - name: Upload source asset inventory
+        uses: actions/upload-artifact@v5
+        with:
+          name: mindsphere-source-asset-inventory
+          path: artifacts/
+          if-no-files-found: error
+          retention-days: 14
