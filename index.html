@@ -794,6 +794,8 @@ function showToast(message){
 }
 function setWeapon(index){
   activeWeapon=Math.max(0,Math.min(weapons.length-1,index));
+  const visualKeys=['pulseRifle','novaCannon','arcLance','gravityCore'];
+  playerController.setWeaponVisual(visualKeys[activeWeapon]);
   document.querySelectorAll('.weapon-select').forEach(b=>b.classList.toggle('active',Number(b.dataset.weapon)===activeWeapon));
   updateHUD();
 }
