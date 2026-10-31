@@ -88,10 +88,19 @@ export function recordPhotoUsed(path,role,status='loading'){
  if(old)old.status=status;else d.photos.push({path,role,status});d.render?.();
 }
 export function recordModelLoaded(path){
- const d=installWorldDebugPanel();if(!d.modelsLoaded.some(m=>m.path===path))d.modelsLoaded.push({path,status:'loaded'});d.render?.();
+ const d=installWorldDebugPanel();
+ if(!d.modelsLoaded.some(m=>m.path===path))d.modelsLoaded.push({path,status:'loaded'});
+ d.missingAssets=d.missingAssets.filter(item=>item.path!==path);
+ d.render?.();
 }
 export function registerMissingAsset(path,reason='Required file is not present in the repository'){
  const d=installWorldDebugPanel();if(!d.missingAssets.some(x=>x.path===path))d.missingAssets.push({path,reason});d.render?.();
+}
+export function resolveMissingAsset(path){
+ const d=installWorldDebugPanel();
+ const before=d.missingAssets.length;
+ d.missingAssets=d.missingAssets.filter(item=>item.path!==path);
+ if(d.missingAssets.length!==before)d.render?.();
 }
 export function recordWorldNote(note){
  const d=installWorldDebugPanel();if(!d.primitives.includes(note))d.primitives.push(note);d.render?.();
