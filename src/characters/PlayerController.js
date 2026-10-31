@@ -312,69 +312,85 @@ export class PlayerController {
       const entries = Object.entries(manifest.clips || {});
       if (!entries.length) return [];
 
-      // Several animation keys intentionally share a single source FBX. Load each
-      // file once, clone its AnimationClip for each state, then dispose its unused scene.
-      const loadedFiles = new Map();
-      const loadFile = (file, isFbx) => {
-        if (!loadedFiles.has(file)) {
-          const task = isFbx
-            ? new FBXLoader().loadAsync(file)
-            : loader.loadAsync(file);
-          loadedFiles.set(file, task);
-        }
-        return loadedFiles.get(file);
-      };
-
-      const results = await Promise.all(entries.map(async ([key, value]) => {
+      // Group keys that share one FBX/GLB file so it is downloaded and decoded once.
+      const groups = new Map();
+      for (const [key, value] of entries) {
         const definition = typeof value === 'string' ? { file: value } : value;
-        if (!definition || !definition.file) return null;
+        if (!definition || !definition.file) continue;
         const file = /^https?:\/\//i.test(definition.file)
           ? definition.file
           : publicAssetUrl(definition.file.startsWith('/')
             ? definition.file.slice(1)
             : 'assets/animations/' + definition.file);
-        try {
-          const isFbx = definition.format === 'fbx' || /\.fbx(?:[?#]|$)/i.test(file);
-          const loadedAsset = await loadFile(file, isFbx);
-          const sourceClips = loadedAsset.animations || [];
-          const expected = definition.clipName ? normaliseName(definition.clipName) : normaliseName(key);
-          const sourceClip = sourceClips.find((clip) => normaliseName(clip.name) === expected)
-            || sourceClips[0];
-          if (!sourceClip) {
-            console.warn('[Project Zero Hour] Animation file has no animation clip:', file);
-            return null;
-          }
-          const clip = sourceClip.clone();
-          clip.name = key;
-          return clip;
-        } catch (error) {
-          console.warn('[Project Zero Hour] Optional animation clip could not be loaded:', file, error.message);
-          return null;
-        }
-      }));
+        const isFbx = definition.format === 'fbx' || /\.fbx(?:[?#]|$)/i.test(file);
+        if (!groups.has(file)) groups.set(file, { file, isFbx, entries: [] });
+        groups.get(file).entries.push({ key, definition });
+      }
 
-      const geometries = new Set();
-      const materials = new Set();
-      const textures = new Set();
-      const loadedAssets = await Promise.allSettled([...loadedFiles.values()]);
-      for (const result of loadedAssets) {
-        if (result.status !== 'fulfilled') continue;
-        result.value.scene?.traverse((object) => {
+      const sourceGroups = [...groups.values()];
+      const clips = [];
+      const disposeScene = (scene) => {
+        if (!scene) return;
+        const geometries = new Set();
+        const materials = new Set();
+        const textures = new Set();
+        scene.traverse((object) => {
           if (object.geometry) geometries.add(object.geometry);
-          const list = Array.isArray(object.material) ? object.material : object.material ? [object.material] : [];
-          for (const material of list) {
+          const materialList = Array.isArray(object.material)
+            ? object.material
+            : object.material
+              ? [object.material]
+              : [];
+          for (const material of materialList) {
             materials.add(material);
             for (const value of Object.values(material)) {
               if (value?.isTexture) textures.add(value);
             }
           }
         });
-      }
-      for (const texture of textures) texture.dispose();
-      for (const material of materials) material.dispose();
-      for (const geometry of geometries) geometry.dispose();
+        for (const texture of textures) texture.dispose();
+        for (const material of materials) material.dispose();
+        for (const geometry of geometries) geometry.dispose();
+      };
 
-      return results.filter(Boolean);
+      const concurrency = this.renderer && this.renderer.capabilities
+        ? (this.renderer.capabilities.isWebGL2 ? 3 : 2)
+        : 2;
+
+      for (let offset = 0; offset < sourceGroups.length; offset += concurrency) {
+        const batch = sourceGroups.slice(offset, offset + concurrency);
+        await Promise.all(batch.map(async (group) => {
+          let loadedAsset = null;
+          try {
+            loadedAsset = group.isFbx
+              ? await new FBXLoader().loadAsync(group.file)
+              : await loader.loadAsync(group.file);
+            const sourceClips = loadedAsset.animations || [];
+            for (const { key, definition } of group.entries) {
+              const expected = definition.clipName
+                ? normaliseName(definition.clipName)
+                : normaliseName(key);
+              const sourceClip = sourceClips.find((clip) => normaliseName(clip.name) === expected)
+                || sourceClips[0];
+              if (!sourceClip) {
+                console.warn('[Project Zero Hour] Animation file has no animation clip:', group.file, key);
+                continue;
+              }
+              const clip = sourceClip.clone();
+              clip.name = key;
+              clips.push(clip);
+            }
+          } catch (error) {
+            console.warn('[Project Zero Hour] Optional animation source failed:', group.file, error.message);
+          } finally {
+            // The cloned AnimationClip owns its tracks; the decoded source scene is no longer needed.
+            disposeScene(loadedAsset?.scene);
+            loadedAsset = null;
+          }
+        }));
+      }
+
+      return clips;
     } catch (error) {
       // The manifest is optional for artists who pack clips directly into player.glb.
       console.warn('[Project Zero Hour] Animation manifest could not be read:', error.message);
