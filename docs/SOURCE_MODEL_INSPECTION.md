@@ -23,7 +23,7 @@ Three.js FBXLoader structural inspection reported:
 | Embedded animation clips | 1 |
 | Recognised Mixamo bones | Includes `mixamorigHips`, `mixamorigHead`, `mixamorigRightHand` |
 
-The same archive includes Idle, Walking, Running, Jump, Left/Right Strafe and turn FBX files. The inspector's exported node-name samples for the Trellis rig and the pack's locomotion clips overlapped by 39 of 41 names (about 95%). This is a promising compatibility signal, not proof that every clip will look correct in motion.
+The same archive includes Idle, Walking, Running, Jump, Left/Right Strafe and turn FBX files. The enhanced track inspection parsed **76 FBX files with animation tracks** from the source candidates; all 76 had **52/52 unique track-target node names present on the Trellis rig**. This confirms exact target-name compatibility for those parsed tracks, although it does not prove that every clip will look correct in motion or that the bind pose/root motion is appropriate.
 
 **Recommendation:** use this as the first development rig to test the runtime importer. The archive name indicates a female character pack; inspect the actual appearance and confirm it is appropriate for the ZERO hero before treating it as final production art.
 
