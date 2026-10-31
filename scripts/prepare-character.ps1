@@ -1,12 +1,67 @@
 [CmdletBinding()]
 param(
-    [string]$Archive = "german-bundeswehr-soldier-rigged.zip",
+    [string]$Archive = "",
+    [string]$SourceFile = "",
     [string]$ModelEntry = "",
     [switch]$ListOnly
 )
 
 $ErrorActionPreference = "Stop"
 $repoRoot = Split-Path -Parent $PSScriptRoot
+if ($SourceFile -and $Archive) {
+    throw "Choose either -SourceFile or -Archive, not both."
+}
+if ($SourceFile) {
+    $sourcePath = Join-Path $repoRoot $SourceFile
+    if (!(Test-Path -LiteralPath $sourcePath -PathType Leaf)) {
+        throw "Source file not found: $sourcePath"
+    }
+    if ([IO.Path]::GetExtension($sourcePath).ToLowerInvariant() -ne ".glb") {
+        throw "Standalone character imports must be self-contained .glb files. Use the ZIP pipeline for FBX plus texture dependencies."
+    }
+    $sourceInfo = Get-Item -LiteralPath $sourcePath
+    if ($sourceInfo.Length -lt 512) {
+        $sample = Get-Content -LiteralPath $sourcePath -Raw -ErrorAction SilentlyContinue
+        if ($sample -match "version https://git-lfs.github.com/spec/v1") {
+            throw "This is a Git LFS pointer, not the actual GLB. Run 'git lfs pull' first."
+        }
+        throw "Source GLB is unexpectedly small. Verify the asset."
+    }
+
+    $publicRoot = Join-Path $repoRoot "public"
+    $extractRoot = Join-Path $publicRoot (Join-Path "assets" (Join-Path "characters" (Join-Path "imported" "zero-soldier")))
+    New-Item -ItemType Directory -Force -Path $extractRoot | Out-Null
+    $targetFile = Join-Path $extractRoot ([IO.Path]::GetFileName($sourcePath))
+    Copy-Item -LiteralPath $sourcePath -Destination $targetFile -Force
+    $publicRootFull = [IO.Path]::GetFullPath($publicRoot).TrimEnd([char]92, [char]47)
+    $runtimePath = $targetFile.Substring($publicRootFull.Length).TrimStart([char]92, [char]47).Replace([char]92, '/')
+
+    $catalogPath = Join-Path (Join-Path $publicRoot "assets") "asset-catalog.json"
+    New-Item -ItemType Directory -Force -Path (Split-Path -Parent $catalogPath) | Out-Null
+    $catalog = $null
+    if (Test-Path -LiteralPath $catalogPath -PathType Leaf) {
+        try { $catalog = Get-Content -LiteralPath $catalogPath -Raw | ConvertFrom-Json }
+        catch { throw "Existing asset catalog is invalid JSON: $catalogPath" }
+    }
+    if ($null -eq $catalog) { $catalog = [PSCustomObject]@{} }
+    if ($null -eq $catalog.worldModels) {
+        $catalog | Add-Member -NotePropertyName worldModels -NotePropertyValue ([PSCustomObject]@{}) -Force
+    }
+    $catalog | Add-Member -NotePropertyName schemaVersion -NotePropertyValue 1 -Force
+    $catalog | Add-Member -NotePropertyName character -NotePropertyValue ([PSCustomObject]@{
+        playerModel = $runtimePath
+        sourceFile = $SourceFile
+        selectionNote = "Imported as a standalone GLB. The runtime will reject it if it lacks a usable skinned humanoid mesh. Confirm likeness, materials, rig, scale, weapon socket and redistribution rights."
+    }) -Force
+    $catalog | ConvertTo-Json -Depth 15 | Set-Content -LiteralPath $catalogPath -Encoding UTF8
+
+    Write-Host "Player GLB staged: $runtimePath" -ForegroundColor Green
+    Write-Host "Catalog written: $catalogPath"
+    Write-Warning "A GLB file is not automatically a rigged humanoid. The runtime validates for a skin/armature and will keep the development proxy if one is absent."
+    return
+}
+
+if (!$Archive) { $Archive = "german-bundeswehr-soldier-rigged.zip" }
 $archivePath = Join-Path $repoRoot (Join-Path "Assets" $Archive)
 if (!(Test-Path -LiteralPath $archivePath -PathType Leaf)) {
     throw "Archive not found: $archivePath. Run 'git lfs pull' from the repository root and retry."
