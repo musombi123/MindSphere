@@ -1,13 +1,14 @@
 import * as THREE from 'three';
 import { roadCenterX } from './Terrain.js';
-import { registerMissingAsset, recordWorldNote } from './AssetDiagnostics.js';
+import { recordWorldNote } from './AssetDiagnostics.js';
 
 function seeded(seed){let s=seed>>>0;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
 
 export class Vegetation {
- constructor({scene,quality='medium',textures,terrain,camera}){
-  this.scene=scene;this.quality=quality;this.textures=textures;this.terrain=terrain;this.camera=camera;
-  this.meshes=[];this.billboards=[];this.build();
+ constructor({scene,quality='medium',textures,terrain,camera,assetLibrary=null}){
+  this.scene=scene;this.quality=quality;this.textures=textures;this.terrain=terrain;this.camera=camera;this.assetLibrary=assetLibrary;
+  this.meshes=[];this.billboards=[];this.realVegetation=[];this.build();
+  this.assetLibrary?.ready.then(()=>this.addCatalogVegetation()).catch(error=>console.warn('[Project Zero Hour] Real vegetation loading failed:',error));
  }
  build(){
   const random=seeded(2097);
@@ -19,12 +20,7 @@ export class Vegetation {
   this.addCutoutCards(this.textures.photo.plants,'PHOTO_GARDEN_UNDERSTORY',Math.round((this.quality==='high'?180:this.quality==='medium'?110:50)*q),random,{
    minDistance:5.0,minX:6.5,maxX:32,minZ:-123,maxZ:20,minY:0.02,width:2.1,height:1.8
   });
-  for(const path of [
-   '/assets/world/models/acacia.glb','/assets/world/models/eucalyptus.glb',
-   '/assets/world/models/mango_tree.glb','/assets/world/models/fig_tree.glb',
-   '/assets/world/models/banana_plant.glb','/assets/world/models/maize_patch.glb',
-   '/assets/world/models/sugarcane_patch.glb'
-  ])registerMissingAsset(path,'Near-range licensed model was not supplied. The distant layer uses extracted photo cutouts from your video.');
+  recordWorldNote('Near-range vegetation uses verified models from the world asset catalog where available; user-video foliage cutouts remain the distant layer.');
   recordWorldNote('Trees and ground cover use extracted, alpha-keyed pixels from the user video as camera-facing billboards. Near-range tree GLBs are still missing and must not be mistaken for completed photogrammetry.');
  }
  addCutoutCards(texture,name,count,random,options){
@@ -46,7 +42,45 @@ export class Vegetation {
   }
   mesh.count=placed;mesh.instanceMatrix.needsUpdate=true;this.scene.add(mesh);this.meshes.push(mesh);
  }
+ addCatalogVegetation(){
+  if(!this.assetLibrary)return;
+  for(const item of this.realVegetation)this.assetLibrary.releaseInstance(item.instance);
+  this.realVegetation=[];
+  const treeKeys=['acacia','eucalyptus','mangoTree','figTree'].filter(key=>this.assetLibrary.has(key));
+  const cropKeys=['bananaPlant','maizePatch','sugarcanePatch'].filter(key=>this.assetLibrary.has(key));
+  const treeCount=this.quality==='high'?20:this.quality==='medium'?14:8;
+  const cropCount=this.quality==='high'?15:this.quality==='medium'?9:4;
+  const random=seeded(2097);
+  const add=(key,x,z,height,rotation=0)=>{
+   const y=this.terrain.getHeightAt(x,z);
+   const instance=this.assetLibrary.createInstance(key,{position:[x,y,z],targetHeight:height,rotationY:rotation});
+   if(instance)this.realVegetation.push({instance,position:new THREE.Vector3(x,y,z)});
+  };
+  for(let i=0;i<treeCount&&treeKeys.length;i++){
+   const key=treeKeys[i%treeKeys.length];
+   const side=random()<.5?-1:1;
+   const x=side*(12+random()*39);
+   const z=-119+random()*132;
+   if(Math.abs(x-roadCenterX(z))<9)continue;
+   const height=key==='acacia'?6.2+random()*1.4:key==='eucalyptus'?8+random()*2:5.4+random()*1.2;
+   add(key,x,z,height,random()*Math.PI*2);
+  }
+  for(let i=0;i<cropCount&&cropKeys.length;i++){
+   const key=cropKeys[i%cropKeys.length];
+   const side=i%2===0?-1:1;
+   const x=side*(19+random()*21),z=-111+random()*118;
+   if(Math.abs(x-roadCenterX(z))<12)continue;
+   add(key,x,z,key==='maizePatch'?2.25:key==='sugarcanePatch'?2.7:2.1,random()*Math.PI*2);
+  }
+  console.info('[Project Zero Hour] Real near-field vegetation instances:',this.realVegetation.length);
+ }
  update(_dt,elapsed){
+  if(this.camera){
+   for(const item of this.realVegetation){
+    const distance=this.camera.position.distanceTo(item.position);
+    item.instance.visible=distance<118;
+   }
+  }
   if(!this.camera||!this.billboards.length)return;
   const dummy=new THREE.Object3D(),touched=new Set();
   for(const card of this.billboards){
@@ -64,6 +98,6 @@ export class Vegetation {
   }
   for(const mesh of touched)mesh.instanceMatrix.needsUpdate=true;
  }
- setQuality(q){if(q===this.quality)return;this.dispose();this.quality=q;this.build();}
- dispose(){for(const mesh of this.meshes){this.scene.remove(mesh);mesh.geometry.dispose();mesh.material.dispose();}this.meshes=[];this.billboards=[];}
+ setQuality(q){if(q===this.quality)return;this.dispose();this.quality=q;this.build();this.addCatalogVegetation();}
+ dispose(){for(const item of this.realVegetation)this.assetLibrary?.releaseInstance(item.instance);this.realVegetation=[];for(const mesh of this.meshes){this.scene.remove(mesh);mesh.geometry.dispose();mesh.material.dispose();}this.meshes=[];this.billboards=[];}
 }
