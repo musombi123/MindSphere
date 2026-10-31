@@ -46,38 +46,25 @@ npm run build
 
 The current manifest stages 33 FBX entries, including Idle, Walk, Run, Sprint, Backpedal, crouch idle/walk/aim, prone shoot/reload, block, jump/wall-jump/high-jump, fall/land, hit/death variants, dodge, melee, turn, Shoot, Reload and Interact. It does not fabricate missing animations. The clips must target the same skeleton node/bone names as the chosen player rig. This pipeline loads FBX clips; it **does not automatically retarget incompatible skeletons**.
 
-## Prepare a player model from the standalone GLB or soldier archive
+## Prepare the inspected player rig
 
-A standalone GLB already in the repository can be staged without extracting a ZIP. For the existing Trellis GLB candidate:
+The model inspection report found that the standalone `Assets/trellis-2387720894.glb` is a static mesh with no skin/bones, so it is **not** the player rig. It also found that `Assets/german-bundeswehr-soldier-rigged.zip` contains only an Idle animation file.
 
-```powershell
-git lfs pull --include="Assets/trellis-2387720894.glb"
-.\scripts\prepare-character.ps1 -SourceFile "Assets/trellis-2387720894.glb"
-```
+The stronger development candidate is `trellis-2387720894.fbx` inside `Female Basic Locomotion Pack.zip`. Three.js FBX inspection found one skinned mesh and 65 bones, including a Mixamo-style right hand. The pack also contains matching Idle, Walk, Run, Jump and Strafe clips. This is a structural finding, not visual approval of the character or its licensing. See [CHARACTER_PIPELINE.md](CHARACTER_PIPELINE.md).
 
-This only stages the model; the runtime rejects it if it is not a skinned humanoid with a usable bone hierarchy. The model's likeness, skin, orientation and animation compatibility still need visual review.
-
-The soldier ZIP is an alternate source pack, not a ready-to-load runtime path. Pull and inspect it first:
+Pull and stage that candidate:
 
 ```powershell
-git lfs pull --include="Assets/german-bundeswehr-soldier-rigged.zip"
-.\scripts\prepare-character.ps1 -ListOnly
+git lfs pull --include="Assets/Female Basic Locomotion Pack.zip"
+.\scripts\prepare-character.ps1 -Archive "Female Basic Locomotion Pack.zip" -ListOnly
+.\scripts\prepare-character.ps1 -Archive "Female Basic Locomotion Pack.zip" -ModelEntry "trellis-2387720894.fbx"
 ```
 
-The script ranks likely model candidates by filename hints (for example, soldier/character/rigged) and uncompressed file size. This is a convenience ranking, not proof that the selected file is the correct character, has a valid skeleton, has complete textures, or matches the reference identity.
+The script extracts the rig and all supported FBX/media dependencies below `public/assets/characters/imported/zero-soldier/`, then merges its model path into `public/assets/asset-catalog.json`. The runtime validates for a skinned humanoid before replacing the development proxy.
 
-After inspecting the candidate list and confirming the archive is the intended, rights-cleared player source, select the correct archive entry explicitly when there are multiple candidates, then extract its model and supported texture files:
+When the character pack is extracted, `npm run assets:prepare` automatically overrides the core locomotion manifest entries with that pack's Idle, Walk, Run, Jump, Strafe Left, Strafe Right and Turn files. Other actions retain the baseline FBX clips. This preference is based on the inspected skeleton hierarchy, but the animation transitions still require in-game review.
 
-```powershell
-.\scripts\prepare-character.ps1 -ModelEntry "exact/path/from/listing/model.fbx"
-```
-
-Omit `-ModelEntry` only when the archive has one obvious candidate or you have reviewed the script's top-ranked choice.
-
-The archive extraction is placed below `public/assets/characters/imported/zero-soldier/`. The script writes `public/assets/asset-catalog.json`; the runtime reads `character.playerModel` from this catalog and supports GLB/GLTF or FBX models.
-
-**Before public release:** open the game and inspect the actual player mesh, likeness, materials, feet-to-ground alignment, forward axis, skeleton, animation binding and right-hand weapon socket. The current automatic candidate choice must be reviewed by a human. If the candidate is wrong, edit the catalog to point to the verified model. Do not claim the intended character likeness is complete based solely on extraction.
-
+Do not publish the extracted model solely because the parser reports bones. The archive name indicates a female locomotion pack; check the actual rendered character, clothing, body proportions, texture quality and intended hero appearance. Also confirm source creator, licence, attribution and redistribution rights before including it in a public web build or APK.
 ## Enemy animation integration
 
 When the player rig loads successfully, the game clones it for enemy roles and applies a restrained faction tint. These clones use the available idle/walk/run, shoot, hit and death clips. This is a shared-rig integration stage; separate enemy faction meshes and unique gear still need to be supplied and visually reviewed. When no compatible player rig is available, the development actor proxy remains active and the missing-model warning remains visible in the F3 diagnostics.
