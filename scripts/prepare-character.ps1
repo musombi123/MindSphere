@@ -61,7 +61,7 @@ if ($SourceFile) {
     return
 }
 
-if (!$Archive) { $Archive = "german-bundeswehr-soldier-rigged.zip" }
+if (!$Archive) { $Archive = "Female Basic Locomotion Pack.zip" }
 $archivePath = Join-Path $repoRoot (Join-Path "Assets" $Archive)
 if (!(Test-Path -LiteralPath $archivePath -PathType Leaf)) {
     throw "Archive not found: $archivePath. Run 'git lfs pull' from the repository root and retry."
@@ -88,7 +88,7 @@ try {
         $ext = [IO.Path]::GetExtension($_.Name).ToLowerInvariant()
         $name = [IO.Path]::GetFileNameWithoutExtension($_.Name)
         ($ext -in @(".fbx", ".glb", ".gltf", ".obj")) -and
-        ($name -notmatch "(?i)(walk|run|idle|anim|animation|death|reload|shoot|jump|crouch|hit|pose)")
+        ($name -notmatch "(?i)(walk|run|idle|anim|animation|death|reload|shoot|fire|firing|jump|crouch|hit|pose|strafe|turn|aim|block|attack|melee|dagger|land|evade|dodge|put.?away|backpedal)")
     })
 
     if (!$models.Count) {
@@ -101,7 +101,7 @@ try {
     $ranked = @($models | ForEach-Object {
         $name = [IO.Path]::GetFileNameWithoutExtension($_.Name)
         $score = 0
-        if ($name -match "(?i)soldier|character|player|human|body") { $score += 10 }
+        if ($name -match "(?i)soldier|character|player|human|body|trellis") { $score += 10 }
         if ($name -match "(?i)rigged|armature|skeleton") { $score += 8 }
         [PSCustomObject]@{ Entry = $_; Score = $score; Size = $_.Length; Name = $_.FullName }
     } | Sort-Object Score, Size -Descending)
