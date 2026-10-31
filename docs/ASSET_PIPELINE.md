@@ -17,6 +17,16 @@ git lfs pull --include="Assets/german-bundeswehr-soldier-rigged.zip"
 
 Do not download the entire source library unless you need it; it contains large archives and high-resolution source media. Check that downloaded files are real assets, not short Git LFS pointer text files.
 
+## Inventory the complete source asset library
+
+Before choosing a player, weapon or world model, run the non-destructive inventory:
+
+```powershell
+.\scripts\audit-source-assets.ps1
+```
+
+It lists standalone model files and model members inside ZIP archives, flags archives that are still LFS pointers, classifies likely animation/weapon/vegetation/building candidates, and shows each internal ZIP path. It does not extract or modify any source file. Use `-ArchiveName "filename.zip"` to inspect one pack, or `-IncludeAnimationOnly` to include all FBX animation entries in the report.
+
 ## Prepare animation clips
 
 The repository-owned FBX files in `Assets/` are copied into `public/assets/animations/fbx/` by:
