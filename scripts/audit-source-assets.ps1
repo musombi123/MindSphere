@@ -1,7 +1,9 @@
 [CmdletBinding()]
 param(
     [string]$ArchiveName = "",
-    [switch]$IncludeAnimationOnly
+    [switch]$IncludeAnimationOnly,
+    [string]$OutputCsv = "",
+    [string]$OutputJson = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -124,6 +126,19 @@ foreach ($archive in $archives) {
     finally {
         if ($zip) { $zip.Dispose() }
     }
+}
+
+if ($OutputCsv) {
+    $csvPath = Join-Path $repoRoot $OutputCsv
+    New-Item -ItemType Directory -Force -Path (Split-Path -Parent $csvPath) | Out-Null
+    $rows | Export-Csv -LiteralPath $csvPath -NoTypeInformation -Encoding UTF8
+    Write-Host "CSV report: $csvPath" -ForegroundColor Green
+}
+if ($OutputJson) {
+    $jsonPath = Join-Path $repoRoot $OutputJson
+    New-Item -ItemType Directory -Force -Path (Split-Path -Parent $jsonPath) | Out-Null
+    $rows | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $jsonPath -Encoding UTF8
+    Write-Host "JSON report: $jsonPath" -ForegroundColor Green
 }
 
 Write-Host ""
