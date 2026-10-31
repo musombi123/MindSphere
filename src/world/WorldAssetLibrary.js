@@ -106,15 +106,21 @@ export class WorldAssetLibrary {
       this.definitions.set(key, { ...((typeof definition === 'object' && definition) || {}), file });
     }
 
-    const tasks = [];
+    const mapped = [];
     for (const key of Object.keys(EXPECTED_WORLD_MODELS)) {
-      if (this.definitions.has(key)) tasks.push(this.loadModel(key));
+      if (this.definitions.has(key)) mapped.push(key);
       else registerMissingAsset(
         '/assets/world/models/' + key + '.glb',
         EXPECTED_WORLD_MODELS[key] + ' has no verified file mapping in public/assets/asset-catalog.json.'
       );
     }
-    await Promise.allSettled(tasks);
+
+    // Keep concurrent GPU uploads/decoder work bounded on entry-level Android devices.
+    const concurrency = this.renderer?.capabilities?.isWebGL2 ? 3 : 2;
+    for (let offset = 0; offset < mapped.length; offset += concurrency) {
+      const batch = mapped.slice(offset, offset + concurrency);
+      await Promise.allSettled(batch.map((key) => this.loadModel(key)));
+    }
     return this;
   }
 
@@ -129,8 +135,6 @@ export class WorldAssetLibrary {
       : publicUrl(definition.file);
     const task = (async () => {
       try {
-        const response = await fetch(url, { method: 'HEAD', cache: 'no-store' });
-        if (!response.ok) throw new Error('Asset unavailable (HTTP ' + response.status + ').');
         const gltf = await this.loader.loadAsync(url);
         if (!gltf.scene) throw new Error('GLB/GLTF file did not contain a scene.');
         const template = gltf.scene;
