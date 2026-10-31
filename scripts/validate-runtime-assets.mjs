@@ -1,4 +1,4 @@
-import { readFile, stat } from 'node:fs/promises';
+import { open, readFile, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -49,7 +49,11 @@ async function verifyFile(file, label, acceptedExtensions = []) {
       fail(label + ' is missing, empty, or too small (' + fileStat.size + ' bytes).');
       return false;
     }
-    const prefix = await readFile(file, { encoding: 'utf8', flag: 'r' }).then(s => s.slice(0, 100)).catch(() => '');
+    const prefixBuffer = Buffer.alloc(100);
+    const prefixHandle = await open(file, 'r');
+    try { await prefixHandle.read(prefixBuffer, 0, prefixBuffer.length, 0); }
+    finally { await prefixHandle.close(); }
+    const prefix = prefixBuffer.toString('utf8');
     if (prefix.startsWith('version https://git-lfs.github.com/spec/v1')) {
       fail(label + ' is still a Git LFS pointer. Run a targeted git lfs pull for this runtime path.');
       return false;
@@ -60,8 +64,7 @@ async function verifyFile(file, label, acceptedExtensions = []) {
     }
     if (path.extname(file).toLowerCase() === '.glb') {
       const header = Buffer.alloc(12);
-      const fs = await import('node:fs/promises');
-      const handle = await fs.open(file, 'r');
+      const handle = await open(file, 'r');
       try { await handle.read(header, 0, 12, 0); } finally { await handle.close(); }
       if (header.toString('ascii', 0, 4) !== 'glTF' || header.readUInt32LE(4) !== 2) {
         fail(label + ' is not a valid glTF binary (GLB v2) file.');
