@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { roadCenterX } from './Terrain.js';
-import { recordWorldNote } from './AssetDiagnostics.js';
+import { registerMissingAsset, recordWorldNote } from './AssetDiagnostics.js';
 
 export class Props {
  constructor({scene,terrain,textures,quality='medium',camera,assetLibrary=null}){
@@ -31,7 +31,7 @@ export class Props {
    this.addPhotoPanel(homestead,'USER_PHOTO_RURAL_HOMESTEAD_'+i,x,y+3.0,z,9.4,5.3,side===1?-.10:.10);
   }
   recordWorldNote('Near-field rural geometry is loaded from the verified worldModels section of public/assets/asset-catalog.json. Missing entries are listed in the F3 asset diagnostics.');
-  recordWorldNote('Rural homes and timber fences are shown using the actual user-video photos on feathered photo cards. These are not true 3D buildings or colliders; matching GLBs are still required for close-up geometry.');
+  recordWorldNote('User-video photo panels remain as distant reference scenery where a verified near-field GLB has not been mapped. Mapped world models are separate true 3D meshes; these photo panels are not colliders.');
  }
  addCatalogWorldModels(){
   if(!this.assetLibrary)return;
