@@ -471,7 +471,8 @@ export class PlayerController {
     };
 
     update(0, 0);
-    return { root, mixer, actions, play, update };
+    const durationFor = (key, fallback = 1) => actions.get(resolveClipKey(key) || key)?.getClip()?.duration || fallback;
+    return { root, mixer, actions, play, update, durationFor };
   }
 
   createFallbackHumanoid() {
