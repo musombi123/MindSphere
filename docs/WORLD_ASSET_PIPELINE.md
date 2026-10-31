@@ -11,10 +11,10 @@ The repository includes candidate source archives for thatched rural houses, rur
 First download the LFS source payloads:
 
 ```powershell
-git lfs pull
+git lfs pull --include="Assets/thatched-rural-houses.zip"
 ```
 
-Then list GLB/GLTF members of a candidate ZIP without extracting:
+Use the matching path for the other ZIP you intend to inspect; you do not need to download all source packs. Then list GLB/GLTF members of a candidate ZIP without extracting:
 
 ```powershell
 .\scripts\prepare-world-assets.ps1 -Archive "thatched-rural-houses.zip" -ListOnly
