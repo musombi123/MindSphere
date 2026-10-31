@@ -182,12 +182,21 @@ export class WorldAssetLibrary {
       : Number(scale || 1);
     instance.scale.multiplyScalar(resolvedScale);
     instance.rotation.y = Number(rotationY) || 0;
-    instance.position.set(Number(position[0]) || 0, Number(position[1]) || 0, Number(position[2]) || 0);
+    const target = new THREE.Vector3(
+      Number(position[0]) || 0,
+      Number(position[1]) || 0,
+      Number(position[2]) || 0
+    );
+    instance.position.copy(target);
 
-    // Align the actual model's lowest point with the supplied terrain elevation.
+    // Centre the actual rotated/scaled model on the requested X/Z and align its lowest point to terrain Y.
     instance.updateMatrixWorld(true);
     const bounds = new THREE.Box3().setFromObject(instance);
-    instance.position.y -= bounds.min.y;
+    const centre = bounds.getCenter(new THREE.Vector3());
+    instance.position.x += target.x - centre.x;
+    instance.position.y += target.y - bounds.min.y;
+    instance.position.z += target.z - centre.z;
+    instance.updateMatrixWorld(true);
     modelMaterialSetup(instance);
     instance.traverse((object) => {
       if (object.isMesh || object.isSkinnedMesh) {
