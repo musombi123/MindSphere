@@ -4,13 +4,14 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "npm run assets:prepare && vite --host 0.0.0.0",
+    "dev": "npm run assets:prepare && npm run assets:validate && vite --host 0.0.0.0",
     "assets:prepare": "node scripts/prepare-runtime-assets.mjs",
-    "build": "npm run assets:prepare && vite build",
+    "build": "npm run assets:prepare && npm run assets:validate && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "android:sync": "npm run build && cap sync android",
     "android:open": "cap open android",
-    "postinstall": "node scripts/copy-three-decoders.mjs"
+    "postinstall": "node scripts/copy-three-decoders.mjs",
+    "assets:validate": "node scripts/validate-runtime-assets.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^7.4.3",
