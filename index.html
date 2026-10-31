@@ -1263,7 +1263,7 @@ function updateWorld(dt){
     if (e.aiMode === 'advance') {
       steering.copy(forward);
     } else if (e.aiMode === 'flank') {
-      steering.copy(forward).multiplyScalar(.38).addScaledVector(lateral, .92);
+      steering.copy(forward).multiplyScalar(.62).addScaledVector(lateral, .78);
     } else if (e.aiMode === 'circle') {
       steering.copy(lateral).addScaledVector(forward, .12);
     } else if (e.aiMode === 'retreat') {
@@ -1279,7 +1279,8 @@ function updateWorld(dt){
     }
 
     const steeringLength = steering.length();
-    const moving = steeringLength > .12 && dist > 2.2;
+    const minMoveDistance = e.aiMode === 'retreat' || e.aiMode === 'reposition' ? .75 : 2.2;
+    const moving = steeringLength > .12 && dist > minMoveDistance;
     if (moving) {
       steering.normalize();
       const speed = e.moveSpeed * (e.boss ? 1.05 : 1) * (e.role === 'thief' && e.aiMode === 'flank' ? 1.2 : 1);
