@@ -75,7 +75,7 @@ Full offline play is the target. Normal ad networks need connectivity to request
 
 ## Website deployment
 
-The workflow at `.github/workflows/deploy-pages.yml` builds the site and attempts to publish it on pushes to `main`. The Vite build can succeed even when deployment fails because GitHub Pages is not enabled. To publish, open **Repository Settings → Pages** and select **GitHub Actions** as the build/deployment source, subject to repository permissions. Then check the Actions tab.
+The workflow at `.github/workflows/deploy-pages.yml` builds the game on every push and uploads a Pages-ready artifact. The publish job is skipped by default so an unconfigured Pages site does not turn a successful build red. To publish, open **Repository Settings → Pages** and select **GitHub Actions** as the build/deployment source. Then add the repository Actions variable `ENABLE_GITHUB_PAGES=true` under **Settings → Secrets and variables → Actions → Variables**. The next run will build and publish; leave the variable unset while you only want build validation.
 
 Expected URL after a successful Pages deployment: <https://musombi123.github.io/MindSphere/>.
 
