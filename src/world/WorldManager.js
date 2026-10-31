@@ -8,7 +8,8 @@ import { Props } from './Props.js';
 import { Weather } from './Weather.js';
 import { AudioAmbience } from './AudioAmbience.js';
 import { Postprocessing } from './Postprocessing.js';
-import { installWorldDebugPanel, registerMissingAsset } from './AssetDiagnostics.js';
+import { WorldAssetLibrary } from './WorldAssetLibrary.js';
+import { installWorldDebugPanel } from './AssetDiagnostics.js';
 
 export class WorldManager {
   constructor({ scene, renderer, camera, chapter = 1, hemi, sun, quality = null }) {
@@ -18,26 +19,17 @@ export class WorldManager {
     this.quality = quality || (matchMedia('(pointer: coarse)').matches ? 'low' : 'medium');
     try { const saved = localStorage.getItem('zeroHourWorldQuality'); if (['low','medium','high'].includes(saved)) this.quality = saved; } catch {}
     this.textures = createProceduralPbrTextures(this.quality === 'high' ? 384 : 256);
+    this.assetLibrary = new WorldAssetLibrary({ renderer, scene });
     this.terrain = new Terrain({ scene, quality: this.quality, textures: this.textures });
     this.road = new Road({ scene, terrain: this.terrain, textures: this.textures, quality: this.quality });
     this.sky = new Sky({scene,sun,hemi,quality:this.quality,photos:this.textures.photo});
-    this.vegetation = new Vegetation({scene,quality:this.quality,textures:this.textures,terrain:this.terrain,camera});
-    this.props = new Props({scene,terrain:this.terrain,textures:this.textures,quality:this.quality,camera});
+    this.vegetation = new Vegetation({scene,quality:this.quality,textures:this.textures,terrain:this.terrain,camera,assetLibrary:this.assetLibrary});
+    this.props = new Props({scene,terrain:this.terrain,textures:this.textures,quality:this.quality,camera,assetLibrary:this.assetLibrary});
     this.weather = new Weather({scene,quality:this.quality});
     this.audio = new AudioAmbience();
     this.postprocessing = new Postprocessing({renderer,scene,camera,sun,quality:this.quality});
-    for (const modelPath of [
-      '/assets/world/models/acacia.glb', '/assets/world/models/eucalyptus.glb',
-      '/assets/world/models/mango_tree.glb', '/assets/world/models/fig_tree.glb',
-      '/assets/world/models/mud_house.glb', '/assets/world/models/timber_fence.glb',
-      '/assets/world/models/boda_boda.glb', '/assets/world/models/rusted_pickup.glb',
-      '/assets/world/models/water_tank.glb'
-    ]) registerMissingAsset(modelPath, 'Near-field licensed GLB not supplied. The game must not pretend a photo card is a 3D model.');
     window.__worldQuality=this.quality;
     window.__setWorldQuality=(preset)=>this.setQuality(preset);
-    for (const audioPath of ['/assets/world/audio/wind.ogg','/assets/world/audio/birds.ogg','/assets/world/audio/insects.ogg','/assets/world/audio/footsteps_soil.ogg','/assets/world/audio/footsteps_grass.ogg','/assets/world/audio/footsteps_wood.ogg','/assets/world/audio/footsteps_metal.ogg']) {
-      registerMissingAsset(audioPath, 'Licensed ambient/footstep audio is not bundled yet. Add this file to enable that sound.');
-    }
     this.phaseRoadMesh = null;
     this.elapsed = 0;
   }
@@ -55,5 +47,5 @@ export class WorldManager {
     this.road.setQuality(quality);
     this.sky.setQuality(quality);this.vegetation.setQuality(quality);this.props.setQuality(quality);this.weather.setQuality(quality);this.postprocessing.setQuality(quality);
   }
-  dispose() { this.road.dispose(); this.terrain.dispose();this.sky.dispose();this.vegetation.dispose();this.props.dispose();this.weather.dispose();this.audio.dispose();this.postprocessing.dispose(); }
+  dispose() { this.props.dispose();this.vegetation.dispose();this.assetLibrary.dispose();this.road.dispose();this.terrain.dispose();this.sky.dispose();this.weather.dispose();this.audio.dispose();this.postprocessing.dispose(); }
 }
