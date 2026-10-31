@@ -112,7 +112,11 @@ if (manifest) {
     if (clipEntries.length < 30) fail('Expected at least 30 staged FBX clips; found ' + clipEntries.length + '. Run npm run assets:prepare.');
     for (const [key, value] of clipEntries) {
       const definition = typeof value === 'string' ? { file: value } : value;
-      const file = localAssetPath(path.posix.join('assets/animations', String(definition?.file || '')), 'Animation ' + key);
+      const rawAnimationPath = String(definition?.file || '');
+      const animationPath = rawAnimationPath.startsWith('/')
+        ? rawAnimationPath
+        : path.posix.join('assets/animations', rawAnimationPath);
+      const file = localAssetPath(animationPath, 'Animation ' + key);
       if (!file) continue;
       const format = definition?.format === 'fbx' ? ['.fbx'] : ['.glb', '.gltf', '.fbx'];
       if (await verifyFile(file, 'Animation ' + key, format)) stats.animations++;
