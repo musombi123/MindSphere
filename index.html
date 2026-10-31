@@ -179,6 +179,7 @@ const mat = {
   arc:new THREE.MeshBasicMaterial({color:0x77acff}),
   gravity:new THREE.MeshBasicMaterial({color:0xe28cff}),
   enemyShot:new THREE.MeshBasicMaterial({color:0xff6b5d}),
+  echoShot:new THREE.MeshBasicMaterial({color:0xaa82ff}),
   bossShot:new THREE.MeshBasicMaterial({color:0xff39a9}),
   intel:new THREE.MeshStandardMaterial({color:0xffd16d,emissive:0x9a4c09,emissiveIntensity:1.5,metalness:.4,roughness:.25}),
   echoTop:new THREE.MeshStandardMaterial({color:0x6f4d9d,emissive:0x3d1d76,emissiveIntensity:.8,roughness:.35,metalness:.25}),
@@ -198,7 +199,7 @@ worldManager.initialize();
 // Start optional ambience only after a real user gesture; missing audio is listed in the red asset diagnostics.
 canvas.addEventListener('pointerdown',()=>{worldManager.audio.enable().catch(()=>{});},{once:true});
 
-const player = {pos:new THREE.Vector3(0,worldManager.getHeightAt(0,9),9),health:100,maxHealth:100,score:0,kills:0,gangDown:0,thievesStopped:0,intel:0,rescued:0,anchors:0,shieldTime:0,overdriveTime:0,riverDisruptTime:0,verticalVelocity:0,grounded:true,fallAnimationStarted:false,dodgeTime:0,dodgeInvulnerable:0,dodgeCooldown:0,dodgeDirection:new THREE.Vector3(0,0,-1),meleeCooldown:0,dead:false};
+const player = {pos:new THREE.Vector3(0,worldManager.getHeightAt(0,9),9),health:100,maxHealth:100,score:0,kills:0,gangDown:0,thievesStopped:0,intel:0,rescued:0,anchors:0,shieldTime:0,overdriveTime:0,riverDisruptTime:0,velocity:new THREE.Vector3(),verticalVelocity:0,grounded:true,fallAnimationStarted:false,dodgeTime:0,dodgeInvulnerable:0,dodgeCooldown:0,dodgeDirection:new THREE.Vector3(0,0,-1),meleeCooldown:0,dead:false};
 const playerController = new PlayerController({
   renderer,
   onProgress: (event) => {
@@ -264,6 +265,11 @@ function addEnemy(x,z,boss=false,role='gangster'){
     maxHp: boss ? 190 : (role === 'echo' ? 62 : (role === 'thief' ? 36 : 52)),
     boss, role, dead: false, nextShot: 1.2 + Math.random() * 1.6,
     moveSpeed: boss ? 1.35 : (role === 'echo' ? 1.9 : (role === 'thief' ? 2.1 : 1.65)),
+    attackRange: boss ? 9.5 : (role === 'echo' ? 13.5 : (role === 'thief' ? 7.5 : 5.8)),
+    fireRange: role === 'echo' ? 27 : 21,
+    fireInterval: boss ? 1.05 : (role === 'echo' ? 1.35 : (role === 'thief' ? 1.55 : 1.8)),
+    aiMode: 'advance', rethinkTimer: Math.random() * .4,
+    strafeSign: Math.random() < .5 ? -1 : 1,
     flash: 0, animator: null, deathRemaining: 0, hitAnimationCooldown: 0
   });
 }
@@ -801,7 +807,7 @@ function setWeapon(index){
 }
 document.querySelectorAll('.weapon-select').forEach(b=>b.addEventListener('click',()=>setWeapon(Number(b.dataset.weapon))));
 function createProjectile(pos,dir,team,weapon,damageOverride){
-  const material=team==='enemy'?(weapon==='boss'?mat.bossShot:mat.enemyShot):[mat.pulse,mat.nova,mat.arc,mat.gravity][weapon.color];
+  const material=team==='enemy'?(weapon==='boss'?mat.bossShot:weapon==='echo'?mat.echoShot:mat.enemyShot):[mat.pulse,mat.nova,mat.arc,mat.gravity][weapon.color];
   const mesh=new THREE.Mesh(team==='enemy'?smallSphereGeo:sphereGeo,material);
   mesh.position.copy(pos);scene.add(mesh);
   projectiles.push({mesh,dir:dir.clone().normalize(),team,weapon,damage:damageOverride??weapon.damage,life:team==='enemy'?3:2.8,dead:false});
@@ -1141,6 +1147,7 @@ window.addEventListener('blur',()=>{for(const k of Object.keys(keys))keys[k]=fal
 
 function updateWorld(dt){
   if(!running||finished||narrativeOpen)return;
+  const previousPlayerX=player.pos.x,previousPlayerZ=player.pos.z;
   elapsed+=dt;
   player.riverDisruptTime=Math.max(0,player.riverDisruptTime-dt);
   player.dodgeTime=Math.max(0,player.dodgeTime-dt);
@@ -1201,6 +1208,7 @@ function updateWorld(dt){
   }
   playerModel.position.copy(player.pos);
   playerShadow.position.set(player.pos.x,groundHeight+.025,player.pos.z);
+  if(dt>0)player.velocity.set((player.pos.x-previousPlayerX)/dt,0,(player.pos.z-previousPlayerZ)/dt);
   const jumpHeight=Math.max(0,player.pos.y-groundHeight);
   playerShadow.scale.setScalar(1-Math.min(.28,jumpHeight*.08));
   playerController.setLocomotion({
@@ -1228,27 +1236,77 @@ function updateWorld(dt){
       continue;
     }
     e.hitAnimationCooldown = Math.max(0, e.hitAnimationCooldown - dt);
-    e.nextShot-=dt;
-    const dx=player.pos.x-e.model.position.x,dz=player.pos.z-e.model.position.z;
-    const dist=Math.sqrt(dx*dx+dz*dz);
-    e.model.rotation.y=Math.atan2(-dx,-dz);
-    const moving = dist > 4.4;
-    if(moving){
-      const factor=e.boss?1.05:1;
-      e.model.position.x+=dx/(dist||1)*e.moveSpeed*dt*factor;
-      e.model.position.z+=dz/(dist||1)*e.moveSpeed*dt*factor;
+    e.nextShot -= dt;
+    e.rethinkTimer -= dt;
+
+    const dx = player.pos.x - e.model.position.x;
+    const dz = player.pos.z - e.model.position.z;
+    const dist = Math.sqrt(dx * dx + dz * dz);
+    const forward = new THREE.Vector3(dx, 0, dz).normalize();
+    const lateral = new THREE.Vector3(-forward.z, 0, forward.x).multiplyScalar(e.strafeSign);
+
+    if (e.rethinkTimer <= 0) {
+      e.strafeSign = Math.random() < .5 ? -1 : 1;
+      if (e.boss) {
+        e.aiMode = dist > e.attackRange + 1.5 ? 'advance' : dist < e.attackRange - 2 ? 'reposition' : 'command';
+      } else if (e.role === 'echo') {
+        e.aiMode = dist < e.attackRange - 3 ? 'retreat' : dist > e.attackRange + 3 ? 'advance' : 'hold';
+      } else if (e.role === 'thief') {
+        e.aiMode = dist > e.attackRange ? 'flank' : 'circle';
+      } else {
+        e.aiMode = dist > e.attackRange ? 'advance' : 'suppress';
+      }
+      e.rethinkTimer = .55 + Math.random() * .45;
     }
-    e.model.position.y=worldManager.getHeightAt(e.model.position.x,e.model.position.z);
-    e.shadow.position.set(e.model.position.x,e.model.position.y+.025,e.model.position.z);
+
+    const steering = new THREE.Vector3();
+    if (e.aiMode === 'advance') {
+      steering.copy(forward);
+    } else if (e.aiMode === 'flank') {
+      steering.copy(forward).multiplyScalar(.38).addScaledVector(lateral, .92);
+    } else if (e.aiMode === 'circle') {
+      steering.copy(lateral).addScaledVector(forward, .12);
+    } else if (e.aiMode === 'retreat') {
+      steering.copy(forward).multiplyScalar(-.9).addScaledVector(lateral, .45);
+    } else if (e.aiMode === 'reposition') {
+      steering.copy(forward).multiplyScalar(-.42).addScaledVector(lateral, .55);
+    } else if (e.aiMode === 'command') {
+      steering.copy(lateral).multiplyScalar(.45);
+    } else if (e.aiMode === 'hold') {
+      steering.copy(lateral).multiplyScalar(.62);
+    } else {
+      steering.copy(lateral).multiplyScalar(.32);
+    }
+
+    const steeringLength = steering.length();
+    const moving = steeringLength > .12 && dist > 2.2;
+    if (moving) {
+      steering.normalize();
+      const speed = e.moveSpeed * (e.boss ? 1.05 : 1) * (e.role === 'thief' && e.aiMode === 'flank' ? 1.2 : 1);
+      e.model.position.x += steering.x * speed * dt;
+      e.model.position.z += steering.z * speed * dt;
+      e.model.position.x = THREE.MathUtils.clamp(e.model.position.x, -6.2, 6.2);
+      e.model.position.z = THREE.MathUtils.clamp(e.model.position.z, -57, 14);
+    }
+    e.model.rotation.y = Math.atan2(-dx, -dz);
+    e.model.position.y = worldManager.getHeightAt(e.model.position.x, e.model.position.z);
+    e.shadow.position.set(e.model.position.x, e.model.position.y + .025, e.model.position.z);
     e.animator?.update(dt, moving ? e.moveSpeed : 0);
-    if(dist<21&&e.nextShot<=0){
-      const v=new THREE.Vector3(dx,0,dz).normalize();
-      const origin=new THREE.Vector3(e.model.position.x,1.3,e.model.position.z-.25);
+
+    if (dist < e.fireRange && e.nextShot <= 0) {
+      const leadTime = THREE.MathUtils.clamp(dist / (e.role === 'echo' ? 24 : 20), 0, .42);
+      const accuracy = e.boss ? .94 : e.role === 'echo' ? .88 : e.role === 'thief' ? .66 : .76;
+      const targetX = player.pos.x + player.velocity.x * leadTime * accuracy + (Math.random() - .5) * (1 - accuracy) * 1.5;
+      const targetZ = player.pos.z + player.velocity.z * leadTime * accuracy + (Math.random() - .5) * (1 - accuracy) * 1.5;
+      const shotDirection = new THREE.Vector3(targetX - e.model.position.x, 0, targetZ - e.model.position.z).normalize();
+      const origin = new THREE.Vector3(e.model.position.x, e.model.position.y + 1.3, e.model.position.z - .25);
       e.animator?.play('shoot', 0.06);
-      createProjectile(origin,v,'enemy',e.boss?'boss':'regular',e.boss?12:7);
-      e.nextShot=e.boss?1.05:1.65+Math.random()*.55;
-      if((chapter===2||chapter===3)&&signalChoice==='trust')e.nextShot*=.9;
-      else if((chapter===2||chapter===3)&&signalChoice==='sever')e.nextShot*=1.12;
+      const shotKind = e.boss ? 'boss' : e.role === 'echo' ? 'echo' : 'regular';
+      const damage = e.boss ? 12 : e.role === 'echo' ? 9 : e.role === 'thief' ? 6 : 7;
+      createProjectile(origin, shotDirection, 'enemy', shotKind, damage);
+      e.nextShot = e.fireInterval * (.86 + Math.random() * .32);
+      if ((chapter === 2 || chapter === 3) && signalChoice === 'trust') e.nextShot *= .9;
+      else if ((chapter === 2 || chapter === 3) && signalChoice === 'sever') e.nextShot *= 1.12;
     }
   }
   if(chapter===2){for(const fx of riverRipples){if(fx.mesh.parent){fx.mesh.position.x+=Math.sin(elapsed*.7+(fx.phase||0))*dt*1.4;fx.mesh.rotation.z+=dt*.35;}}}
