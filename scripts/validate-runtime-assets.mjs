@@ -45,8 +45,8 @@ async function verifyFile(file, label, acceptedExtensions = []) {
   if (!file) return false;
   try {
     const fileStat = await stat(file);
-    if (!fileStat.isFile() || fileStat.size < 512) {
-      fail(label + ' is missing, empty, or too small (' + fileStat.size + ' bytes).');
+    if (!fileStat.isFile() || fileStat.size < 1) {
+      fail(label + ' is missing or empty (' + fileStat.size + ' bytes).');
       return false;
     }
     const prefixBuffer = Buffer.alloc(100);
