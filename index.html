@@ -218,7 +218,9 @@ const playerController = new PlayerController({
 const playerModel = createActor(true,false);
 playerController.attachRoot(playerModel);
 scene.add(playerModel);
-playerController.load('/assets/characters/player.glb');
+playerController.load().then((loaded) => {
+  if (loaded) installRiggedEnemyModels();
+});
 const playerShadow=new THREE.Mesh(actorShadowGeo,actorShadowMat);playerShadow.position.y=.005;scene.add(playerShadow);
 const shieldBubble=new THREE.Mesh(new THREE.SphereGeometry(1.65,16,12),new THREE.MeshBasicMaterial({color:0x62eaff,wireframe:true,transparent:true,opacity:.22,depthWrite:false}));
 shieldBubble.position.y=1.1;shieldBubble.visible=false;playerModel.add(shieldBubble);
@@ -256,7 +258,42 @@ const enemies=[];
 function addEnemy(x,z,boss=false,role='gangster'){
   const model=createActor(false,boss,role);model.position.set(x,worldManager.getHeightAt(x,z),z);scene.add(model);
   const shadow=new THREE.Mesh(actorShadowGeo,actorShadowMat);shadow.position.set(x,worldManager.getHeightAt(x,z)+.025,z);scene.add(shadow);
-  enemies.push({model,shadow,hp:boss?190:(role==='echo'?62:(role==='thief'?36:52)),maxHp:boss?190:(role==='echo'?62:(role==='thief'?36:52)),boss,role,dead:false,nextShot:1.2+Math.random()*1.6,moveSpeed:boss?1.35:(role==='echo'?1.9:(role==='thief'?2.1:1.65)),flash:0});
+  enemies.push({
+    model, shadow,
+    hp: boss ? 190 : (role === 'echo' ? 62 : (role === 'thief' ? 36 : 52)),
+    maxHp: boss ? 190 : (role === 'echo' ? 62 : (role === 'thief' ? 36 : 52)),
+    boss, role, dead: false, nextShot: 1.2 + Math.random() * 1.6,
+    moveSpeed: boss ? 1.35 : (role === 'echo' ? 1.9 : (role === 'thief' ? 2.1 : 1.65)),
+    flash: 0, animator: null, deathRemaining: 0, hitAnimationCooldown: 0
+  });
+}
+
+function installRiggedEnemyModels() {
+  let installed = 0;
+  for (const enemy of enemies) {
+    if (enemy.animator) continue;
+    const role = enemy.role === 'echo'
+      ? 'echo'
+      : enemy.role === 'thief'
+        ? 'thief'
+        : enemy.boss
+          ? 'boss'
+          : 'gangster';
+    const rig = playerController.createCloneAnimator(role);
+    if (!rig) continue;
+
+    // Remove only the temporary actor geometry. Shared gameplay materials remain owned by the game.
+    enemy.model.traverse((object) => {
+      if (object.isMesh && object.geometry) object.geometry.dispose();
+    });
+    enemy.model.clear();
+    enemy.model.add(rig.root);
+    if (enemy.boss) rig.root.scale.multiplyScalar(1.06);
+    enemy.animator = rig;
+    enemy.animator.update(0, 0);
+    installed++;
+  }
+  console.info('[Project Zero Hour] Rigged enemy actors installed:', installed, '/', enemies.length);
 }
 if(chapter===1){
   addEnemy(-2.1,-8,false,'gangster');addEnemy(2.5,-16,false,'thief');addEnemy(-3,-24,false,'gangster');addEnemy(2.2,-32,false,'thief');addEnemy(-1.2,-39,false,'gangster');addEnemy(0,-48,true,'gangster');
@@ -808,10 +845,19 @@ function hurtPlayer(amount){
 }
 function damageEnemy(e,amount){
   if(e.dead)return;
+  if (e.animator && e.hitAnimationCooldown <= 0 && e.hp > 0) {
+    if (e.animator.play('hit', 0.06)) e.hitAnimationCooldown = 0.32;
+  }
   e.hp=Math.max(0,e.hp-amount);e.flash=.12;
   player.score+=Math.round(amount);
   if(e.hp<=0){
-    e.dead=true;e.model.visible=false;e.shadow.visible=false;
+    e.dead = true;
+    const hasDeathClip = e.animator?.play('death', 0.08) || false;
+    e.deathRemaining = hasDeathClip ? e.animator.durationFor('death', 1.35) : 0;
+    if (!hasDeathClip) {
+      e.model.visible = false;
+      e.shadow.visible = false;
+    }
     player.kills++;if(!e.boss&&e.role==='thief')player.thievesStopped++;else if(!e.boss)player.gangDown++;player.score+=e.boss?500:150;
     showToast(e.boss?'KITO · VIPER COMMANDER DOWN':(chapter===3?'ECHO UNIT DISSOLVED':(e.role==='thief'?'SCAVENGER STOPPED':'BLACK VIPER RAIDER STOPPED')));
     if(e.boss)showStoryBeat('boss');
@@ -1093,21 +1139,35 @@ function updateWorld(dt){
   if(firePressed&&elapsed-lastShot>=weapons[activeWeapon].rate)fire();
 
   for(const e of enemies){
-    if(e.dead)continue;
+    if (e.dead) {
+      if (e.animator && e.deathRemaining > 0) {
+        e.animator.update(dt, 0);
+        e.deathRemaining = Math.max(0, e.deathRemaining - dt);
+        if (e.deathRemaining === 0) {
+          e.model.visible = false;
+          e.shadow.visible = false;
+        }
+      }
+      continue;
+    }
+    e.hitAnimationCooldown = Math.max(0, e.hitAnimationCooldown - dt);
     e.nextShot-=dt;
     const dx=player.pos.x-e.model.position.x,dz=player.pos.z-e.model.position.z;
     const dist=Math.sqrt(dx*dx+dz*dz);
     e.model.rotation.y=Math.atan2(-dx,-dz);
-    if(dist>4.4){
+    const moving = dist > 4.4;
+    if(moving){
       const factor=e.boss?1.05:1;
       e.model.position.x+=dx/(dist||1)*e.moveSpeed*dt*factor;
       e.model.position.z+=dz/(dist||1)*e.moveSpeed*dt*factor;
     }
     e.model.position.y=worldManager.getHeightAt(e.model.position.x,e.model.position.z);
     e.shadow.position.set(e.model.position.x,e.model.position.y+.025,e.model.position.z);
+    e.animator?.update(dt, moving ? e.moveSpeed : 0);
     if(dist<21&&e.nextShot<=0){
       const v=new THREE.Vector3(dx,0,dz).normalize();
       const origin=new THREE.Vector3(e.model.position.x,1.3,e.model.position.z-.25);
+      e.animator?.play('shoot', 0.06);
       createProjectile(origin,v,'enemy',e.boss?'boss':'regular',e.boss?12:7);
       e.nextShot=e.boss?1.05:1.65+Math.random()*.55;
       if((chapter===2||chapter===3)&&signalChoice==='trust')e.nextShot*=.9;
