@@ -312,6 +312,19 @@ export class PlayerController {
       const entries = Object.entries(manifest.clips || {});
       if (!entries.length) return [];
 
+      // Several animation keys intentionally share a single source FBX. Load each
+      // file once, clone its AnimationClip for each state, then dispose its unused scene.
+      const loadedFiles = new Map();
+      const loadFile = (file, isFbx) => {
+        if (!loadedFiles.has(file)) {
+          const task = isFbx
+            ? new FBXLoader().loadAsync(file)
+            : loader.loadAsync(file);
+          loadedFiles.set(file, task);
+        }
+        return loadedFiles.get(file);
+      };
+
       const results = await Promise.all(entries.map(async ([key, value]) => {
         const definition = typeof value === 'string' ? { file: value } : value;
         if (!definition || !definition.file) return null;
@@ -322,9 +335,7 @@ export class PlayerController {
             : 'assets/animations/' + definition.file);
         try {
           const isFbx = definition.format === 'fbx' || /\.fbx(?:[?#]|$)/i.test(file);
-          const loadedAsset = isFbx
-            ? await new FBXLoader().loadAsync(file)
-            : await loader.loadAsync(file);
+          const loadedAsset = await loadFile(file, isFbx);
           const sourceClips = loadedAsset.animations || [];
           const expected = definition.clipName ? normaliseName(definition.clipName) : normaliseName(key);
           const sourceClip = sourceClips.find((clip) => normaliseName(clip.name) === expected)
@@ -341,6 +352,28 @@ export class PlayerController {
           return null;
         }
       }));
+
+      const geometries = new Set();
+      const materials = new Set();
+      const textures = new Set();
+      const loadedAssets = await Promise.allSettled([...loadedFiles.values()]);
+      for (const result of loadedAssets) {
+        if (result.status !== 'fulfilled') continue;
+        result.value.scene?.traverse((object) => {
+          if (object.geometry) geometries.add(object.geometry);
+          const list = Array.isArray(object.material) ? object.material : object.material ? [object.material] : [];
+          for (const material of list) {
+            materials.add(material);
+            for (const value of Object.values(material)) {
+              if (value?.isTexture) textures.add(value);
+            }
+          }
+        });
+      }
+      for (const texture of textures) texture.dispose();
+      for (const material of materials) material.dispose();
+      for (const geometry of geometries) geometry.dispose();
+
       return results.filter(Boolean);
     } catch (error) {
       // The manifest is optional for artists who pack clips directly into player.glb.
