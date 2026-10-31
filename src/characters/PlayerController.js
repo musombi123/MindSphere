@@ -264,6 +264,19 @@ export class PlayerController {
   }
 
   normaliseAvatar(avatar) {
+    let skinnedMeshes = 0;
+    let boneCount = 0;
+    avatar.traverse((object) => {
+      if (object.isSkinnedMesh) skinnedMeshes++;
+      if (object.isBone) boneCount++;
+    });
+    if (skinnedMeshes < 1 || boneCount < 8) {
+      throw new Error(
+        'Player model is not a usable skinned humanoid (skinned meshes: ' +
+        skinnedMeshes + ', bones: ' + boneCount + '). Import a rigged GLB/FBX, not a static OBJ/mesh.'
+      );
+    }
+
     avatar.updateMatrixWorld(true);
     const bounds = new THREE.Box3().setFromObject(avatar);
     const size = bounds.getSize(new THREE.Vector3());
