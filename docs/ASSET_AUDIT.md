@@ -1,3 +1,5 @@
+> **Historical snapshot — 2026-10-29.** This audit describes the repository before the 2026-10-31 game-asset import and FBX pipeline commits. Its old counts and statements (for example, that `Assets/` contains only five scripts) are not a current inventory. See [ASSET_PIPELINE.md](ASSET_PIPELINE.md) and [CHARACTER_PIPELINE.md](CHARACTER_PIPELINE.md) for the current runtime pipeline. The presence of asset packs does not yet mean that every model is extracted, visually approved, compatible, or licensed for redistribution.
+
 # Project Zero Hour — Asset Audit
 
 **Audit date:** 2026-10-29  
