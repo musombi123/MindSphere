@@ -1,12 +1,13 @@
 [CmdletBinding()]
 param(
     [string]$Archive = "german-bundeswehr-soldier-rigged.zip",
+    [string]$ModelEntry = "",
     [switch]$ListOnly
 )
 
 $ErrorActionPreference = "Stop"
 $repoRoot = Split-Path -Parent $PSScriptRoot
-$archivePath = Join-Path $repoRoot ("Assets\" + $Archive)
+$archivePath = Join-Path $repoRoot (Join-Path "Assets" $Archive)
 if (!(Test-Path -LiteralPath $archivePath -PathType Leaf)) {
     throw "Archive not found: $archivePath. Run 'git lfs pull' from the repository root and retry."
 }
@@ -24,7 +25,7 @@ Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 $zip = [System.IO.Compression.ZipFile]::OpenRead($archivePath)
 try {
-    $allowed = @(".fbx", ".glb", ".gltf", ".bin", ".obj", ".mtl", ".png", ".jpg", ".jpeg", ".tga", ".webp")
+    $allowed = @(".fbx", ".glb", ".gltf", ".bin", ".obj", ".mtl", ".png", ".jpg", ".jpeg", ".tga", ".webp", ".ktx2", ".json", ".txt", ".md", ".pdf")
     $entries = @($zip.Entries | Where-Object {
         $_.Name -and $allowed -contains [IO.Path]::GetExtension($_.Name).ToLowerInvariant()
     })
@@ -55,21 +56,35 @@ try {
     $ranked | Select-Object Score, @{Name="SizeMB";Expression={[math]::Round($_.Size / 1MB, 2)}}, Name | Format-Table -AutoSize
     if ($ListOnly) { return }
 
-    $selected = $ranked[0].Entry
+    $selected = $null
+    if ($ModelEntry) {
+        $selected = $models | Where-Object { $_.FullName -eq $ModelEntry } | Select-Object -First 1
+        if (!$selected) {
+            throw "ModelEntry '$ModelEntry' was not found in archive '$Archive'. Copy the exact path from -ListOnly output."
+        }
+    } else {
+        $selected = $ranked[0].Entry
+        if ($ranked.Count -gt 1) {
+            Write-Warning "Multiple model candidates exist. The script selected the top-ranked candidate; inspect and override with -ModelEntry if it is not the intended player."
+        }
+    }
+
     $publicRoot = Join-Path $repoRoot "public"
-    $extractRoot = Join-Path $publicRoot "assetscharactersimportedzero-soldier"
+    $extractRoot = Join-Path $publicRoot (Join-Path "assets" (Join-Path "characters" (Join-Path "imported" "zero-soldier")))
     New-Item -ItemType Directory -Force -Path $extractRoot | Out-Null
     $extractRootFull = [IO.Path]::GetFullPath($extractRoot)
     $separator = [IO.Path]::DirectorySeparatorChar
+    $extractPrefix = $extractRootFull.TrimEnd([char]92, [char]47) + $separator
 
     foreach ($entry in $entries) {
-        $relative = $entry.FullName.Replace("/", $separator).Replace("\", $separator)
-        if ([IO.Path]::IsPathRooted($relative) -or $relative -match "(^|[\/])\.\.([\/]|$)") {
+        $segments = @($entry.FullName -split '[\\/]')
+        if ([IO.Path]::IsPathRooted($entry.FullName) -or $segments -contains '..') {
             Write-Warning "Skipping unsafe archive path: $($entry.FullName)"
             continue
         }
+        $relative = [IO.Path]::Combine([string[]]$segments)
         $destination = [IO.Path]::GetFullPath((Join-Path $extractRootFull $relative))
-        if (!$destination.StartsWith($extractRootFull + $separator, [StringComparison]::OrdinalIgnoreCase)) {
+        if (!$destination.StartsWith($extractPrefix, [StringComparison]::OrdinalIgnoreCase)) {
             Write-Warning "Skipping archive path outside extraction root: $($entry.FullName)"
             continue
         }
@@ -77,23 +92,33 @@ try {
         [System.IO.Compression.ZipFileExtensions]::ExtractToFile($entry, $destination, $true)
     }
 
-    $relativeModel = $selected.FullName.Replace("/", $separator).Replace("\", $separator)
-    $selectedPath = Join-Path $extractRootFull $relativeModel
+    $selectedSegments = @($selected.FullName -split '[\\/]')
+    $selectedPath = Join-Path $extractRootFull ([IO.Path]::Combine([string[]]$selectedSegments))
     if (!(Test-Path -LiteralPath $selectedPath -PathType Leaf)) {
         throw "Selected model was not extracted: $selectedPath"
     }
-    $runtimePath = [IO.Path]::GetRelativePath($publicRoot, $selectedPath).Replace("\", "/")
-    $catalog = [ordered]@{
-        schemaVersion = 1
-        character = @{
-            playerModel = $runtimePath
-            sourceArchive = $Archive
-            selectionNote = "Selected by filename signals and uncompressed archive size. Confirm visual identity, rig, textures, scale, and licensing before public release."
-        }
-    }
-    $catalogPath = Join-Path $publicRoot "assetsasset-catalog.json"
+    $publicRootFull = [IO.Path]::GetFullPath($publicRoot).TrimEnd([char]92, [char]47)
+    $runtimePath = $selectedPath.Substring($publicRootFull.Length).TrimStart([char]92, [char]47).Replace([char]92, '/')
+
+    $catalogPath = Join-Path (Join-Path $publicRoot "assets") "asset-catalog.json"
     New-Item -ItemType Directory -Force -Path (Split-Path -Parent $catalogPath) | Out-Null
-    $catalog | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $catalogPath -Encoding UTF8
+    $catalog = $null
+    if (Test-Path -LiteralPath $catalogPath -PathType Leaf) {
+        try { $catalog = Get-Content -LiteralPath $catalogPath -Raw | ConvertFrom-Json }
+        catch { Write-Warning "Existing asset catalog could not be parsed; creating a fresh catalog." }
+    }
+    if ($null -eq $catalog) { $catalog = [PSCustomObject]@{} }
+    if ($null -eq $catalog.worldModels) {
+        $catalog | Add-Member -NotePropertyName worldModels -NotePropertyValue ([PSCustomObject]@{}) -Force
+    }
+    $catalog | Add-Member -NotePropertyName schemaVersion -NotePropertyValue 1 -Force
+    $catalog | Add-Member -NotePropertyName character -NotePropertyValue ([PSCustomObject]@{
+        playerModel = $runtimePath
+        sourceArchive = $Archive
+        selectedArchiveEntry = $selected.FullName
+        selectionNote = "Selected by filename signals and uncompressed archive size. Confirm visual identity, rig, textures, scale, and licensing before public release."
+    }) -Force
+    $catalog | ConvertTo-Json -Depth 15 | Set-Content -LiteralPath $catalogPath -Encoding UTF8
 
     Write-Host ""
     Write-Host "Player model staged:" -ForegroundColor Green
