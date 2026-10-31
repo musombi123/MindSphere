@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
+import { recordModelLoaded } from '../world/AssetDiagnostics.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
@@ -74,6 +76,7 @@ export class PlayerController {
     this.root = null;
     this.avatar = null;
     this.avatarMixer = null;
+    this.animationClips = [];
     this.loaded = false;
     this.dead = false;
     this.actions = new Map();
@@ -119,9 +122,28 @@ export class PlayerController {
     }
   }
 
-  async load(url = CHARACTER_URL) {
+  async resolveCharacterUrl(requested = '') {
+    if (requested) {
+      return /^https?:\/\//i.test(requested) ? requested : publicAssetUrl(requested);
+    }
+    try {
+      const response = await fetch(publicAssetUrl('assets/asset-catalog.json'), { cache: 'no-store' });
+      if (response.ok) {
+        const catalog = await response.json();
+        const candidate = catalog?.character?.playerModel;
+        if (typeof candidate === 'string' && candidate.trim()) {
+          return publicAssetUrl(candidate.trim());
+        }
+      }
+    } catch (error) {
+      console.info('[Project Zero Hour] Optional asset catalog not available; checking the default player path.');
+    }
+    return publicAssetUrl(CHARACTER_URL);
+  }
+
+  async load(url = '') {
     if (!this.root) throw new Error('PlayerController.attachRoot(root) must be called before load().');
-    const modelUrl = /^https?:\/\//i.test(url) ? url : publicAssetUrl(url);
+    const modelUrl = await this.resolveCharacterUrl(url);
     this.reportProgress(2, 'SEARCHING FOR RIGGED PLAYER MODEL');
 
     const manager = new THREE.LoadingManager();
@@ -147,13 +169,26 @@ export class PlayerController {
       }
 
       this.reportProgress(5, 'DECODING HUMANOID MESH');
-      const gltf = await loader.loadAsync(modelUrl, (event) => {
+      const progress = (event) => {
         if (event && event.total > 0) {
           this.reportProgress(5 + (event.loaded / event.total) * 80, 'DOWNLOADING PLAYER MODEL');
         }
-      });
+      };
 
-      this.avatar = cloneSkinnedScene(gltf.scene);
+      let modelScene = null;
+      let clips = [];
+      if (/\.fbx(?:[?#]|$)/i.test(modelUrl)) {
+        const fbxLoader = new FBXLoader(manager);
+        modelScene = await fbxLoader.loadAsync(modelUrl, progress);
+        clips = [...(modelScene.animations || [])];
+      } else {
+        const gltf = await loader.loadAsync(modelUrl, progress);
+        modelScene = gltf.scene;
+        clips = [...(gltf.animations || [])];
+      }
+
+      if (!modelScene) throw new Error('The character file loaded without a scene root.');
+      this.avatar = cloneSkinnedScene(modelScene);
       this.avatar.name = 'ZERO_HUMANOID_RIG';
       this.normaliseAvatar(this.avatar);
       this.root.add(this.avatar);
@@ -174,23 +209,28 @@ export class PlayerController {
       this.loaded = true;
       this.fallback.group.visible = false;
       this.createWeaponSocket();
-      const clips = [...(gltf.animations || [])];
-      clips.push(...await this.loadExternalAnimationClips(loader));
-      this.createAnimationActions(clips);
+      this.animationClips = clips.slice();
+      const externalClips = await this.loadExternalAnimationClips(loader);
+      this.animationClips.push(...externalClips);
+      this.createAnimationActions(this.animationClips);
+      recordModelLoaded(modelUrl);
 
       this.reportProgress(100, 'AEGIS RIG READY');
-      this.onStatus({ type: 'ready', message: 'RIGGED PLAYER MODEL READY' });
+      this.onStatus({
+        type: 'ready',
+        message: 'RIGGED PLAYER MODEL READY · ' + this.actions.size + ' CLIPS'
+      });
       return true;
     } catch (error) {
       this.activateFallback();
       this.reportProgress(100, 'MODEL UNAVAILABLE · TEMPORARY PROXY ACTIVE');
       this.onStatus({
         type: 'fallback',
-        message: 'Temporary character active. Add public/assets/characters/player.glb.'
+        message: 'Temporary character active. Extract a compatible rigged model into public/assets/characters/.'
       });
       console.warn(
         '[Project Zero Hour] Rigged player model is not available at ' + modelUrl +
-        '. The game is using a temporary non-box humanoid proxy. Add a rigged GLB to enable the real character and its AnimationMixer clips.',
+        '. The development proxy remains active. Extract a compatible rigged model and ensure its animation clips use the same bone names.',
         error && error.message ? error.message : error
       );
       return false;
@@ -231,10 +271,14 @@ export class PlayerController {
             ? definition.file.slice(1)
             : 'assets/animations/' + definition.file);
         try {
-          const clipGltf = await loader.loadAsync(file);
+          const isFbx = definition.format === 'fbx' || /\.fbx(?:[?#]|$)/i.test(file);
+          const loadedAsset = isFbx
+            ? await new FBXLoader().loadAsync(file)
+            : await loader.loadAsync(file);
+          const sourceClips = loadedAsset.animations || [];
           const expected = definition.clipName ? normaliseName(definition.clipName) : normaliseName(key);
-          const sourceClip = (clipGltf.animations || []).find((clip) => normaliseName(clip.name) === expected)
-            || (clipGltf.animations || [])[0];
+          const sourceClip = sourceClips.find((clip) => normaliseName(clip.name) === expected)
+            || sourceClips[0];
           if (!sourceClip) {
             console.warn('[Project Zero Hour] Animation file has no animation clip:', file);
             return null;
@@ -250,6 +294,7 @@ export class PlayerController {
       return results.filter(Boolean);
     } catch (error) {
       // The manifest is optional for artists who pack clips directly into player.glb.
+      console.warn('[Project Zero Hour] Animation manifest could not be read:', error.message);
       return [];
     }
   }
@@ -324,6 +369,109 @@ export class PlayerController {
       console.warn('[Project Zero Hour] No right-hand bone was found in player.glb. Weapon socket is approximate until the rig uses a recognised Mixamo-style hand bone.');
     }
     if (this.root) this.root.userData.weaponSocket = this.weaponSocket;
+  }
+
+ 
+  createCloneAnimator(role = 'gangster') {
+    if (!this.loaded || !this.avatar || !this.animationClips.length) return null;
+
+    const root = cloneSkinnedScene(this.avatar);
+    root.name = 'RIGGED_' + String(role).toUpperCase() + '_ACTOR';
+    const tintByRole = {
+      gangster: 0x9a6760,
+      thief: 0x90956b,
+      boss: 0xb94b56,
+      echo: 0x8d79d0
+    };
+    const tint = new THREE.Color(tintByRole[role] || tintByRole.gangster);
+    root.traverse((object) => {
+      if (!object.isMesh && !object.isSkinnedMesh) return;
+      object.castShadow = true;
+      object.receiveShadow = true;
+      object.frustumCulled = true;
+      const original = Array.isArray(object.material) ? object.material : [object.material];
+      const recoloured = original.map((material) => {
+        if (!material) return material;
+        const clone = material.clone();
+        if (clone.color) clone.color.lerp(tint, role === 'echo' ? 0.24 : 0.13);
+        if (role === 'echo' && clone.emissive) {
+          clone.emissive.lerp(new THREE.Color(0x553d9c), 0.16);
+          clone.emissiveIntensity = Math.max(clone.emissiveIntensity || 0, 0.18);
+        }
+        return clone;
+      });
+      object.material = Array.isArray(object.material) ? recoloured : recoloured[0];
+    });
+
+    const mixer = new THREE.AnimationMixer(root);
+    const actions = new Map();
+    for (const clip of this.animationClips) {
+      const key = resolveClipKey(clip.name);
+      if (key && !actions.has(key)) actions.set(key, mixer.clipAction(clip));
+    }
+
+    let locomotionAction = null;
+    let oneShotAction = null;
+    mixer.addEventListener('finished', (event) => {
+      if (event.action === oneShotAction) oneShotAction = null;
+    });
+
+    const findAction = (keys) => {
+      for (const key of keys) {
+        const action = actions.get(key);
+        if (action) return action;
+      }
+      return null;
+    };
+
+    const fadeLocomotion = (keys) => {
+      if (oneShotAction) return;
+      const next = findAction(keys);
+      if (!next || next === locomotionAction && next.isRunning()) return;
+      const previous = locomotionAction;
+      next.reset();
+      next.enabled = true;
+      next.setLoop(THREE.LoopRepeat, Infinity);
+      next.clampWhenFinished = false;
+      next.fadeIn(0.18).play();
+      if (previous && previous !== next) previous.fadeOut(0.18);
+      locomotionAction = next;
+    };
+
+    const play = (key, fade = 0.08) => {
+      const canonical = resolveClipKey(key) || key;
+      const action = actions.get(canonical);
+      if (!action) return false;
+      for (const other of new Set(actions.values())) {
+        if (other !== action && other.isRunning()) other.fadeOut(fade);
+      }
+      locomotionAction = null;
+      oneShotAction = action;
+      action.reset();
+      action.enabled = true;
+      action.setLoop(THREE.LoopOnce, 1);
+      action.clampWhenFinished = true;
+      action.setEffectiveTimeScale(1);
+      action.setEffectiveWeight(1);
+      action.fadeIn(fade).play();
+      return true;
+    };
+
+    const update = (dt, speed = 0) => {
+      mixer.update(dt);
+      if (oneShotAction) return;
+      const safeSpeed = Math.max(0, Number(speed) || 0);
+      if (safeSpeed < 0.15) {
+        fadeLocomotion(['idle', 'walk', 'run']);
+      } else if (safeSpeed > 6.8) {
+        fadeLocomotion(['run', 'walk', 'idle']);
+      } else {
+        fadeLocomotion(['walk', 'run', 'idle']);
+      }
+    };
+
+    update(0, 0);
+    return { root, mixer, actions, play, update };
   }
 
   createFallbackHumanoid() {
