@@ -19,11 +19,34 @@ function publicAssetUrl(path) {
 
 const REQUIRED_CLIPS = [
   'idle', 'walk', 'run', 'sprint', 'strafeLeft', 'strafeRight', 'backpedal',
-  'jump', 'fall', 'land', 'aimIdle', 'shoot', 'reload', 'hit', 'death',
-  'interact', 'shockwave', 'aegis', 'overdrive', 'chainLightning', 'secondWind'
+  'crouchIdle', 'crouchAimIdle', 'crouchWalk', 'crouchStop',
+  'proneShoot', 'proneReload', 'block', 'jump', 'jumpWall', 'jumpHigh', 'runJump',
+  'fall', 'land', 'aimIdle', 'shoot', 'reload', 'hit', 'hitToBack',
+  'death', 'deathFromRight', 'deathBack', 'deathWalk', 'interact', 'turn',
+  'dodge', 'melee', 'meleeStab',
+  'shockwave', 'aegis', 'overdrive', 'chainLightning', 'secondWind'
 ];
 
 const CLIP_RULES = [
+  ['deathFromRight', /deathfromright|rightdeath/],
+  ['deathBack', /deathbackward|standingdeathback|deathback/],
+  ['deathWalk', /walkingtodying|walkingtodeath|deathtowalk/],
+  ['hitToBack', /kneelhit|hittoback|riflekneelhit/],
+  ['crouchAimIdle', /idlecrouchingaiming|crouchaim|aimcrouch/],
+  ['crouchStop', /crouchstop|stopwalkingcrouch/],
+  ['crouchWalk', /crouchwalk|crouchedwalk/],
+  ['crouchIdle', /idlecrouching|crouchidle/],
+  ['proneShoot', /pronefiring|proneshoot/],
+  ['proneReload', /pronereload/],
+  ['jumpWall', /jumpfromwall|walljump/],
+  ['jumpHigh', /bigjump|highjump/],
+  ['runJump', /runningjump|runjump/],
+  ['meleeStab', /doubledagger|daggerstab/],
+  ['melee', /fistfight|melee/],
+  ['dodge', /esquiva|dodge|evade/],
+  ['startWalk', /startwalking|startwalk/],
+  ['turn', /rifleturn|turn/],
+  ['block', /rifleblock|block/],
   ['chainLightning', /chainlightning|lightningchain|chaincast/],
   ['secondWind', /secondwind|healing|recover|vitality/],
   ['shockwave', /shockwave|groundslam|areaburst|aoe/],
@@ -86,7 +109,7 @@ export class PlayerController {
     this.weaponSocket = null;
     this.fallbackGesture = null;
     this.fallbackTime = 0;
-    this.motion = { moveX: 0, moveZ: 0, speed: 0, maxSpeed: 9.2, sprinting: false, aiming: false };
+    this.motion = { moveX: 0, moveZ: 0, speed: 0, maxSpeed: 9.2, sprinting: false, aiming: false, crouching: false };
     this.cameraRaycaster = new THREE.Raycaster();
     this.cameraPosition = new THREE.Vector3();
     this.cameraSafeDistance = 0;
@@ -320,7 +343,7 @@ export class PlayerController {
       const key = resolveClipKey(clip.name);
       if (!key || this.actions.has(key)) return;
       let mappedClip = clip;
-      if (key === 'aimIdle') {
+      if (key === 'aimIdle' || key === 'crouchAimIdle') {
         const upperBodyTracks = clip.tracks.filter((track) => {
           const target = normaliseName(String(track.name).split('.')[0].split('/').pop());
           return /spine|chest|neck|head|clavicle|shoulder|arm|forearm|hand|finger/.test(target);
@@ -547,13 +570,14 @@ export class PlayerController {
     this.root.userData.weaponSocket = this.weaponSocket;
   }
 
-  setLocomotion({ moveX = 0, moveZ = 0, speed = 0, maxSpeed = 9.2, sprinting = false, aiming = false } = {}) {
+  setLocomotion({ moveX = 0, moveZ = 0, speed = 0, maxSpeed = 9.2, sprinting = false, aiming = false, crouching = false } = {}) {
     this.motion.moveX = moveX;
     this.motion.moveZ = moveZ;
     this.motion.speed = Math.max(0, speed);
     this.motion.maxSpeed = Math.max(1, maxSpeed);
     this.motion.sprinting = Boolean(sprinting);
     this.motion.aiming = Boolean(aiming);
+    this.motion.crouching = Boolean(crouching);
   }
 
   trigger(key) {
@@ -608,7 +632,11 @@ export class PlayerController {
       if (action) desired.set(action, (desired.get(action) || 0) + weight);
     };
 
-    if (motion.aiming && intensity < 0.05 && this.actions.has('aimIdle')) {
+    if (motion.crouching) {
+      if (intensity < 0.05) add('crouchIdle', 1, 'idle');
+      else add('crouchWalk', 1, 'walk');
+      if (motion.aiming) add('crouchAimIdle', 0.1);
+    } else if (motion.aiming && intensity < 0.05 && this.actions.has('aimIdle')) {
       add('aimIdle', 0.9);
       add('idle', 0.1);
     } else if (motion.aiming && intensity >= 0.05) {
@@ -637,7 +665,9 @@ export class PlayerController {
       add('sprint', intensity * sprintBlend, 'run');
     }
 
-    const aimingAction = this.actions.get('aimIdle');
+    const aimingAction = motion.crouching
+      ? (this.actions.get('crouchAimIdle') || this.actions.get('aimIdle'))
+      : this.actions.get('aimIdle');
     const locomotionTotal = Array.from(desired.entries())
       .filter(([action]) => action !== aimingAction)
       .reduce((sum, [, value]) => sum + value, 0);
@@ -645,7 +675,7 @@ export class PlayerController {
     const allActions = new Set(this.actions.values());
     allActions.forEach((action) => {
       const targetWeight = action === aimingAction
-        ? (motion.aiming ? 1 : 0)
+        ? (motion.aiming && (motion.crouching ? motion.crouching : !motion.crouching) ? 1 : 0)
         : (locomotionTotal > 0 ? (desired.get(action) || 0) / locomotionTotal : 0);
       const currentWeight = this.actionWeights.get(action) || 0;
       const nextWeight = THREE.MathUtils.lerp(currentWeight, targetWeight, blend);
@@ -669,6 +699,7 @@ export class PlayerController {
     const stride = Math.sin(this.fallbackTime * frequency) * 0.48 * moveAmount;
     const gesture = this.fallbackGesture;
     const gestureWeight = gesture ? clamp01(gesture.remaining / 0.3) : 0;
+    this.fallback.group.position.y = this.motion.crouching ? -0.18 : 0;
     if (gesture) {
       gesture.remaining = Math.max(0, gesture.remaining - dt);
       if (gesture.remaining === 0 && gesture.key !== 'death') this.fallbackGesture = null;
