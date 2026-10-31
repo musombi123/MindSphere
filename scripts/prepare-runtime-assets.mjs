@@ -1,4 +1,4 @@
-import { copyFile, mkdir, readFile, stat, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -43,6 +43,8 @@ const clipSources = {
   jumpHigh: 'Big Jump.fbx',
 };
 
+// This directory is generated from Assets/ on every dev/build run. Remove stale staged copies only here.
+await rm(outputDir, { recursive: true, force: true });
 await mkdir(outputDir, { recursive: true });
 
 let existing = { schemaVersion: 1, description: '', clips: {} };
@@ -86,5 +88,6 @@ for (const item of missing) {
 }
 console.log(`[Project Zero Hour] Animation manifest: ${path.relative(root, manifestPath)}`);
 if (missing.length) {
-  console.warn('[Project Zero Hour] Some clips remain unavailable. Check that Git LFS/source assets are pulled and the animation filenames match Assets/.');
+  console.error('[Project Zero Hour] Required source animations are missing. Restore the named files in Assets/ before building.');
+  process.exitCode = 1;
 }
