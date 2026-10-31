@@ -23,7 +23,7 @@ The app bundles Three.js through Vite, so the built game does not need to fetch 
 
 ```bash
 git lfs install
-git lfs pull --include="public/assets/characters/imported/**,public/assets/world/imported/**"
+git lfs pull --include="public/assets/characters/imported/**,public/assets/world/imported/**,public/assets/weapons/imported/**"
 npm ci
 npm run dev
 ```
