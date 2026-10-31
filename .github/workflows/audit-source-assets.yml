@@ -6,6 +6,8 @@ on:
     paths:
       - 'Assets/**'
       - 'scripts/audit-source-assets.ps1'
+      - 'scripts/export-model-candidates.ps1'
+      - 'scripts/inspect-model-candidates.mjs'
       - '.github/workflows/audit-source-assets.yml'
   workflow_dispatch:
 
@@ -19,7 +21,7 @@ concurrency:
 
 jobs:
   inventory:
-    name: Extract source model inventory
+    name: Extract and inspect source models
     runs-on: windows-latest
     steps:
       - name: Checkout repository
@@ -29,12 +31,24 @@ jobs:
         run: |
           git lfs install
           git lfs pull --include="Assets/**,*.zip,*.exr,*.wav,*.glb"
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install Three.js model inspection dependencies
+        run: npm ci
       - name: Inventory standalone and ZIP model files
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force artifacts | Out-Null
           .\scripts\audit-source-assets.ps1 -IncludeAnimationOnly -OutputCsv "artifacts\source-assets.csv" -OutputJson "artifacts\source-assets.json"
-      - name: Upload source asset inventory
+      - name: Export shortlisted model candidates
+        shell: pwsh
+        run: .\scripts\export-model-candidates.ps1
+      - name: Inspect GLB and FBX structure
+        run: node scripts/inspect-model-candidates.mjs
+      - name: Upload source model inventory and structural report
         uses: actions/upload-artifact@v5
         with:
           name: mindsphere-source-asset-inventory
