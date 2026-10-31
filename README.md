@@ -13,7 +13,7 @@ Chapter 01 asks ZERO to stop the raiders, recover three Echo Shards, defeat comm
 
 The end report changes with that choice. When a chapter is replayed, the game acknowledges the previous attempt and the stored choice. That loop is a story mechanic; it is not a cloud save or a completed multi-mission campaign.
 
-Read the full premise and five-chapter arc in [STORY_BIBLE.md](STORY_BIBLE.md). **Chapters 01 and 02 are now implemented as playable prototypes. Chapters 03–05 remain the narrative roadmap, not yet playable missions.**
+Read the full premise and five-chapter arc in [STORY_BIBLE.md](STORY_BIBLE.md). **Chapters 01–03 are implemented as playable prototypes. Chapters 04–05 remain the narrative roadmap, not yet playable missions.**
 
 The setting uses real geographic anchors—including Mount Elgon, Sang’alo and Chetambe hills, and the Nzoia River—but the people, organisations, MILELE Engine, Conductor, technology, and events are fictional. The game does not claim that its speculative events or technology are real Bungoma history.
 
@@ -22,18 +22,23 @@ The setting uses real geographic anchors—including Mount Elgon, Sang’alo and
 The app bundles Three.js through Vite, so the built game does not need to fetch the 3D library from a CDN at launch.
 
 ```bash
-npm install
+git lfs install
+git lfs pull
+npm ci
 npm run dev
 ```
 
 Open the local address printed by Vite. For a production-like local build:
 
 ```bash
+npm run assets:prepare
 npm run build
 npm run preview
 ```
 
 A modern browser with WebGL support is required.
+
+See [docs/ASSET_PIPELINE.md](docs/ASSET_PIPELINE.md) for the FBX animation staging, player-model extraction, asset catalog, licensing checks and validation limits. The build automatically stages the repository's selected FBX clips into the public runtime animation manifest.
 
 ## Controls
 
@@ -92,9 +97,10 @@ When you deliberately choose to test a native build later, the workflow packages
 - [x] Chapter 02 Nzoia crossing with silver river, raised bridge, animated anomaly, three civilian rescues, two temporal anchors, and four Echo units
 - [x] Chapter 01 success transitions to Chapter 02; the Trust/Sever choice changes Chapter 02 enemy tracking versus suit health and alters the finale dialogue
 - [x] Local Vite build configured for bundled Three.js
-- [ ] Chapters 03–05 playable missions and deeper cross-chapter choice consequences
-- [ ] Character animation, richer environment assets, voice/music, and sound design
-- [ ] Low-end Android performance tests
+- [x] Chapter 03 — The County That Never Was, with memory echoes, phase seams and a persistent local ending choice
+- [ ] Chapters 04–05 playable missions and deeper cross-chapter choice consequences
+- [ ] Verified player likeness/rig, separate enemy faction models, near-field rural environment GLBs, full audio and polished VFX
+- [ ] Low-end Android device profiling and frame-rate certification
 - [ ] Real rewarded-ad SDK, verified rewards, privacy/consent flow, and cloud saves
 
-This remains an early prototype. Procedural shapes are used for characters and scenery; no purchased or third-party game assets are included.
+This remains a playable prototype, not a production-certified release. The world is a hybrid of photo-derived surfaces, procedural road/terrain geometry and distant photographic cutouts. The runtime uses a development actor proxy until a compatible character model has been extracted and visually verified. Third-party asset packs are present in the repository, but their licensing and redistribution terms must be confirmed before shipping them.
