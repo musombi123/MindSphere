@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
-import { recordModelLoaded } from '../world/AssetDiagnostics.js';
+import { recordModelLoaded, registerMissingAsset, resolveMissingAsset } from '../world/AssetDiagnostics.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
@@ -237,6 +237,8 @@ export class PlayerController {
       this.animationClips.push(...externalClips);
       this.createAnimationActions(this.animationClips);
       recordModelLoaded(modelUrl);
+      resolveMissingAsset(CHARACTER_URL);
+      resolveMissingAsset('/' + CHARACTER_URL);
 
       this.reportProgress(100, 'AEGIS RIG READY');
       this.onStatus({
@@ -245,6 +247,7 @@ export class PlayerController {
       });
       return true;
     } catch (error) {
+      registerMissingAsset(modelUrl, 'Player rig did not load: ' + (error && error.message ? error.message : String(error)));
       this.activateFallback();
       this.reportProgress(100, 'MODEL UNAVAILABLE · TEMPORARY PROXY ACTIVE');
       this.onStatus({
