@@ -22,3 +22,7 @@ These are user-provided media, not third-party stock. The project does not asser
 ## Still required for full photorealism
 
 Near-range tree, homestead, fence, vehicle and water-tank GLB models and a true 360-degree HDR panorama are not included yet. These missing GLBs are intentionally listed in the F3 debug panel and the on-screen asset-missing banner.
+
+## Imported candidate packs — rights review required
+
+The repository also contains user-imported candidate FBX, GLB, ZIP, EXR and WAV assets under `Assets/`. The individual creators, original source pages and license terms have not yet been verified in this repository documentation. Do not treat Git LFS availability or repository possession as a grant of redistribution, commercial-use or derivative-work rights. Before shipping any candidate asset in a public web build or APK, record its creator/source URL, exact license version, attribution requirements, modification status and redistribution permission here. Remove or replace any asset whose provenance or license cannot be established.
