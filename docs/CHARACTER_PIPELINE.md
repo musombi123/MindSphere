@@ -18,23 +18,30 @@ npm run assets:prepare
 
 This copies the selected source clips to `public/assets/animations/fbx/` and registers them in `public/assets/animations/manifest.json`. The standard `npm run build` runs this preparation step automatically.
 
-Current staged map: Idle, Walk, Run, Sprint, Backpedal, Aim Idle, Shoot, Reload, Jump, Fall, Land, Hit, Death and Interact. Some gameplay ability animations (Shockwave, Aegis, Overdrive, Chain Lightning and Second Wind) are not present in the selected map; the controller must not pretend those clips exist.
+Current staged map: 33 entries covering Idle, Walk, Run, Sprint, Backpedal, crouch idle/walk/aim, prone shoot/reload, block, Jump, wall-jump, high-jump, run-jump, Fall, Land, Aim Idle, Shoot, Reload, Hit and death variants, Interact, Turn, Dodge, Fist Fight and Dagger Stab. Some gameplay ability animations (Shockwave, Aegis, Overdrive, Chain Lightning and Second Wind) are not present in the selected map; the controller must not pretend those clips exist.
 
 **Skeleton constraint:** external FBX clips are played against the active character skeleton by matching animation track/node names. This is not an automatic humanoid retargeter. If the clip skeleton and player rig do not share compatible bone names and rest pose, the clip may not animate correctly. Confirm this in a real browser session using the chosen rig.
 
 ## Extract the soldier archive
 
-The current repository includes `Assets/german-bundeswehr-soldier-rigged.zip` as a Git LFS source archive. First ensure Git LFS has downloaded the real archive:
+The current repository includes both `Assets/trellis-2387720894.glb` and `Assets/german-bundeswehr-soldier-rigged.zip` as source candidates. For the standalone GLB, run:
 
 ```powershell
-git lfs pull
+git lfs pull --include="Assets/trellis-2387720894.glb"
+.\scripts\prepare-character.ps1 -SourceFile "Assets/trellis-2387720894.glb"
+```
+
+The runtime requires at least one skinned mesh and a usable humanoid bone hierarchy; a static object/OBJ-converted mesh is rejected and the development proxy remains active. For the soldier ZIP alternate, fetch and list its candidates: 
+
+```powershell
+git lfs pull --include="Assets/german-bundeswehr-soldier-rigged.zip"
 .\scripts\prepare-character.ps1 -ListOnly
 ```
 
-Review the model candidates the script reports. It ranks files by filename hints and uncompressed file size; this cannot establish likeness, quality, rig validity, textures or redistribution rights. After confirming the intended source model and license, run:
+Review the model candidates the script reports. It ranks files by filename hints and uncompressed file size; this cannot establish likeness, quality, rig validity, textures or redistribution rights. After confirming the intended source model, license and exact internal path, run:
 
 ```powershell
-.\scripts\prepare-character.ps1
+.\scripts\prepare-character.ps1 -ModelEntry "exact/path/from/listing/model.fbx"
 ```
 
 The script extracts supported model and texture files below `public/assets/characters/imported/zero-soldier/` and writes `public/assets/asset-catalog.json`. The game then discovers the configured model through the catalog. Review the selected player in the game before using it as the release character. If the chosen archive does not contain a suitable original rig, do not force an animation-only FBX into the player slot; use another compatible player asset.
