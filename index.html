@@ -82,7 +82,7 @@
   </div>
   <div class="touch-bonus-list" id="touch-bonus-list"></div>
   <div class="touch-actions">
-    <button class="fire-touch" id="touch-fire">FIRE</button><button id="touch-shock">Q<br>BURST</button><button id="touch-shield">E<br>AEGIS</button><button id="touch-reload">RELOAD</button><button id="touch-interact" disabled>F · INTERACT</button>
+    <button class="fire-touch" id="touch-fire">FIRE</button><button id="touch-shock">Q<br>BURST</button><button id="touch-shield">E<br>AEGIS</button><button id="touch-reload">RELOAD</button><button id="touch-crouch">CROUCH</button><button id="touch-interact" disabled>G · INTERACT</button>
   </div>
 </div>
 <div class="screen-layer" id="intro-layer">
@@ -92,7 +92,7 @@
     <p class="story-copy" id="intro-copy">The blackout lasted forty-three seconds. Across Bungoma, solar pumps started in reverse, radios broadcast tomorrow’s weather, and a voice called for help seventeen minutes before anyone sent it. Now the Black Viper mercenaries control a red-earth road beneath the shadow of Mount Elgon. You are Amani Wekesa, callsign ZERO — a rescue engineer wearing an experimental Aegis suit. Your mission is to recover three glowing signal fragments before the crew reaches the old relay above Sang’alo.</p>
     <div class="story-grid" id="intro-grid"><div><b>01 / SURVIVE</b><small>Stop the raiders and their commander, Kito.</small></div><div><b>02 / LISTEN</b><small>Recover three Echo Shards. They contain messages from futures that never happened.</small></div><div><b>03 / CHOOSE</b><small>Decide whether to trust the voice or sever the signal.</small></div></div>
     <button class="deploy-btn" id="start-btn">BEGIN CHAPTER 01 ↗</button>
-    <div class="story-foot">DESKTOP: WASD / mouse / click / Q E R G · F/C/X abilities · MOBILE: on-screen controls · Fiction set around real Bungoma landscapes.</div>
+    <div class="story-foot">DESKTOP: WASD / mouse / click / Ctrl crouch / Q E R G · F/C/X abilities · MOBILE: on-screen controls · Fiction set around real Bungoma landscapes.</div>
   </div>
 </div>
 <div class="screen-layer hidden comms-layer" id="comms-layer" role="dialog" aria-modal="true" aria-labelledby="comms-title">
@@ -425,7 +425,7 @@ let running=false,finished=false,firePressed=false,adRemaining=0,adBusy=false;
 let nearbyInteractable=null;
 let shockCooldown=0,shieldCooldown=0;
 let elapsed=0,lastFrame=performance.now();
-const keys={w:false,a:false,s:false,d:false,shift:false,aim:false};
+const keys={w:false,a:false,s:false,d:false,shift:false,aim:false,crouch:false};
 const projectiles=[],effects=[];
 const targetPlane=new THREE.Plane(new THREE.Vector3(0,1,0),0);
 const raycaster=new THREE.Raycaster();
@@ -1049,6 +1049,7 @@ document.getElementById('reload-btn').addEventListener('click',beginReload);
 document.getElementById('touch-shock').addEventListener('click',shockwave);
 document.getElementById('touch-shield').addEventListener('click',aegis);
 document.getElementById('touch-reload').addEventListener('click',beginReload);
+document.getElementById('touch-crouch').addEventListener('click',()=>{keys.crouch=!keys.crouch;const button=document.getElementById('touch-crouch');button.textContent=keys.crouch?'STAND':'CROUCH';button.classList.toggle('ready',keys.crouch);});
 document.getElementById('interact-btn').addEventListener('click',interactWithNearby);
 document.getElementById('touch-interact').addEventListener('click',interactWithNearby);
 document.getElementById('touch-fire').addEventListener('pointerdown',e=>{e.preventDefault();firePressed=true;});
@@ -1067,6 +1068,7 @@ window.addEventListener('keydown',e=>{
   if(k==='w'||k==='arrowup')keys.w=true;if(k==='s'||k==='arrowdown')keys.s=true;
   if(k==='a'||k==='arrowleft')keys.a=true;if(k==='d'||k==='arrowright')keys.d=true;
   if(k==='shift')keys.shift=true;
+  if(k==='control')keys.crouch=true;
   if(k===' ')firePressed=true;
   if(k==='q')shockwave();if(k==='e')aegis();if(k==='r')beginReload();
   if(k>='1'&&k<='4')setWeapon(Number(k)-1);
@@ -1076,7 +1078,7 @@ window.addEventListener('keyup',e=>{
   const k=e.key.toLowerCase();
   if(k==='w'||k==='arrowup')keys.w=false;if(k==='s'||k==='arrowdown')keys.s=false;
   if(k==='a'||k==='arrowleft')keys.a=false;if(k==='d'||k==='arrowright')keys.d=false;
-  if(k==='shift')keys.shift=false;if(k===' ')firePressed=false;
+  if(k==='shift')keys.shift=false;if(k==='control')keys.crouch=false;if(k===' ')firePressed=false;
 });
 canvas.addEventListener('pointermove',e=>{
   pointer.x=(e.clientX/window.innerWidth)*2-1;
@@ -1116,7 +1118,7 @@ function updateWorld(dt){
     move.normalize();
     moveSpeed=overdriveTime>0?9.2:5.4;
     if(player.riverDisruptTime>0)moveSpeed*=.52;
-    if(keys.shift)moveSpeed*=1.35;
+    if(keys.crouch)moveSpeed*=.58;else if(keys.shift)moveSpeed*=1.35;
     player.pos.addScaledVector(move,moveSpeed*dt);
     player.pos.x=THREE.MathUtils.clamp(player.pos.x,-5.3,5.3);
     player.pos.z=THREE.MathUtils.clamp(player.pos.z,-56,13);
@@ -1128,7 +1130,7 @@ function updateWorld(dt){
   playerModel.position.copy(player.pos);playerShadow.position.set(player.pos.x,player.pos.y+.025,player.pos.z);
   playerController.setLocomotion({
     moveX:move.x,moveZ:move.z,speed:moveSpeed,maxSpeed:9.2,
-    sprinting:keys.shift,aiming:keys.aim
+    sprinting:keys.shift&&!keys.crouch,aiming:keys.aim,crouching:keys.crouch
   });
   pointAim();
   if(keys.aim){
