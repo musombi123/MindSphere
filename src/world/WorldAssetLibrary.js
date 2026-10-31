@@ -4,7 +4,7 @@ import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { clone as cloneSkinnedScene } from 'three/addons/utils/SkeletonUtils.js';
-import { recordModelLoaded, registerMissingAsset } from './AssetDiagnostics.js';
+import { recordModelLoaded, registerMissingAsset, resolveMissingAsset } from './AssetDiagnostics.js';
 
 const CATALOG_URL = 'assets/asset-catalog.json';
 const BASE_URL = import.meta.env.BASE_URL || './';
@@ -143,6 +143,7 @@ export class WorldAssetLibrary {
         this.templates.set(key, template);
         this.bounds.set(key, { min: bounds.min.clone(), max: bounds.max.clone(), size });
         recordModelLoaded(url);
+        resolveMissingAsset('/assets/world/models/' + key + '.glb');
         console.info('[Project Zero Hour] World model ready:', key, url);
         return template;
       } catch (error) {
