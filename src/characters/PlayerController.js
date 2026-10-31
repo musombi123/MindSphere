@@ -107,6 +107,9 @@ export class PlayerController {
     this.oneShotAction = null;
     this.oneShotKey = '';
     this.weaponSocket = null;
+    this.weaponDefinitions = new Map();
+    this.weaponVisuals = new Map();
+    this.activeWeaponVisual = 'pulseRifle';
     this.fallbackGesture = null;
     this.fallbackTime = 0;
     this.motion = { moveX: 0, moveZ: 0, speed: 0, maxSpeed: 9.2, sprinting: false, aiming: false, crouching: false };
@@ -154,6 +157,12 @@ export class PlayerController {
       if (response.ok) {
         const catalog = await response.json();
         const candidate = catalog?.character?.playerModel;
+        this.weaponDefinitions = new Map(
+          Object.entries(catalog?.weaponModels || {}).filter(([key, value]) =>
+            ['pulseRifle', 'novaCannon', 'arcLance', 'gravityCore'].includes(key) &&
+            value && typeof (typeof value === 'string' ? value : value.file) === 'string'
+          ).map(([key, value]) => [key, typeof value === 'string' ? { file: value } : value])
+        );
         if (typeof candidate === 'string' && candidate.trim()) {
           return publicAssetUrl(candidate.trim());
         }
@@ -232,6 +241,7 @@ export class PlayerController {
       this.loaded = true;
       this.fallback.group.visible = false;
       this.createWeaponSocket();
+      await this.loadWeaponVisuals(loader);
       this.animationClips = clips.slice();
       const externalClips = await this.loadExternalAnimationClips(loader);
       this.animationClips.push(...externalClips);
@@ -249,6 +259,7 @@ export class PlayerController {
     } catch (error) {
       registerMissingAsset(modelUrl, 'Player rig did not load: ' + (error && error.message ? error.message : String(error)));
       this.activateFallback();
+      await this.loadWeaponVisuals(loader);
       this.reportProgress(100, 'MODEL UNAVAILABLE · TEMPORARY PROXY ACTIVE');
       this.onStatus({
         type: 'fallback',
@@ -411,6 +422,75 @@ export class PlayerController {
   }
 
  
+
+  async loadWeaponVisuals(loader) {
+    this.weaponVisuals.clear();
+    const keys = ['pulseRifle', 'novaCannon', 'arcLance', 'gravityCore'];
+    if (!this.weaponSocket) return;
+
+    for (const key of keys) {
+      const definition = this.weaponDefinitions.get(key);
+      if (!definition || !definition.file) {
+        registerMissingAsset(
+          '/assets/weapons/' + key + '.glb',
+          'No verified GLB mapping exists in public/assets/asset-catalog.json weaponModels.'
+        );
+        continue;
+      }
+
+      const file = /^https?:\/\//i.test(definition.file)
+        ? definition.file
+        : publicAssetUrl(definition.file);
+      try {
+        const gltf = await loader.loadAsync(file);
+        if (!gltf.scene) throw new Error('Weapon GLB did not contain a scene.');
+        const model = cloneSkinnedScene(gltf.scene);
+        model.name = 'PLAYER_WEAPON_' + key.toUpperCase();
+        model.traverse((object) => {
+          if (!object.isMesh && !object.isSkinnedMesh) return;
+          object.castShadow = true;
+          object.receiveShadow = true;
+          object.frustumCulled = true;
+        });
+
+        const config = definition.transform || {};
+        const boundsBefore = new THREE.Box3().setFromObject(model);
+        const size = boundsBefore.getSize(new THREE.Vector3());
+        const maxDimension = Math.max(size.x, size.y, size.z);
+        if (!(maxDimension > 0.001)) throw new Error('Weapon GLB has invalid bounds.');
+        const targetLength = Number(config.targetLength) > 0 ? Number(config.targetLength) : 0.85;
+        const uniformScale = (Number(config.scale) > 0 ? Number(config.scale) : 1) * (targetLength / maxDimension);
+        model.scale.multiplyScalar(uniformScale);
+        const position = Array.isArray(config.position) ? config.position : [0, 0, 0];
+        const rotation = Array.isArray(config.rotation) ? config.rotation : [0, 0, 0];
+        model.position.set(Number(position[0]) || 0, Number(position[1]) || 0, Number(position[2]) || 0);
+        model.rotation.set(Number(rotation[0]) || 0, Number(rotation[1]) || 0, Number(rotation[2]) || 0);
+
+        const wrapper = new THREE.Group();
+        wrapper.name = 'PLAYER_WEAPON_VISUAL_' + key.toUpperCase();
+        wrapper.add(model);
+        wrapper.visible = false;
+        this.weaponSocket.add(wrapper);
+        this.weaponVisuals.set(key, wrapper);
+        recordModelLoaded(file);
+        resolveMissingAsset('/assets/weapons/' + key + '.glb');
+        console.info('[Project Zero Hour] Weapon visual loaded:', key, file);
+      } catch (error) {
+        registerMissingAsset(file, 'Weapon visual failed to load: ' + (error.message || String(error)));
+        console.warn('[Project Zero Hour] Weapon visual unavailable:', key, error);
+      }
+    }
+    this.setWeaponVisual(this.activeWeaponVisual);
+  }
+
+  setWeaponVisual(key) {
+    this.activeWeaponVisual = String(key || 'pulseRifle');
+    for (const [weaponKey, visual] of this.weaponVisuals) {
+      visual.visible = weaponKey === this.activeWeaponVisual;
+    }
+  }
+
+
   createCloneAnimator(role = 'gangster') {
     if (!this.loaded || !this.avatar || !this.animationClips.length) return null;
 
