@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "vite build",
+    "assets:prepare": "node scripts/prepare-runtime-assets.mjs",
+    "build": "npm run assets:prepare && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "android:sync": "npm run build && cap sync android",
     "android:open": "cap open android",
