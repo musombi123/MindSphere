@@ -28,7 +28,7 @@ jobs:
         with:
           node-version: 22
       - name: Install dependencies
-        run: npm install
+        run: npm ci
       - name: Build self-contained game assets
         run: npm run build
       - name: Configure GitHub Pages
