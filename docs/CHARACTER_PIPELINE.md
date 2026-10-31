@@ -43,6 +43,8 @@ The baseline 33-clip set is staged from loose FBX files under `Assets/`. When th
 
 Other actions (crouch, prone, shoot, reload, hit, death, dodge and melee) continue using the baseline staged clips unless compatible versions are added. The selected character-pack clips are referenced directly under `/assets/characters/imported/zero-soldier/`; the rest remain under `/assets/animations/fbx/`. The normal build refreshes the manifest before validation.
 
+The runtime now checks animation track targets against the loaded player rig before creating an action. Clips below 65% target-name coverage are rejected and reported; accepted clips are also the only ones cloned to enemy rigs. The source inspection found 76 animation FBXs with 52/52 target-name coverage on the Trellis rig.
+
 This is **name-compatible clip binding**, not automatic retargeting. A close node-name match is a promising structural signal but does not guarantee every joint orientation, bind pose, root-motion choice or clip transition is correct. Verify idle, walk, run, sprint, aim, shoot, reload, jump, crouch, hit and death in the actual browser game. Check for foot sliding, twisted wrists, root drift and weapon-hand alignment.
 
 ## Enemy reuse and weapon socket
