@@ -8,7 +8,7 @@ const manifestPath = path.join(publicRoot, 'assets', 'animations', 'manifest.jso
 const catalogPath = path.join(publicRoot, 'assets', 'asset-catalog.json');
 const failures = [];
 const warnings = [];
-const stats = { animations: 0, worldModels: 0, weaponModels: 0, playerModel: false };
+const stats = { animations: 0, manifestAssets: 0, worldModels: 0, weaponModels: 0, playerModel: false };
 
 function fail(message) { failures.push(message); }
 function warn(message) { warnings.push(message); }
@@ -29,7 +29,12 @@ function localAssetPath(value, label) {
     fail(label + ' must be a non-empty local public/ path.');
     return null;
   }
-  const clean = value.trim().replace(/\\/g, '/').replace(/^\/+/, '');
+  const raw = value.trim();
+  if (raw.startsWith('/')) {
+    fail(label + ' must be relative to the app base URL; leading-slash paths are not allowed: ' + value);
+    return null;
+  }
+  const clean = raw.replace(/\\/g, '/');
   if (/^(https?:|data:|blob:)/i.test(clean) || clean.split('/').includes('..') || clean.includes('?') || clean.includes('#')) {
     fail(label + ' must be a safe local path without URL schemes, traversal, query or fragment: ' + value);
     return null;
@@ -101,9 +106,10 @@ async function verifyFile(file, label, acceptedExtensions = []) {
   }
 }
 
-const [manifest, catalog] = await Promise.all([
+const [manifest, catalog, assetManifest] = await Promise.all([
   readJson(manifestPath, 'Animation manifest'),
-  readJson(catalogPath, 'Asset catalog')
+  readJson(catalogPath, 'Asset catalog'),
+  readJson(path.join(publicRoot, 'assets', 'asset-manifest.json'), 'Runtime asset manifest')
 ]);
 
 if (manifest) {
@@ -115,13 +121,22 @@ if (manifest) {
     for (const [key, value] of clipEntries) {
       const definition = typeof value === 'string' ? { file: value } : value;
       const rawAnimationPath = String(definition?.file || '');
-      const animationPath = rawAnimationPath.startsWith('/')
-        ? rawAnimationPath
-        : path.posix.join('assets/animations', rawAnimationPath);
+      const animationPath = rawAnimationPath.startsWith('/') || rawAnimationPath.startsWith('assets/') ? rawAnimationPath : path.posix.join('assets/animations', rawAnimationPath);
       const file = localAssetPath(animationPath, 'Animation ' + key);
       if (!file) continue;
       const format = definition?.format === 'fbx' ? ['.fbx'] : ['.glb', '.gltf', '.fbx'];
       if (await verifyFile(file, 'Animation ' + key, format)) stats.animations++;
+    }
+  }
+}
+
+if (assetManifest) {
+  if (assetManifest.schemaVersion !== 1 || !Array.isArray(assetManifest.requiredAssets)) {
+    fail('Runtime asset manifest must have schemaVersion 1 and a requiredAssets array.');
+  } else {
+    for (const entry of assetManifest.requiredAssets) {
+      const file = localAssetPath(entry?.file, 'Runtime asset manifest entry');
+      if (file && await verifyFile(file, 'Manifest asset ' + entry.file)) stats.manifestAssets++;
     }
   }
 }
@@ -145,13 +160,14 @@ if (catalog) {
       const file = localAssetPath(definition?.file, category + '.' + key);
       if (file && await verifyFile(file, category + '.' + key, allowedExtensions)) stats[category]++;
     }
-    if (!entries.length) warn('No ' + category + ' have been mapped yet; F3 will report these runtime assets as missing.');
+    if (!entries.length) warn('No ' + category + ' are mapped. These slots are optional enhancements and are listed in ASSETS_NEEDED.md.');
   }
 }
 
 console.log('[Project Zero Hour] Runtime asset validation summary');
 console.log('  Animation clips: ' + stats.animations);
 console.log('  Player rig: ' + (stats.playerModel ? 'mapped' : 'not yet mapped'));
+console.log('  Generated manifest files verified: ' + stats.manifestAssets);
 console.log('  World GLB/GLTF models: ' + stats.worldModels);
 console.log('  Weapon GLB/GLTF models: ' + stats.weaponModels);
 for (const message of warnings) console.warn('  ! ' + message);

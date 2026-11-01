@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
-import { recordModelLoaded, registerMissingAsset, resolveMissingAsset, registerOptionalAsset, resolveOptionalAsset } from '../world/AssetDiagnostics.js';
+import { recordModelLoaded, registerMissingAsset, resolveMissingAsset, registerOptionalAsset, resolveOptionalAsset, updateAssetTask } from '../world/AssetDiagnostics.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
@@ -133,6 +133,8 @@ export class PlayerController {
   }
 
   reportProgress(percent, message) {
+    const safePercent = clamp01(Number(percent) / 100) * 100;
+    updateAssetTask('player-model', { label: message || 'PLAYER MODEL', loaded: safePercent, total: 100, done: safePercent >= 100 });
     this.onProgress({
       percent: clamp01(Number(percent) / 100) * 100,
       message: message || 'INITIALISING AEGIS CHARACTER'
@@ -330,6 +332,7 @@ export class PlayerController {
       const response = await fetch(publicAssetUrl(ANIMATION_MANIFEST_URL), { cache: 'no-store' });
       if (!response.ok) return [];
       const manifest = await response.json();
+      resolveMissingAsset(publicAssetUrl(ANIMATION_MANIFEST_URL));
       const entries = Object.entries(manifest.clips || {});
       if (!entries.length) return [];
 
@@ -338,11 +341,11 @@ export class PlayerController {
       for (const [key, value] of entries) {
         const definition = typeof value === 'string' ? { file: value } : value;
         if (!definition || !definition.file) continue;
-        const file = /^https?:\/\//i.test(definition.file)
-          ? definition.file
-          : publicAssetUrl(definition.file.startsWith('/')
-            ? definition.file.slice(1)
-            : 'assets/animations/' + definition.file);
+        let rawPath = definition.file;
+        while (rawPath.startsWith('/')) rawPath = rawPath.slice(1);
+        const relativePath = rawPath.startsWith('assets/') ? rawPath : 'assets/animations/' + rawPath;
+        const isRemote = definition.file.toLowerCase().startsWith('https://') || definition.file.toLowerCase().startsWith('http://');
+        const file = isRemote ? definition.file : publicAssetUrl(relativePath);
         const isFbx = definition.format === 'fbx' || /\.fbx(?:[?#]|$)/i.test(file);
         if (!groups.has(file)) groups.set(file, { file, isFbx, entries: [] });
         groups.get(file).entries.push({ key, definition });
@@ -386,6 +389,7 @@ export class PlayerController {
             loadedAsset = group.isFbx
               ? await new FBXLoader().loadAsync(group.file)
               : await loader.loadAsync(group.file);
+            resolveMissingAsset(group.file);
             const sourceClips = loadedAsset.animations || [];
             for (const { key, definition } of group.entries) {
               const expected = definition.clipName

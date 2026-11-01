@@ -48,14 +48,14 @@ The script extracts all supported referenced model and texture files below `publ
 
 - `WorldAssetLibrary` loads and validates mapped GLB/GLTF models, preserves PBR materials, enables mesh shadow flags, and records loaded/missing assets in F3 diagnostics.
 - `Props` places mapped rural houses, fence segments, a motorcycle, pickup, water tank and homestead/roadside details at terrain height.
-- `Vegetation` places mapped trees and crop patches near the road, while retaining the user-footage cutouts as a distant layer. Real vegetation instances are distance-culled.
+- `Vegetation` places mapped trees and crop patches near the road. Without mapped GLBs it uses instanced 3D trunk, branch, canopy, shrub and grass geometry; vegetation instances are distance-culled.
 - The library derives model scale from its measured bounds and target height. Rotation/orientation still needs visual review for each selected source asset.
 
 ## Design and release gate
 
 Mapping a model key is an explicit statement about the model's role. Do not map a random prop to a house/tree key just to clear an F3 warning. Check the model in-game for identity, silhouette, PBR maps, local origin, forward axis, ground contact, scale, LOD cost and mobile draw calls. Confirm creator, source, exact license, attribution and redistribution rights before a public build. A file existing in Git/Git LFS does not grant redistribution permission.
 
-The world is still hybrid: the uploaded 320×180 photographs drive distant photo references and source-derived surfaces; GLBs provide the near-field geometry where mapped. This does not claim full photogrammetry or a fully scanned Bungoma landscape.
+The world is still hybrid: the uploaded 320×180 photographs supply source pixels for local surface material crops, while the scene's terrain, road, vegetation, sky and rural prop stand-ins are 3D geometry. Mapped GLBs replace matching stand-ins. No full photogrammetry or fully scanned Bungoma landscape is claimed.
 
 ## Weapon models
 

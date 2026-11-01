@@ -99,7 +99,7 @@ for (const [key, filename] of Object.entries(compatibleCharacterClips)) {
     const file = await stat(candidate);
     if (!file.isFile() || file.size < 1024) continue;
     existing.clips[key] = {
-      file: '/assets/characters/imported/zero-soldier/' + filename,
+      file: 'assets/characters/imported/zero-soldier/' + filename,
       format: 'fbx',
       source: 'Female Basic Locomotion Pack · shared Trellis humanoid rig',
     };
@@ -108,6 +108,8 @@ for (const [key, filename] of Object.entries(compatibleCharacterClips)) {
     // The character pack is optional until the player candidate has been imported.
   }
 }
+
+await writeFile(manifestPath, JSON.stringify(existing, null, 2) + '\n', 'utf8');
 
 console.log(`[Project Zero Hour] Staged ${copied.length}/${Object.keys(clipSources).length} FBX animation entries.`);
 for (const item of copied) {

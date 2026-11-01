@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { recordPhotoUsed, registerMissingAsset, installWorldDebugPanel } from './AssetDiagnostics.js';
+import { recordPhotoUsed, registerMissingAsset, resolveMissingAsset, installWorldDebugPanel } from './AssetDiagnostics.js';
 
 const ROOT='reference/world/';
 const FILES={
@@ -9,14 +9,14 @@ const FILES={
  homestead:ROOT+'video_frame_26s.webp'
 };
 const imageCache=new Map();
-function assetUrl(path){return (import.meta.env.BASE_URL||'./')+String(path).replace(/^\/+/,'');}
+function assetUrl(path){const base=new URL(import.meta.env.BASE_URL||'./',window.location.href);return new URL(String(path).replace(/^\/+/,''),base).href;}
 function loadImage(path,role){
- recordPhotoUsed('/'+path,role,'loading');
- if(imageCache.has(path))return imageCache.get(path).then(image=>{recordPhotoUsed('/'+path,role,'loaded');return image;});
+ recordPhotoUsed(path,role,'loading');
+ if(imageCache.has(path))return imageCache.get(path).then(image=>{recordPhotoUsed(path,role,'loaded');return image;});
  const promise=new Promise((resolve,reject)=>{
   const image=new Image();image.decoding='async';
-  image.onload=()=>{recordPhotoUsed('/'+path,role,'loaded');resolve(image);};
-  image.onerror=()=>{registerMissingAsset('/'+path,'A photo extracted from your uploaded video is required for this world surface.');reject(new Error('Required photo missing: '+path));};
+  image.onload=()=>{recordPhotoUsed(path,role,'loaded');resolveMissingAsset(assetUrl(path));resolve(image);};
+  image.onerror=()=>{recordPhotoUsed(path,role,'failed');registerMissingAsset(path,'A photo extracted from your uploaded video is required for this world surface.');reject(new Error('Required photo missing: '+path));};
   image.src=assetUrl(path);
  });
  imageCache.set(path,promise);return promise;

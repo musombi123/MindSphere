@@ -27,6 +27,14 @@ Before choosing a player, weapon or world model, run the non-destructive invento
 
 It lists standalone model files and model members inside ZIP archives, flags archives that are still LFS pointers, classifies likely animation/weapon/vegetation/building candidates, and shows each internal ZIP path. It does not extract or modify any source file. Use `-ArchiveName "filename.zip"` to inspect one pack, or `-IncludeAnimationOnly` to include all FBX animation entries in the report.
 
+## Runtime asset manifest and offline paths
+
+The active web runtime resolves every local model, animation, texture, decoder and reference image relative to Vite's `BASE_URL`. Do not start a local asset URL with `/`; an origin-root path can escape the deployed subpath and fail inside a packaged app. Keep catalog and animation-manifest paths relative, for example `assets/animations/fbx/Walking.fbx` or `assets/characters/imported/zero-soldier/idle.fbx`.
+
+The build runs `npm run assets:manifest` before validation. This creates `public/assets/asset-manifest.json` from the catalog and animation manifest and fails the build if a required local file is missing, empty, or still an LFS pointer. At game startup, `RuntimeAssetPreloader.js` reads that generated manifest and preloads the player model, core locomotion/combat clips, reference textures and decoder files with bounded concurrency. The same loading overlay reports progress; a required file that fails to preload is added to the F3 missing-assets list. Catalog slots without a mapped world/weapon model are optional enhancements; they are not treated as 404 failures. Their exact backlog is maintained in `ASSETS_NEEDED.md`.
+
+After Vite has produced `dist/`, `npm run offline:manifest` generates `dist/precache-manifest.json`. On a secure production web origin, `public/sw.js` caches that exact build and reports its progress through F3 diagnostics. The first visit needs a connection until all files are cached; later visits can load the cached build offline. Capacitor ships the `dist/` files in its native web bundle and skips service-worker registration for `capacitor:` / `file:` origins.
+
 ## Prepare animation clips
 
 The repository-owned FBX files in `Assets/` are copied into `public/assets/animations/fbx/` by:
@@ -71,9 +79,9 @@ When the player rig loads successfully, the game clones it for enemy roles and a
 
 ## World assets and current limitations
 
-The current world is a hybrid of a heightfield, photo-derived PBR crops, procedural road geometry, and photo-cutout vegetation. The three user-supplied world video frames are 320×180 stills, not photogrammetry or a 360-degree panorama. Houses and fences currently use photo panels at distance; near-field building, tree, boda boda, pickup, tank, bridge and other prop GLBs remain missing. Do not describe these photo panels as completed 3D geometry.
+The current world uses a heightfield, a winding 3D laterite road, local photo-derived PBR material crops, instanced 3D trees/branches/grass, 3D rural prop meshes, a continuous procedural sky dome and a generated distant ridge. The three user-supplied world video frames are 320×180 stills, not photogrammetry or a 360-degree panorama. Rural buildings, fencing, vehicles and tanks are currently procedural 3D mesh stand-ins; the photorealistic GLB backlog is listed in ASSETS_NEEDED.md. Do not describe these stand-ins as scanned or photogrammetric assets.
 
-The F3 asset panel lists missing models and audio; F4 displays runtime performance counters. Low, Medium and High world presets are available. These counters and presets need real target-device profiling before performance can be certified.
+The F3 diagnostics panel separates required files that fail to load from optional unmapped world/weapon models and optional ambience recordings. F4 displays FPS, draw calls, triangles, geometry/texture counts and JavaScript heap when exposed by the browser. Low, Medium and High world presets are available. These counters and presets still require real target-device profiling before performance can be certified.
 
 ## Verification boundary
 

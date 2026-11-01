@@ -32,13 +32,17 @@ Open the local address printed by Vite. For a production-like local build:
 
 ```bash
 npm run assets:prepare
+npm run assets:manifest
+npm run assets:validate
 npm run build
 npm run preview
 ```
 
+The build generates `public/assets/asset-manifest.json` from the asset catalog and animation manifest, then creates `dist/precache-manifest.json` after Vite copies the local runtime files. On a secure production web origin, the service worker downloads and caches the generated build so a subsequent visit can start offline. The first visit still requires a connection until that cache finishes. Capacitor packages the local `dist/` files with the app; the web service worker is intentionally skipped for `capacitor:` and `file:` origins.
+
 A modern browser with WebGL support is required.
 
-See [docs/ASSET_PIPELINE.md](docs/ASSET_PIPELINE.md) for FBX staging, player-model import and validation; [docs/SOURCE_MODEL_INSPECTION.md](docs/SOURCE_MODEL_INSPECTION.md) for the 31 October 2026 structural asset audit; [docs/WORLD_ASSET_PIPELINE.md](docs/WORLD_ASSET_PIPELINE.md) for world/weapon GLB catalog mapping; and [docs/COMBAT_SYSTEMS.md](docs/COMBAT_SYSTEMS.md) for movement and enemy AI. The build and dev server stage the selected FBX clips and validate runtime asset references automatically. Press F3 for asset diagnostics and F4 for performance counters.
+See [docs/ASSET_PIPELINE.md](docs/ASSET_PIPELINE.md) for FBX staging, player-model import and validation; [docs/SOURCE_MODEL_INSPECTION.md](docs/SOURCE_MODEL_INSPECTION.md) for the structural asset audit; [docs/WORLD_ASSET_PIPELINE.md](docs/WORLD_ASSET_PIPELINE.md) for world/weapon GLB catalog mapping; [docs/WORLD_REFERENCE_MAP.md](docs/WORLD_REFERENCE_MAP.md) for the current environment's source-photo mapping; [ASSETS_NEEDED.md](ASSETS_NEEDED.md) for outstanding licensed models and audio; and [docs/COMBAT_SYSTEMS.md](docs/COMBAT_SYSTEMS.md) for movement and enemy AI. The build stages the selected FBX clips, generates the required-asset manifest and validates runtime paths. Press F3 or use a three-finger tap for asset diagnostics; press F4 for FPS, draw-call, triangle, geometry, texture and available JavaScript heap counters.
 
 ## Controls
 
@@ -111,4 +115,4 @@ When you deliberately choose to test a native build later, the workflow packages
 - [ ] Low-end Android device profiling and frame-rate certification
 - [ ] Real rewarded-ad SDK, verified rewards, privacy/consent flow, and cloud saves
 
-This remains a playable prototype, not a production-certified release. The world is a hybrid of photo-derived surfaces, procedural road/terrain geometry and distant photographic cutouts. The runtime uses a development actor proxy until a compatible character model has been extracted and visually verified. Third-party asset packs are present in the repository, but their licensing and redistribution terms must be confirmed before shipping them.
+This remains a playable prototype, not a production-certified release. The world uses a 3D heightfield, laterite road, instanced vegetation and 3D rural prop meshes with local photo-derived PBR surface materials. The sky is a procedural dome with a generated horizon ridge; it is not a tiled panorama. Some near-field structures remain procedural mesh stand-ins rather than photorealistic scans; see ASSETS_NEEDED.md for the remaining model backlog. The active player catalog still uses the previously inspected 65-bone Mixamo-compatible FBX. The root-level Military Male GLB is a separate, unapproved candidate and is not mapped as the production hero. Third-party asset packs are present in the repository, but their licensing and redistribution terms must be confirmed before shipping them.
