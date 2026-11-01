@@ -68,7 +68,7 @@ export function installWorldDebugPanel(){
   d.performance={...d.performance,...stats};
   const p=d.performance;
   const heap=p.jsHeapMb!=null&&Number.isFinite(Number(p.jsHeapMb))?Number(p.jsHeapMb).toFixed(1)+' MB':'n/a';
-  perf.textContent='WORLD PERFORMANCE · F4\\nFPS  '+Number(p.fps||0).toFixed(1)+'\\nDRAW CALLS  '+Number(p.drawCalls||0)+'\\nTRIANGLES  '+Number(p.triangles||0)+'\\nGEOMETRIES  '+Number(p.geometries||0)+'\\nTEXTURES  '+Number(p.textures||0)+'\\nJS HEAP  '+heap;;
+  perf.textContent='WORLD PERFORMANCE · F4\nFPS  '+Number(p.fps||0).toFixed(1)+'\nDRAW CALLS  '+Number(p.drawCalls||0)+'\nTRIANGLES  '+Number(p.triangles||0)+'\nGEOMETRIES  '+Number(p.geometries||0)+'\nTEXTURES  '+Number(p.textures||0)+'\nJS HEAP  '+heap;
   if(body.isConnected&&panel.style.display!=='none')d.render();
  };
  d.render=()=>{
