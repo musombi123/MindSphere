@@ -1,4 +1,7 @@
 const CACHE_PREFIX = 'project-zero-hour-runtime-';
+const META_CACHE_NAME = CACHE_PREFIX + 'meta';
+const ACTIVE_BUILD_KEY = 'active-build.json';
+let activeCacheName = null;
 
 async function notifyClients(message) {
   const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
@@ -45,6 +48,10 @@ async function installRuntimeCache() {
   await cache.put(manifestUrl.href, new Response(JSON.stringify(manifest), {
     headers: { 'Content-Type': 'application/json' }
   }));
+  const metaCache = await caches.open(META_CACHE_NAME);
+  await metaCache.put(new URL(ACTIVE_BUILD_KEY, scopeUrl).href, new Response(JSON.stringify({ buildId: manifest.buildId }), {
+    headers: { 'Content-Type': 'application/json' }
+  }));
   await notifyClients({
     type: 'PZH_PRECACHE_COMPLETE',
     loaded: files.length,
@@ -66,29 +73,35 @@ self.addEventListener('install', (event) => {
 });
 
 async function findInstalledBuildCache() {
-  const manifestUrl = new URL('precache-manifest.json', self.registration.scope).href;
-  const names = (await caches.keys()).filter((name) => name.startsWith(CACHE_PREFIX));
-  for (const name of names) {
-    const cache = await caches.open(name);
-    const response = await cache.match(manifestUrl);
-    if (!response) continue;
-    try {
-      const manifest = await response.json();
-      if (manifest && manifest.buildId && name === CACHE_PREFIX + manifest.buildId) return name;
-    } catch {
-      // Ignore incomplete or stale cache manifests and preserve the previous good cache.
-    }
+  const pointerUrl = new URL(ACTIVE_BUILD_KEY, self.registration.scope).href;
+  const metaCache = await caches.open(META_CACHE_NAME);
+  const pointer = await metaCache.match(pointerUrl);
+  if (!pointer) return null;
+  try {
+    const state = await pointer.json();
+    const cacheName = state && state.buildId ? CACHE_PREFIX + state.buildId : null;
+    if (!cacheName) return null;
+    const names = await caches.keys();
+    return names.includes(cacheName) ? cacheName : null;
+  } catch {
+    return null;
   }
-  return null;
+}
+
+async function getActiveBuildCacheName() {
+  if (activeCacheName) return activeCacheName;
+  activeCacheName = await findInstalledBuildCache();
+  return activeCacheName;
 }
 
 self.addEventListener('activate', (event) => {
   event.waitUntil((async () => {
     const currentCacheName = await findInstalledBuildCache();
+    activeCacheName = currentCacheName;
     if (currentCacheName) {
       const names = await caches.keys();
       await Promise.all(names.map((name) => {
-        if (name.startsWith(CACHE_PREFIX) && name !== currentCacheName) return caches.delete(name);
+        if (name.startsWith(CACHE_PREFIX) && name !== currentCacheName && name !== META_CACHE_NAME) return caches.delete(name);
         return Promise.resolve(false);
       }));
     }
@@ -99,8 +112,7 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'PZH_CHECK_PRECACHE') {
     event.waitUntil((async () => {
-      const names = await caches.keys();
-      const cachedName = names.filter((name) => name.startsWith(CACHE_PREFIX)).sort().pop();
+      const cachedName = await getActiveBuildCacheName();
       if (cachedName) {
         const cache = await caches.open(cachedName);
         const manifestUrl = new URL('precache-manifest.json', self.registration.scope).href;
@@ -131,8 +143,7 @@ self.addEventListener('fetch', (event) => {
     try {
       const response = await fetch(request);
       if (response.ok && response.type === 'basic') {
-        const names = (await caches.keys()).filter((name) => name.startsWith(CACHE_PREFIX)).sort();
-        const current = names[names.length - 1];
+        const current = await getActiveBuildCacheName();
         if (current) {
           const cache = await caches.open(current);
           await cache.put(request, response.clone());
