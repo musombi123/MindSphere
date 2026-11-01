@@ -21,8 +21,13 @@ These are user-provided media, not third-party stock. The project does not asser
 
 ## Still required for full photorealism
 
-Near-range tree, homestead, fence, vehicle and water-tank GLB models and a true 360-degree HDR panorama are not included yet. These missing GLBs are intentionally listed in the F3 debug panel and the on-screen asset-missing banner.
+Near-range tree, homestead, fence, vehicle and water-tank GLB models and a true 360-degree HDR panorama are not included yet. Unmapped optional GLBs are listed in the F3 diagnostics panel and ASSETS_NEEDED.md; they do not trigger the red required-asset failure banner. Only a required file that actually fails to load should show that banner.
 
 ## Imported candidate packs — rights review required
 
 The repository also contains user-imported candidate FBX, GLB, ZIP, EXR and WAV assets under `Assets/`. The individual creators, original source pages and license terms have not yet been verified in this repository documentation. Do not treat Git LFS availability or repository possession as a grant of redistribution, commercial-use or derivative-work rights. Before shipping any candidate asset in a public web build or APK, record its creator/source URL, exact license version, attribution requirements, modification status and redistribution permission here. Remove or replace any asset whose provenance or license cannot be established.
+
+
+## Optional local ambience
+
+The browser runtime checks for local wind, birds, insects and two footsteps recordings under `public/assets/world/audio/`. These files are not currently present. Their absence is reported as optional in F3 and does not block offline mission startup. Add only original or properly licensed recordings and document their source and redistribution terms before shipping.
