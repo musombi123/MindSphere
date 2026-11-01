@@ -24,6 +24,17 @@ This list is generated from the current Three.js/Vite asset catalog and the visu
 | Low | firePit | Rural outdoor fire pit GLB | No catalog GLB is mapped |
 | Medium | stoneWall | Local masonry boundary wall GLB | Existing roadside wall construction remains active |
 
+## Weapon models still needed
+
+These catalog slots are also currently unmapped and remain optional visual upgrades:
+
+- pulseRifle — distinct sci-fi rifle mesh with a correct hand grip and muzzle attachment point.
+- novaCannon — heavy launcher/cannon mesh with separately modelled moving components where needed.
+- arcLance — energy weapon mesh with emitter and hand attachment point.
+- gravityCore — distinct gravity device mesh with a stable hand socket.
+
+Keep weapon meshes separate from the player skeleton so the runtime can swap weapons and align them to the right-hand socket.
+
 ## Audio assets still needed
 
 The optional offline ambience loader looks for these local files. They are not currently present in public/assets/world/audio/, so the loader skips them and reports them as optional in F3:
