@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
-import { recordModelLoaded, registerMissingAsset, resolveMissingAsset, registerOptionalAsset, resolveOptionalAsset } from '../world/AssetDiagnostics.js';
+import { recordModelLoaded, registerMissingAsset, resolveMissingAsset, registerOptionalAsset, resolveOptionalAsset, updateAssetTask } from '../world/AssetDiagnostics.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
@@ -133,6 +133,8 @@ export class PlayerController {
   }
 
   reportProgress(percent, message) {
+    const safePercent = clamp01(Number(percent) / 100) * 100;
+    updateAssetTask('player-model', { label: message || 'PLAYER MODEL', loaded: safePercent, total: 100, done: safePercent >= 100 });
     this.onProgress({
       percent: clamp01(Number(percent) / 100) * 100,
       message: message || 'INITIALISING AEGIS CHARACTER'
@@ -338,11 +340,11 @@ export class PlayerController {
       for (const [key, value] of entries) {
         const definition = typeof value === 'string' ? { file: value } : value;
         if (!definition || !definition.file) continue;
-        const file = /^https?:\/\//i.test(definition.file)
+        const rawPath = definition.file.replace(/^\\/+/, '');
+        const relativePath = rawPath.startsWith('assets/') ? rawPath : 'assets/animations/' + rawPath;
+        const file = /^https?:\\/\\//i.test(definition.file)
           ? definition.file
-          : publicAssetUrl(definition.file.startsWith('/')
-            ? definition.file.slice(1)
-            : 'assets/animations/' + definition.file);
+          : publicAssetUrl(relativePath);
         const isFbx = definition.format === 'fbx' || /\.fbx(?:[?#]|$)/i.test(file);
         if (!groups.has(file)) groups.set(file, { file, isFbx, entries: [] });
         groups.get(file).entries.push({ key, definition });
