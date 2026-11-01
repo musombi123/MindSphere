@@ -121,7 +121,7 @@ if (manifest) {
     for (const [key, value] of clipEntries) {
       const definition = typeof value === 'string' ? { file: value } : value;
       const rawAnimationPath = String(definition?.file || '');
-      const animationPath = rawAnimationPath.startsWith('assets/') ? rawAnimationPath : path.posix.join('assets/animations', rawAnimationPath);
+      const animationPath = rawAnimationPath.startsWith('/') || rawAnimationPath.startsWith('assets/') ? rawAnimationPath : path.posix.join('assets/animations', rawAnimationPath);
       const file = localAssetPath(animationPath, 'Animation ' + key);
       if (!file) continue;
       const format = definition?.format === 'fbx' ? ['.fbx'] : ['.glb', '.gltf', '.fbx'];
