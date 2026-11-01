@@ -116,16 +116,7 @@ export function createPhotoPbrTextures(){
   wood:surface('weathered timber fence photo crop',FILES.fence,[.02,.22,.96,.60]),
   metal:surface('corrugated roof photo crop',FILES.homestead,[0,0,1,.31]),
   leaf:surface('leaf canopy photo crop',FILES.fence,[0,0,1,.43]),
-  photo:{
-   sky:photo('photo sky and skyline strip',FILES.landscape,[0,0,1,.58]),
-   horizon:photo('rural road and tree-line backdrop',FILES.landscape,[0,.17,1,.56]),
-   treeLine:photo('distant tree-line photo panel',FILES.landscape,[0,.22,1,.43]),
-   treeCutout:photo('tree canopy foliage alpha cutout from user video',FILES.landscape,[.12,.16,.76,.40],{feather:true,foliageKey:true}),
-   plants:photo('green understory alpha cutout from user garden photo',FILES.fence,[0,.58,1,.40],{feather:true,foliageKey:true}),
-   vegetation:photo('garden and fence photo',FILES.fence,[0,0,1,1]),
-   fence:photo('hand-built timber fence photo',FILES.fence,[0,.1,1,.72]),
-   homestead:photo('rural homestead and corrugated roof photo',FILES.homestead,[0,0,1,1])
-  }
+  photo:{}
  };
 }
 export const createProceduralPbrTextures=createPhotoPbrTextures;
