@@ -116,6 +116,7 @@ import * as THREE from 'three';
 import { PlayerController } from './src/characters/PlayerController.js';
 import { WorldManager } from './src/world/WorldManager.js';
 import { updateWorldPerformanceStats } from './src/world/AssetDiagnostics.js';
+import { createEnemyTacticalState, suppressEnemyTactics, updateEnemyTactics } from './src/combat/EnemyTacticalAI.js';
 
 const canvas = document.getElementById('game-canvas');
 const renderer = new THREE.WebGLRenderer({canvas, antialias: !matchMedia('(pointer: coarse)').matches, alpha: false, powerPreference: 'high-performance'});
@@ -264,6 +265,7 @@ function addEnemy(x,z,boss=false,role='gangster'){
     hp: boss ? 190 : (role === 'echo' ? 62 : (role === 'thief' ? 36 : 52)),
     maxHp: boss ? 190 : (role === 'echo' ? 62 : (role === 'thief' ? 36 : 52)),
     boss, role, dead: false, nextShot: 1.2 + Math.random() * 1.6,
+    tactical: createEnemyTacticalState(role, boss, enemies.length),
     moveSpeed: boss ? 1.35 : (role === 'echo' ? 1.9 : (role === 'thief' ? 2.1 : 1.65)),
     attackRange: boss ? 9.5 : (role === 'echo' ? 13.5 : (role === 'thief' ? 7.5 : 5.8)),
     fireRange: role === 'echo' ? 27 : 21,
@@ -858,6 +860,7 @@ function damageEnemy(e,amount){
     if (e.animator.play('hit', 0.06)) e.hitAnimationCooldown = 0.32;
   }
   e.hp=Math.max(0,e.hp-amount);e.flash=.12;
+  suppressEnemyTactics(e, Math.min(.9, amount / 90));
   player.score+=Math.round(amount);
   if(e.hp<=0){
     e.dead = true;
@@ -1239,51 +1242,13 @@ function updateWorld(dt){
     e.nextShot -= dt;
     e.rethinkTimer -= dt;
 
-    const dx = player.pos.x - e.model.position.x;
-    const dz = player.pos.z - e.model.position.z;
-    const dist = Math.sqrt(dx * dx + dz * dz);
-    const forward = new THREE.Vector3(dx, 0, dz).normalize();
-    const lateral = new THREE.Vector3(-forward.z, 0, forward.x).multiplyScalar(e.strafeSign);
-
-    if (e.rethinkTimer <= 0) {
-      e.strafeSign = Math.random() < .5 ? -1 : 1;
-      if (e.boss) {
-        e.aiMode = dist > e.attackRange + 1.5 ? 'advance' : dist < e.attackRange - 2 ? 'reposition' : 'command';
-      } else if (e.role === 'echo') {
-        e.aiMode = dist < e.attackRange - 3 ? 'retreat' : dist > e.attackRange + 3 ? 'advance' : 'hold';
-      } else if (e.role === 'thief') {
-        e.aiMode = dist > e.attackRange ? 'flank' : 'circle';
-      } else {
-        e.aiMode = dist > e.attackRange ? 'advance' : 'suppress';
-      }
-      e.rethinkTimer = .55 + Math.random() * .45;
-    }
-
-    const steering = new THREE.Vector3();
-    if (e.aiMode === 'advance') {
-      steering.copy(forward);
-    } else if (e.aiMode === 'flank') {
-      steering.copy(forward).multiplyScalar(.62).addScaledVector(lateral, .78);
-    } else if (e.aiMode === 'circle') {
-      steering.copy(lateral).addScaledVector(forward, .12);
-    } else if (e.aiMode === 'retreat') {
-      steering.copy(forward).multiplyScalar(-.9).addScaledVector(lateral, .45);
-    } else if (e.aiMode === 'reposition') {
-      steering.copy(forward).multiplyScalar(-.42).addScaledVector(lateral, .55);
-    } else if (e.aiMode === 'command') {
-      steering.copy(lateral).multiplyScalar(.45);
-    } else if (e.aiMode === 'hold') {
-      steering.copy(lateral).multiplyScalar(.62);
-    } else {
-      steering.copy(lateral).multiplyScalar(.32);
-    }
-
-    const steeringLength = steering.length();
-    const minMoveDistance = e.aiMode === 'retreat' || e.aiMode === 'reposition' ? .75 : 2.2;
-    const moving = steeringLength > .12 && dist > minMoveDistance;
+    const tactics = updateEnemyTactics(e, enemies, player, dt);
+    const dist = tactics.distance;
+    const moving = tactics.moving;
+    const steering = tactics.steering;
     if (moving) {
       steering.normalize();
-      const speed = e.moveSpeed * (e.boss ? 1.05 : 1) * (e.role === 'thief' && e.aiMode === 'flank' ? 1.2 : 1);
+      const speed = e.moveSpeed * tactics.speedMultiplier;
       e.model.position.x += steering.x * speed * dt;
       e.model.position.z += steering.z * speed * dt;
       e.model.position.x = THREE.MathUtils.clamp(e.model.position.x, -6.2, 6.2);
@@ -1296,7 +1261,8 @@ function updateWorld(dt){
 
     if (dist < e.fireRange && e.nextShot <= 0) {
       const leadTime = THREE.MathUtils.clamp(dist / (e.role === 'echo' ? 24 : 20), 0, .42);
-      const accuracy = e.boss ? .94 : e.role === 'echo' ? .88 : e.role === 'thief' ? .66 : .76;
+      const baseAccuracy = e.boss ? .94 : e.role === 'echo' ? .88 : e.role === 'thief' ? .66 : .76;
+      const accuracy = THREE.MathUtils.clamp(baseAccuracy * tactics.accuracyMultiplier, .35, .98);
       const targetX = player.pos.x + player.velocity.x * leadTime * accuracy + (Math.random() - .5) * (1 - accuracy) * 1.5;
       const targetZ = player.pos.z + player.velocity.z * leadTime * accuracy + (Math.random() - .5) * (1 - accuracy) * 1.5;
       const shotDirection = new THREE.Vector3(targetX - e.model.position.x, 0, targetZ - e.model.position.z).normalize();
@@ -1305,7 +1271,7 @@ function updateWorld(dt){
       const shotKind = e.boss ? 'boss' : e.role === 'echo' ? 'echo' : 'regular';
       const damage = e.boss ? 12 : e.role === 'echo' ? 9 : e.role === 'thief' ? 6 : 7;
       createProjectile(origin, shotDirection, 'enemy', shotKind, damage);
-      e.nextShot = e.fireInterval * (.86 + Math.random() * .32);
+      e.nextShot = e.fireInterval * (.86 + Math.random() * .32) * tactics.fireDelayMultiplier;
       if ((chapter === 2 || chapter === 3) && signalChoice === 'trust') e.nextShot *= .9;
       else if ((chapter === 2 || chapter === 3) && signalChoice === 'sever') e.nextShot *= 1.12;
     }
