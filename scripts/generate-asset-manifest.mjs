@@ -50,7 +50,8 @@ function addRequired(assetPath, role) {
 async function readJson(file, label) {
   const source = await readFile(file, 'utf8');
   try {
-    return JSON.parse(source.replace(/^\\uFEFF/, ''));
+    const cleanSource = source.charCodeAt(0) === 0xFEFF ? source.slice(1) : source;
+    return JSON.parse(cleanSource);
   } catch (error) {
     throw new Error(label + ' is invalid JSON: ' + error.message);
   }
