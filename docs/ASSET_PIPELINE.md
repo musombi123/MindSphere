@@ -79,9 +79,9 @@ When the player rig loads successfully, the game clones it for enemy roles and a
 
 ## World assets and current limitations
 
-The current world is a hybrid of a heightfield, photo-derived PBR crops, procedural road geometry, and photo-cutout vegetation. The three user-supplied world video frames are 320×180 stills, not photogrammetry or a 360-degree panorama. Houses and fences currently use photo panels at distance; near-field building, tree, boda boda, pickup, tank, bridge and other prop GLBs remain missing. Do not describe these photo panels as completed 3D geometry.
+The current world uses a heightfield, a winding 3D laterite road, local photo-derived PBR material crops, instanced 3D trees/branches/grass, 3D rural prop meshes, a continuous procedural sky dome and a generated distant ridge. The three user-supplied world video frames are 320×180 stills, not photogrammetry or a 360-degree panorama. Rural buildings, fencing, vehicles and tanks are currently procedural 3D mesh stand-ins; the photorealistic GLB backlog is listed in ASSETS_NEEDED.md. Do not describe these stand-ins as scanned or photogrammetric assets.
 
-The F3 asset panel lists missing models and audio; F4 displays runtime performance counters. Low, Medium and High world presets are available. These counters and presets need real target-device profiling before performance can be certified.
+The F3 diagnostics panel separates required files that fail to load from optional unmapped world/weapon models and optional ambience recordings. F4 displays FPS, draw calls, triangles, geometry/texture counts and JavaScript heap when exposed by the browser. Low, Medium and High world presets are available. These counters and presets still require real target-device profiling before performance can be certified.
 
 ## Verification boundary
 
