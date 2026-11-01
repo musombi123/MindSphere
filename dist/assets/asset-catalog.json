@@ -1,0 +1,15 @@
+{
+    "worldModels":  {
+
+                    },
+    "weaponModels":  {
+
+                     },
+    "schemaVersion":  1,
+    "character":  {
+                      "playerModel":  "assets/characters/imported/zero-soldier/trellis-2387720894.fbx",
+                      "sourceArchive":  "Female Basic Locomotion Pack.zip",
+                      "selectedArchiveEntry":  "trellis-2387720894.fbx",
+                      "selectionNote":  "Selected by filename signals and uncompressed archive size. Confirm visual identity, rig, textures, scale, and licensing before public release."
+                  }
+}
