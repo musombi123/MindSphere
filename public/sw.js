@@ -1,4 +1,5 @@
 const CACHE_PREFIX = 'project-zero-hour-runtime-';
+let activeCacheName = null;
 
 async function notifyClients(message) {
   const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
@@ -17,6 +18,7 @@ async function installRuntimeCache() {
   }
 
   const cacheName = CACHE_PREFIX + manifest.buildId;
+  activeCacheName = cacheName;
   const cache = await caches.open(cacheName);
   const files = manifest.files;
   let loaded = 0;
@@ -68,10 +70,8 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   event.waitUntil((async () => {
     const names = await caches.keys();
-    const keep = names.filter((name) => name.startsWith(CACHE_PREFIX));
-    const current = keep.sort().pop();
     await Promise.all(names.map((name) => {
-      if (name.startsWith(CACHE_PREFIX) && name !== current) return caches.delete(name);
+      if (name.startsWith(CACHE_PREFIX) && name !== activeCacheName) return caches.delete(name);
       return Promise.resolve(false);
     }));
     await self.clients.claim();
@@ -82,13 +82,18 @@ self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'PZH_CHECK_PRECACHE') {
     event.waitUntil((async () => {
       const names = await caches.keys();
-      const cached = names.filter((name) => name.startsWith(CACHE_PREFIX)).sort().pop();
-      if (cached) {
+      const cachedName = names.filter((name) => name.startsWith(CACHE_PREFIX)).sort().pop();
+      if (cachedName) {
+        const cache = await caches.open(cachedName);
+        const manifestUrl = new URL('precache-manifest.json', self.registration.scope).href;
+        const response = await cache.match(manifestUrl);
+        const manifest = response ? await response.json() : null;
+        const total = Number(manifest && manifest.totalFiles) || 1;
         await event.source?.postMessage({
           type: 'PZH_PRECACHE_COMPLETE',
-          loaded: 1,
-          total: 1,
-          buildId: cached.slice(CACHE_PREFIX.length)
+          loaded: total,
+          total,
+          buildId: cachedName.slice(CACHE_PREFIX.length)
         });
       }
     })());
