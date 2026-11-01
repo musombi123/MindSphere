@@ -17,7 +17,7 @@ These are user-provided media, not third-party stock. The project does not asser
 | Three.js | Existing project dependency; MIT |
 | \`three-mesh-bvh\` | MIT; used for heightfield spatial raycasts |
 | \`src/world/TextureFactory.js\` | Project code that crops the user's photographs and derives normal/roughness maps from those pixels. It does not synthesize substitute albedo textures. |
-| \`src/world/Sky.js\` | Project code placing the user's ordinary camera frames on feathered curved background panels; the source footage is not a 360-degree panorama. |
+| \`src/world/Sky.js\` | Project code rendering a continuous procedural atmospheric shader dome, sun halo and generated distant ridge. The source footage is not used as a sky panorama or as a set of 2D sky cards. |
 
 ## Still required for full photorealism
 
