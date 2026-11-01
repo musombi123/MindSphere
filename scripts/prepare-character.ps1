@@ -53,7 +53,9 @@ if ($SourceFile) {
         sourceFile = $SourceFile
         selectionNote = "Imported as a standalone GLB. The runtime will reject it if it lacks a usable skinned humanoid mesh. Confirm likeness, materials, rig, scale, weapon socket and redistribution rights."
     }) -Force
-    $catalog | ConvertTo-Json -Depth 15 | Set-Content -LiteralPath $catalogPath -Encoding UTF8
+    $jsonText = $catalog | ConvertTo-Json -Depth 15
+    $utf8NoBom = [System.Text.UTF8Encoding]::new($false)
+    [System.IO.File]::WriteAllText($catalogPath, $jsonText + [Environment]::NewLine, $utf8NoBom)
 
     Write-Host "Player GLB staged: $runtimePath" -ForegroundColor Green
     Write-Host "Catalog written: $catalogPath"
@@ -173,7 +175,9 @@ try {
         selectedArchiveEntry = $selected.FullName
         selectionNote = "Selected by filename signals and uncompressed archive size. Confirm visual identity, rig, textures, scale, and licensing before public release."
     }) -Force
-    $catalog | ConvertTo-Json -Depth 15 | Set-Content -LiteralPath $catalogPath -Encoding UTF8
+    $jsonText = $catalog | ConvertTo-Json -Depth 15
+    $utf8NoBom = [System.Text.UTF8Encoding]::new($false)
+    [System.IO.File]::WriteAllText($catalogPath, $jsonText + [Environment]::NewLine, $utf8NoBom)
 
     Write-Host ""
     Write-Host "Player model staged:" -ForegroundColor Green
