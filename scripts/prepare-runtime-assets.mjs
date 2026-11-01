@@ -109,6 +109,8 @@ for (const [key, filename] of Object.entries(compatibleCharacterClips)) {
   }
 }
 
+await writeFile(manifestPath, JSON.stringify(existing, null, 2) + '\n', 'utf8');
+
 console.log(`[Project Zero Hour] Staged ${copied.length}/${Object.keys(clipSources).length} FBX animation entries.`);
 for (const item of copied) {
   console.log(`  ✓ ${item.key.padEnd(12)} ${item.filename} (${(item.size / 1024 / 1024).toFixed(2)} MB)`);
