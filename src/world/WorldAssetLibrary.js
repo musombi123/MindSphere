@@ -4,7 +4,7 @@ import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { clone as cloneSkinnedScene } from 'three/addons/utils/SkeletonUtils.js';
-import { recordModelLoaded, registerMissingAsset, resolveMissingAsset, registerOptionalAsset, resolveOptionalAsset } from './AssetDiagnostics.js';
+import { recordModelLoaded, registerMissingAsset, resolveMissingAsset, registerOptionalAsset, resolveOptionalAsset, updateAssetTask } from './AssetDiagnostics.js';
 
 const CATALOG_URL = 'assets/asset-catalog.json';
 const BASE_URL = import.meta.env.BASE_URL || './';
@@ -68,6 +68,9 @@ export class WorldAssetLibrary {
     this.errors = new Map();
     this.loading = new Map();
     this.manager = new THREE.LoadingManager();
+    this.manager.onProgress = (_url, loaded, total) => updateAssetTask('world-models', {
+      label: 'WORLD MODELS', loaded, total, done: total > 0 && loaded >= total
+    });
     this.draco = new DRACOLoader(this.manager);
     this.draco.setDecoderPath(publicUrl('decoders/draco/'));
     this.ktx2 = new KTX2Loader(this.manager);
@@ -87,13 +90,13 @@ export class WorldAssetLibrary {
       if (!response.ok) throw new Error('HTTP ' + response.status);
       catalog = await response.json();
     } catch (error) {
-      console.warn('[Project Zero Hour] World asset catalog is not readable:', error.message);
-      for (const [key, label] of Object.entries(EXPECTED_WORLD_MODELS)) {
-        registerOptionalAsset('/assets/world/models/' + key + '.glb', label + ' has no verified 3D model yet; the current photo/procedural scenery remains in use.');
-      }
+      const catalogUrl = publicUrl(CATALOG_URL);
+      registerMissingAsset(catalogUrl, 'The required runtime asset catalog could not be loaded: ' + error.message);
+      console.warn('[Project Zero Hour] Required world asset catalog is not readable:', error.message);
       return this;
     }
 
+    resolveMissingAsset(publicUrl(CATALOG_URL));
     const definitions = catalog?.worldModels && typeof catalog.worldModels === 'object'
       ? catalog.worldModels
       : {};
@@ -110,7 +113,7 @@ export class WorldAssetLibrary {
     for (const key of Object.keys(EXPECTED_WORLD_MODELS)) {
       if (this.definitions.has(key)) mapped.push(key);
       else registerOptionalAsset(
-        '/assets/world/models/' + key + '.glb',
+        'assets/world/models/' + key + '.glb',
         EXPECTED_WORLD_MODELS[key] + ' has no verified 3D model yet; this authored detail is not present in the current scene.'
       );
     }
@@ -147,8 +150,8 @@ export class WorldAssetLibrary {
         this.templates.set(key, template);
         this.bounds.set(key, { min: bounds.min.clone(), max: bounds.max.clone(), size });
         recordModelLoaded(url);
-        resolveMissingAsset('/assets/world/models/' + key + '.glb');
-        resolveOptionalAsset('/assets/world/models/' + key + '.glb');
+        resolveMissingAsset('assets/world/models/' + key + '.glb');
+        resolveOptionalAsset('assets/world/models/' + key + '.glb');
         console.info('[Project Zero Hour] World model ready:', key, url);
         return template;
       } catch (error) {
