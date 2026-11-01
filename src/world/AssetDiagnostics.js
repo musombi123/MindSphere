@@ -45,7 +45,19 @@ export function installWorldDebugPanel(){
  for(const [value,label] of [['low','Low · mobile performance'],['medium','Medium · balanced'],['high','High · visual quality']]){const option=document.createElement('option');option.value=value;option.textContent=label;select.append(option);}
  select.value=window.__worldQuality||'medium';
  select.onchange=()=>{const set=window.__setWorldQuality;if(typeof set==='function')set(select.value);};
- settings.append(setTitle,setNote,select);
+
+ const weatherTitle=document.createElement('h3');weatherTitle.textContent='ATMOSPHERE · WEATHER PROFILE';
+ Object.assign(weatherTitle.style,{fontSize:'13px',color:'#86e5f0',margin:'14px 0 5px'});
+ const weatherNote=document.createElement('p');weatherNote.textContent='Chapter defaults: clear dust, Nzoia storm, and phase anomaly. Override here for testing.';
+ Object.assign(weatherNote.style,{margin:'0 0 8px',color:'#bfd0d5'});
+ const weatherSelect=document.createElement('select');weatherSelect.id='world-weather-selector';
+ Object.assign(weatherSelect.style,{padding:'7px 10px',background:'#10232b',color:'#f1fbff',border:'1px solid #5c828e',borderRadius:'6px'});
+ for(const [value,label] of [['clear','Clear · late-morning air'],['dust','Dust · dry wind'],['rain','Rain · overcast'],['storm','Storm · wind and lightning'],['anomaly','Echo · phase atmosphere']]){
+  const option=document.createElement('option');option.value=value;option.textContent=label;weatherSelect.append(option);
+ }
+ weatherSelect.value=window.__worldWeather||'clear';
+ weatherSelect.onchange=()=>{const set=window.__setWorldWeather;if(typeof set==='function')set(weatherSelect.value);};
+ settings.append(setTitle,setNote,select,weatherTitle,weatherNote,weatherSelect);
 
  d.updatePerformance=(stats)=>{
   d.performance={...d.performance,...stats};
@@ -55,6 +67,7 @@ export function installWorldDebugPanel(){
  };
  d.render=()=>{
   select.value=window.__worldQuality||'medium';
+  weatherSelect.value=window.__worldWeather||'clear';
   body.replaceChildren(settings,
    section('Photos used from the uploaded video',d.photos),
    section('Models loaded',d.modelsLoaded),
