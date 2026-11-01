@@ -54,7 +54,7 @@ Use original or properly licensed recordings and include source, licence, attrib
 
 ## Player model candidate awaiting review
 
-Military_Male_01 (1).glb is present at the repository root and is tracked by Git LFS. It is not mapped as the production player. Before use, inspect the actual LFS payload for GLB validity, skinned-mesh count, skeleton hierarchy, material/texture dependencies, scale and licence; then test the 65-bone Mixamo animation set against its skeleton. The current player catalog entry remains the previously inspected Mixamo FBX until that review passes.
+The current remote branch tracks a root-level file named `Military_Male_01 (1).glb` (not the exact name `male_military1(1).glb`). Its Git LFS pointer is 132 bytes and declares a 1,955,320-byte payload (SHA-256 `fe4952b12cb4a8ea6627df3b95370d9e2e5eb3c557d00969b2e1a1013e4575a6`). I could not find a file at `male_military1(1).glb` or `Assets/male_military1(1).glb` in the branch tree. If the root-level file is the intended model, pull that exact path and inspect the actual LFS payload for GLB validity, skinned-mesh count, skeleton hierarchy, material/texture dependencies, scale and licence; then test the 65-bone Mixamo animation set against its skeleton. It is not extracted under `public/assets/characters/` and is not mapped as the production player. The current player catalog entry remains the previously inspected Mixamo FBX until that review passes.
 
 ## Release gate
 
