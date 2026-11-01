@@ -4,17 +4,19 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "npm run assets:prepare && npm run assets:validate && vite --host 0.0.0.0",
+    "dev": "npm run assets:prepare && npm run assets:manifest && npm run assets:validate && vite --host 0.0.0.0",
     "assets:prepare": "node scripts/prepare-runtime-assets.mjs",
     "assets:import:character": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/import-character.ps1",
-    "build": "npm run assets:prepare && npm run assets:validate && npm run test:tactical && npm run test:weather && vite build",
+    "build": "npm run assets:prepare && npm run assets:manifest && npm run assets:validate && npm run test:tactical && npm run test:weather && vite build && npm run offline:manifest",
     "preview": "vite preview --host 0.0.0.0",
     "android:sync": "npm run build && cap sync android",
     "android:open": "cap open android",
     "postinstall": "node scripts/copy-three-decoders.mjs",
     "assets:validate": "node scripts/validate-runtime-assets.mjs",
     "test:tactical": "node scripts/test-tactical-ai.mjs",
-    "test:weather": "node scripts/test-weather.mjs"
+    "test:weather": "node scripts/test-weather.mjs",
+    "assets:manifest": "node scripts/generate-asset-manifest.mjs",
+    "offline:manifest": "node scripts/generate-precache-manifest.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^7.4.3",
