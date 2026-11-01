@@ -4,9 +4,9 @@ These are stills extracted from the user's uploaded video \`1000034633.mp4\`. Th
 
 | Image | Source moment | What the photo shows | In-game use |
 |---|---|---|---|
-| \\`public/reference/world/video_frame_02s.webp\\` | Approx. 2 seconds; 320×180 WebP still | Red laterite road crossing the foreground, long brick/masonry boundary wall to the left, shrubs and a thick dark-green tree line, tall roadside trunks/posts, overhead wires and blue sky with white cumulus clouds | Road/soil and related ground-material source crop. The sky is rendered by a procedural shader dome; no photo panel is used. |
-| \\`public/reference/world/video_frame_16s.webp\\` | Approx. 16 seconds; 320×180 WebP still | Hand-built irregular timber/stick fence between mature tree trunks, lush garden understory, broad leaves and small flowers | Bark/wood, leaf and ground-cover material source crops. Vegetation is rendered as instanced 3D geometry, not photo cutouts. |
-| \\`public/reference/world/video_frame_26s.webp\\` | Approx. 26 seconds; 320×180 WebP still | Rustic rural outbuilding/homestead with rough walls, projecting corrugated roof/canopy, a simple small shed nearby, red earth and garden trees | Roof/metal and related surface material source crops. Homestead scenery is represented by 3D procedural mesh groups, not a photo panel. |
+| \`public/reference/world/video_frame_02s.webp\` | Approx. 2 seconds; 320×180 WebP still | Red laterite road crossing the foreground, long brick/masonry boundary wall to the left, shrubs and a thick dark-green tree line, tall roadside trunks/posts, overhead wires and blue sky with white cumulus clouds | Road/soil and related ground-material source crop. The sky is rendered by a procedural shader dome; no photo panel is used. |
+| \`public/reference/world/video_frame_16s.webp\` | Approx. 16 seconds; 320×180 WebP still | Hand-built irregular timber/stick fence between mature tree trunks, lush garden understory, broad leaves and small flowers | Bark/wood, leaf and ground-cover material source crops. Vegetation is rendered as instanced 3D geometry, not photo cutouts. |
+| \`public/reference/world/video_frame_26s.webp\` | Approx. 26 seconds; 320×180 WebP still | Rustic rural outbuilding/homestead with rough walls, projecting corrugated roof/canopy, a simple small shed nearby, red earth and garden trees | Roof/metal and related surface material source crops. Homestead scenery is represented by 3D procedural mesh groups, not a photo panel. |
 
 ## Important limitations
 
