@@ -15,7 +15,7 @@ function loadImage(path,role){
  if(imageCache.has(path))return imageCache.get(path).then(image=>{recordPhotoUsed(path,role,'loaded');return image;});
  const promise=new Promise((resolve,reject)=>{
   const image=new Image();image.decoding='async';
-  image.onload=()=>{recordPhotoUsed(path,role,'loaded');resolve(image);};
+  image.onload=()=>{recordPhotoUsed(path,role,'loaded');resolveMissingAsset(assetUrl(path));resolve(image);};
   image.onerror=()=>{recordPhotoUsed(path,role,'failed');registerMissingAsset(path,'A photo extracted from your uploaded video is required for this world surface.');reject(new Error('Required photo missing: '+path));};
   image.src=assetUrl(path);
  });
