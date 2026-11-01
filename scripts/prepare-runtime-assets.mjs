@@ -99,7 +99,7 @@ for (const [key, filename] of Object.entries(compatibleCharacterClips)) {
     const file = await stat(candidate);
     if (!file.isFile() || file.size < 1024) continue;
     existing.clips[key] = {
-      file: '/assets/characters/imported/zero-soldier/' + filename,
+      file: 'assets/characters/imported/zero-soldier/' + filename,
       format: 'fbx',
       source: 'Female Basic Locomotion Pack · shared Trellis humanoid rig',
     };
