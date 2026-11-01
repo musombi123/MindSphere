@@ -1,7 +1,7 @@
 const getState=()=>window.__worldDebug||(window.__worldDebug={
- photos:[],modelsLoaded:[],missingAssets:[],primitives:[
+ photos:[],modelsLoaded:[],missingAssets:[],optionalAssets:[],primitives:[
   'Gameplay effects use geometry for weapon projectiles, the Aegis shield, Echo Shard crystals and chapter-specific anomaly effects.',
-  'Tree, fence and homestead layers are photographic billboards from your video. Near-range scanned GLB models are still missing.'
+  'Tree, fence and homestead layers use low-resolution photo references and cutouts. Authored near-field GLB models are not yet imported.'
  ],performance:{fps:0,drawCalls:0,triangles:0,gpuMs:null}
 });
 
@@ -71,7 +71,8 @@ export function installWorldDebugPanel(){
   body.replaceChildren(settings,
    section('Photos used from the uploaded video',d.photos),
    section('Models loaded',d.modelsLoaded),
-   section('Missing assets — see red banner',d.missingAssets,true),
+   section('Required assets that failed to load',d.missingAssets,true),
+   section('Optional 3D models not yet mapped',d.optionalAssets),
    section('Geometry / primitives remaining',d.primitives),
    section('Performance snapshot',[
     'FPS: '+Number(d.performance.fps||0).toFixed(1),
@@ -79,7 +80,8 @@ export function installWorldDebugPanel(){
     'Triangles: '+Number(d.performance.triangles||0)
    ])
   );
-  if(d.missingAssets.length){const x=d.missingAssets[0];banner.textContent='ASSET MISSING: '+x.path+(d.missingAssets.length>1?' (+'+(d.missingAssets.length-1)+' more — open F3)':'');banner.style.display='block';}
+  const blockingLayer=Boolean(document.querySelector('.screen-layer:not(.hidden)'));
+  if(d.missingAssets.length&&!blockingLayer){const x=d.missingAssets[0];banner.textContent='REQUIRED ASSET FAILED: '+x.path+(d.missingAssets.length>1?' (+'+(d.missingAssets.length-1)+' more — open F3)':'');banner.style.display='block';}
   else banner.style.display='none';
   const uniquePaths=[...new Set(d.photos.map(p=>p.path))];
   const loadingPaths=uniquePaths.filter(path=>d.photos.some(p=>p.path===path&&p.status==='loading'));
@@ -120,4 +122,14 @@ export function recordWorldNote(note){
 }
 export function updateWorldPerformanceStats(stats){
  const d=installWorldDebugPanel();d.updatePerformance?.(stats);
+}
+
+export function registerOptionalAsset(path,reason='Optional 3D enhancement is not mapped; the current photo/procedural world remains active'){
+ const d=installWorldDebugPanel();if(!d.optionalAssets.some(x=>x.path===path))d.optionalAssets.push({path,status:'not mapped',reason});d.render?.();
+}
+export function resolveOptionalAsset(path){
+ const d=installWorldDebugPanel();
+ const before=d.optionalAssets.length;
+ d.optionalAssets=d.optionalAssets.filter(item=>item.path!==path);
+ if(d.optionalAssets.length!==before)d.render?.();
 }

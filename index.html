@@ -24,12 +24,13 @@
 @media(max-height:520px) and (orientation:landscape){.hud-left{top:53px;width:200px}.right-panel{width:148px;top:56px}.reward-card p{display:none}.reward-card{padding:7px}.weapon-panel{padding:5px}.weapon-select{padding:3px}.bottom-dock{bottom:6px}.action-btn{padding:6px;min-width:75px}.story-card{max-width:540px;padding:18px}.story-card h1{font-size:30px;margin:8px 0}.story-grid{margin:10px 0}.story-copy{font-size:10px}.story-grid small{display:none}}
 
 .character-loader{position:fixed;z-index:11;left:50%;bottom:110px;transform:translateX(-50%);width:min(330px,calc(100vw - 30px));padding:12px 14px;border:1px solid #8be8f74b;border-radius:12px;background:rgba(5,12,17,.92);box-shadow:0 14px 40px #0008;backdrop-filter:blur(10px);pointer-events:none;transition:opacity .25s,transform .25s}
+body.intro-active .topbar,body.intro-active .hud-left,body.intro-active .right-panel,body.intro-active .bottom-dock,body.intro-active #touch-controls,body.intro-active .character-loader,body.intro-active .toast,body.intro-active #surge-alert,body.intro-active #world-photo-loader,body.intro-active #world-performance-overlay{visibility:hidden!important}
 .character-loader.hidden{display:none}.character-loader strong{display:block;font-size:9px;letter-spacing:.16em;color:var(--cyan)}.character-loader small{display:block;margin-top:5px;font-size:9px;color:var(--muted);letter-spacing:.04em}.character-loader-track{height:4px;border-radius:8px;background:#b5dce21b;overflow:hidden;margin-top:10px}.character-loader-track i{display:block;width:0;height:100%;border-radius:8px;background:linear-gradient(90deg,#58eaff,#b5ffe0);box-shadow:0 0 12px #58eaff66;transition:width .12s linear}
 @media(max-width:620px){.character-loader{bottom:164px;padding:9px 11px}.character-loader strong{font-size:8px}.character-loader small{font-size:8px}}
 
 </style>
 </head>
-<body>
+<body class="intro-active">
 <div id="surge-alert" role="status" aria-live="polite" hidden>TEMPORAL SURGE</div>
 <div id="viewport"><canvas id="game-canvas" aria-label="Project Zero Hour 3D game"></canvas></div>
 <div class="character-loader" id="character-loader" role="status" aria-live="polite">
@@ -1086,7 +1087,7 @@ function endMission(success){
   document.getElementById('finish-layer').classList.remove('hidden');updateHUD();
 }
 document.getElementById('start-btn').addEventListener('click',()=>{
-  document.getElementById('intro-layer').classList.add('hidden');running=true;
+  document.getElementById('intro-layer').classList.add('hidden');document.body.classList.remove('intro-active');window.__worldDebug?.render?.();running=true;
   const priorRuns=storyRunCount;storyRunCount=priorRuns+1;
   try{localStorage.setItem('zeroHourStoryRuns',String(storyRunCount));}catch(e){}
   showStoryBeat(chapter===2?'chapter2Opening':chapter===3?'chapter3Opening':(priorRuns>0?'loop':'opening'));updateHUD();
