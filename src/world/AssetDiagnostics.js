@@ -1,7 +1,7 @@
 const getState=()=>window.__worldDebug||(window.__worldDebug={
- photos:[],modelsLoaded:[],missingAssets:[],primitives:[
+ photos:[],modelsLoaded:[],missingAssets:[],optionalAssets:[],primitives:[
   'Gameplay effects use geometry for weapon projectiles, the Aegis shield, Echo Shard crystals and chapter-specific anomaly effects.',
-  'Tree, fence and homestead layers are photographic billboards from your video. Near-range scanned GLB models are still missing.'
+  'Tree, fence and homestead layers use low-resolution photo references and cutouts. Authored near-field GLB models are not yet imported.'
  ],performance:{fps:0,drawCalls:0,triangles:0,gpuMs:null}
 });
 
@@ -120,4 +120,14 @@ export function recordWorldNote(note){
 }
 export function updateWorldPerformanceStats(stats){
  const d=installWorldDebugPanel();d.updatePerformance?.(stats);
+}
+
+export function registerOptionalAsset(path,reason='Optional 3D enhancement is not mapped; the current photo/procedural world remains active'){
+ const d=installWorldDebugPanel();if(!d.optionalAssets.some(x=>x.path===path))d.optionalAssets.push({path,status:'not mapped',reason});d.render?.();
+}
+export function resolveOptionalAsset(path){
+ const d=installWorldDebugPanel();
+ const before=d.optionalAssets.length;
+ d.optionalAssets=d.optionalAssets.filter(item=>item.path!==path);
+ if(d.optionalAssets.length!==before)d.render?.();
 }
