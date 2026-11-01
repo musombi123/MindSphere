@@ -29,6 +29,25 @@ git lfs pull --include="Assets/Female Basic Locomotion Pack.zip"
 
 The script extracts the candidate model and the pack's FBX locomotion files below `public/assets/characters/imported/zero-soldier/`, then merges its model path into `public/assets/asset-catalog.json`. It preserves existing world and weapon catalog mappings.
 
+## One-command Windows character import
+
+The source archive is stored in Git LFS. After checking out the feature branch that
+contains this importer, run:
+
+```powershell
+npm run assets:import:character
+```
+
+This restores the tracked archive only if it is missing from the working tree,
+pulls that archive through Git LFS, imports the inspected
+`trellis-2387720894.fbx` candidate and its pack files, then runs the normal
+production build. It does not commit or push the imported binary assets.
+
+After the build, visually inspect the hero, all locomotion states, textures,
+forward axis, weapon hand socket and redistribution rights. Only then stage
+`public/assets/characters/imported/`, `public/assets/asset-catalog.json` and
+`public/assets/animations/manifest.json` for a commit.
+
 ## Compatible animation selection
 
 The baseline 33-clip set is staged from loose FBX files under `Assets/`. When the Trellis character pack has been extracted, `scripts/prepare-runtime-assets.mjs` automatically prefers its matching pack files for:
