@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
-import { recordModelLoaded, registerMissingAsset, resolveMissingAsset } from '../world/AssetDiagnostics.js';
+import { recordModelLoaded, registerMissingAsset, resolveMissingAsset, registerOptionalAsset, resolveOptionalAsset } from '../world/AssetDiagnostics.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
@@ -510,9 +510,9 @@ export class PlayerController {
     for (const key of keys) {
       const definition = this.weaponDefinitions.get(key);
       if (!definition || !definition.file) {
-        registerMissingAsset(
+        registerOptionalAsset(
           '/assets/weapons/' + key + '.glb',
-          'No verified GLB mapping exists in public/assets/asset-catalog.json weaponModels.'
+          'No approved 3D weapon model has been mapped for this weapon slot yet.'
         );
         continue;
       }
@@ -553,6 +553,7 @@ export class PlayerController {
         this.weaponVisuals.set(key, wrapper);
         recordModelLoaded(file);
         resolveMissingAsset('/assets/weapons/' + key + '.glb');
+        resolveOptionalAsset('/assets/weapons/' + key + '.glb');
         console.info('[Project Zero Hour] Weapon visual loaded:', key, file);
       } catch (error) {
         registerMissingAsset(file, 'Weapon visual failed to load: ' + (error.message || String(error)));
