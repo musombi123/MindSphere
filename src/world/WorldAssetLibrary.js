@@ -4,7 +4,7 @@ import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { clone as cloneSkinnedScene } from 'three/addons/utils/SkeletonUtils.js';
-import { recordModelLoaded, registerMissingAsset, resolveMissingAsset } from './AssetDiagnostics.js';
+import { recordModelLoaded, registerMissingAsset, resolveMissingAsset, registerOptionalAsset, resolveOptionalAsset } from './AssetDiagnostics.js';
 
 const CATALOG_URL = 'assets/asset-catalog.json';
 const BASE_URL = import.meta.env.BASE_URL || './';
@@ -89,7 +89,7 @@ export class WorldAssetLibrary {
     } catch (error) {
       console.warn('[Project Zero Hour] World asset catalog is not readable:', error.message);
       for (const [key, label] of Object.entries(EXPECTED_WORLD_MODELS)) {
-        registerMissingAsset('/assets/world/models/' + key + '.glb', label + ' not yet mapped in public/assets/asset-catalog.json.');
+        registerOptionalAsset('/assets/world/models/' + key + '.glb', label + ' has no verified 3D model yet; the current photo/procedural scenery remains in use.');
       }
       return this;
     }
@@ -109,9 +109,9 @@ export class WorldAssetLibrary {
     const mapped = [];
     for (const key of Object.keys(EXPECTED_WORLD_MODELS)) {
       if (this.definitions.has(key)) mapped.push(key);
-      else registerMissingAsset(
+      else registerOptionalAsset(
         '/assets/world/models/' + key + '.glb',
-        EXPECTED_WORLD_MODELS[key] + ' has no verified file mapping in public/assets/asset-catalog.json.'
+        EXPECTED_WORLD_MODELS[key] + ' has no verified 3D model yet; this authored detail is not present in the current scene.'
       );
     }
 
@@ -148,6 +148,7 @@ export class WorldAssetLibrary {
         this.bounds.set(key, { min: bounds.min.clone(), max: bounds.max.clone(), size });
         recordModelLoaded(url);
         resolveMissingAsset('/assets/world/models/' + key + '.glb');
+        resolveOptionalAsset('/assets/world/models/' + key + '.glb');
         console.info('[Project Zero Hour] World model ready:', key, url);
         return template;
       } catch (error) {
