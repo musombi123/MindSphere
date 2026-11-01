@@ -1,5 +1,138 @@
 {
   "schemaVersion": 1,
-  "description": "Optional animation GLBs exported against the same bone names as public/assets/characters/player.glb. Add only supplied/licensed animation clips here.",
-  "clips": {}
+  "description": "Runtime FBX clips staged from repository-owned Assets/*.fbx. Clips must use the same humanoid bone naming as the selected player rig; the runtime does not retarget unrelated skeletons.",
+  "clips": {
+    "idle": {
+      "file": "fbx/Rifle Idle.fbx",
+      "format": "fbx"
+    },
+    "walk": {
+      "file": "fbx/Walking.fbx",
+      "format": "fbx"
+    },
+    "run": {
+      "file": "fbx/Rifle Run.fbx",
+      "format": "fbx"
+    },
+    "sprint": {
+      "file": "fbx/Rifle Run (3).fbx",
+      "format": "fbx"
+    },
+    "backpedal": {
+      "file": "fbx/Run Backwards.fbx",
+      "format": "fbx"
+    },
+    "aimIdle": {
+      "file": "fbx/Rifle Idle.fbx",
+      "format": "fbx"
+    },
+    "shoot": {
+      "file": "fbx/Firing Rifle.fbx",
+      "format": "fbx"
+    },
+    "reload": {
+      "file": "fbx/Reload.fbx",
+      "format": "fbx"
+    },
+    "jump": {
+      "file": "fbx/Jump.fbx",
+      "format": "fbx"
+    },
+    "fall": {
+      "file": "fbx/Jumping Up.fbx",
+      "format": "fbx"
+    },
+    "land": {
+      "file": "fbx/Hard Landing.fbx",
+      "format": "fbx"
+    },
+    "hit": {
+      "file": "fbx/Walking Hit Reaction.fbx",
+      "format": "fbx"
+    },
+    "death": {
+      "file": "fbx/Death.fbx",
+      "format": "fbx"
+    },
+    "interact": {
+      "file": "fbx/Rifle Put Away.fbx",
+      "format": "fbx"
+    },
+    "crouchIdle": {
+      "file": "fbx/Idle Crouching.fbx",
+      "format": "fbx"
+    },
+    "crouchAimIdle": {
+      "file": "fbx/Idle Crouching Aiming.fbx",
+      "format": "fbx"
+    },
+    "crouchWalk": {
+      "file": "fbx/Crouch Walking.fbx",
+      "format": "fbx"
+    },
+    "crouchStop": {
+      "file": "fbx/Crouch Stop Walking.fbx",
+      "format": "fbx"
+    },
+    "proneShoot": {
+      "file": "fbx/Prone Firing Rifle.fbx",
+      "format": "fbx"
+    },
+    "proneReload": {
+      "file": "fbx/Prone Reloading.fbx",
+      "format": "fbx"
+    },
+    "block": {
+      "file": "fbx/Rifle Block.fbx",
+      "format": "fbx"
+    },
+    "jumpWall": {
+      "file": "fbx/Jump From Wall.fbx",
+      "format": "fbx"
+    },
+    "deathFromRight": {
+      "file": "fbx/Death From Right.fbx",
+      "format": "fbx"
+    },
+    "deathBack": {
+      "file": "fbx/Standing Death Backward 01.fbx",
+      "format": "fbx"
+    },
+    "hitToBack": {
+      "file": "fbx/Rifle Kneel Hit To Back.fbx",
+      "format": "fbx"
+    },
+    "dodge": {
+      "file": "fbx/Esquiva 5.fbx",
+      "format": "fbx"
+    },
+    "melee": {
+      "file": "fbx/Fist Fight A.fbx",
+      "format": "fbx"
+    },
+    "meleeStab": {
+      "file": "fbx/Double Dagger Stab.fbx",
+      "format": "fbx"
+    },
+    "turn": {
+      "file": "fbx/Rifle Turn.fbx",
+      "format": "fbx"
+    },
+    "startWalk": {
+      "file": "fbx/Start Walking.fbx",
+      "format": "fbx"
+    },
+    "runJump": {
+      "file": "fbx/Running Jump.fbx",
+      "format": "fbx"
+    },
+    "deathWalk": {
+      "file": "fbx/Walking To Dying.fbx",
+      "format": "fbx"
+    },
+    "jumpHigh": {
+      "file": "fbx/Big Jump.fbx",
+      "format": "fbx"
+    }
+  }
 }

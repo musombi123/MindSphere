@@ -1,0 +1,2394 @@
+﻿[
+    {
+        "Path":  "tmp-model-candidates/standalone/Big Jump.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Big Jump.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1162928
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Chapa-Giratoria.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Chapa-Giratoria.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1231152
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Crouch Stop Walking - Copy.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Crouch Stop Walking - Copy.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1103600
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Crouch Stop Walking.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Crouch Stop Walking.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1103600
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Crouch Walking (1).fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Crouch Walking (1).fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1014240
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Crouch Walking - Copy.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Crouch Walking - Copy.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1015472
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Crouch Walking.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Crouch Walking.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1015472
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Death From Right.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Death From Right.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1195728
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Death.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Death.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1208256
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Double Dagger Stab.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Double Dagger Stab.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1153664
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Esquiva 5.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Esquiva 5.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1153808
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Firing Rifle (1).fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Firing Rifle (1).fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1264624
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Firing Rifle - Copy.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Firing Rifle - Copy.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  996432
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Firing Rifle.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Firing Rifle.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  996432
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Fist Fight A.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Fist Fight A.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1349472
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Hard Landing (1).fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Hard Landing (1).fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1154288
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Hard Landing.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Hard Landing.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1154288
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Idle Crouching Aiming.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Idle Crouching Aiming.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1064032
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Idle Crouching.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Idle Crouching.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1063280
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Jump From Wall.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Jump From Wall.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1049408
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Jump.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Jump.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1029216
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Jumping Up.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Jumping Up.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1008048
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Martelo 2.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Martelo 2.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1065072
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/murder_drones_weapons.glb",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "murder_drones_weapons.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  133
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/planetside_2_prototype_weapon.glb",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "planetside_2_prototype_weapon.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  132
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Prone Firing Rifle (1).fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Prone Firing Rifle (1).fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1000560
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Prone Firing Rifle.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Prone Firing Rifle.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1049248
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Prone Reloading.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Prone Reloading.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1411376
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Reload (1).fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Reload (1).fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1310528
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Reload (2).fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Reload (2).fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1310528
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Reload (3).fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Reload (3).fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1303792
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Reload.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Reload.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1303792
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Reloading (1).fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Reloading (1).fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1231984
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Reloading (2).fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Reloading (2).fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1227904
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Reloading.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Reloading.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1231984
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Rifle Block.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Rifle Block.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1118496
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Rifle Idle.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Rifle Idle.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1375456
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Rifle Kneel Hit To Back.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Rifle Kneel Hit To Back.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1081440
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Rifle Put Away - Copy.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Rifle Put Away - Copy.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1177936
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Rifle Put Away.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Rifle Put Away.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1177936
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Rifle Run (1).fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Rifle Run (1).fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1003136
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Rifle Run (2) - Copy.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Rifle Run (2) - Copy.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1003136
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Rifle Run (2).fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Rifle Run (2).fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1003136
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Rifle Run (3).fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Rifle Run (3).fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  998656
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Rifle Run - Copy.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Rifle Run - Copy.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1003136
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Rifle Run.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Rifle Run.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1003136
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Rifle Turn.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Rifle Turn.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1015936
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/rifle__awp_weapon_model_cs2.glb",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "rifle__awp_weapon_model_cs2.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  133
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Run Backwards.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Run Backwards.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1053408
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Running Jump.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Running Jump.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1021632
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Standing Death Backward 01.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Standing Death Backward 01.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1151008
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Start Walking - Copy.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Start Walking - Copy.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1039600
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Start Walking.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Start Walking.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1039600
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/trellis-2387720894.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "trellis-2387720894.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  2475964
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/trellis-2387720894.glb",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "trellis-2387720894.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  132
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/trellis-2387720894.obj",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "trellis-2387720894.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  3160527
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Walking - Copy.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Walking - Copy.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1026560
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Walking Hit Reaction - Copy.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Walking Hit Reaction - Copy.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1030848
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Walking Hit Reaction.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Walking Hit Reaction.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1030848
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Walking To Dying - Copy.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Walking To Dying - Copy.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1196240
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Walking To Dying.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Walking To Dying.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1196240
+    },
+    {
+        "Path":  "tmp-model-candidates/standalone/Walking.fbx",
+        "Source":  "Standalone",
+        "Archive":  "",
+        "Entry":  "Walking.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  1026560
+    },
+    {
+        "Path":  "tmp-model-candidates/Female Basic Locomotion Pack/trellis-2387720894.fbx",
+        "Source":  "ZIP member",
+        "Archive":  "Female Basic Locomotion Pack.zip",
+        "Entry":  "trellis-2387720894.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  934161
+    },
+    {
+        "Path":  "tmp-model-candidates/Female Basic Locomotion Pack/left strafe.fbx",
+        "Source":  "ZIP member",
+        "Archive":  "Female Basic Locomotion Pack.zip",
+        "Entry":  "left strafe.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  342337
+    },
+    {
+        "Path":  "tmp-model-candidates/Female Basic Locomotion Pack/right strafe.fbx",
+        "Source":  "ZIP member",
+        "Archive":  "Female Basic Locomotion Pack.zip",
+        "Entry":  "right strafe.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  342337
+    },
+    {
+        "Path":  "tmp-model-candidates/Female Basic Locomotion Pack/running.fbx",
+        "Source":  "ZIP member",
+        "Archive":  "Female Basic Locomotion Pack.zip",
+        "Entry":  "running.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  344753
+    },
+    {
+        "Path":  "tmp-model-candidates/Female Basic Locomotion Pack/jump.fbx",
+        "Source":  "ZIP member",
+        "Archive":  "Female Basic Locomotion Pack.zip",
+        "Entry":  "jump.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  446193
+    },
+    {
+        "Path":  "tmp-model-candidates/Female Basic Locomotion Pack/idle.fbx",
+        "Source":  "ZIP member",
+        "Archive":  "Female Basic Locomotion Pack.zip",
+        "Entry":  "idle.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  814641
+    },
+    {
+        "Path":  "tmp-model-candidates/Female Basic Locomotion Pack/left strafe walk.fbx",
+        "Source":  "ZIP member",
+        "Archive":  "Female Basic Locomotion Pack.zip",
+        "Entry":  "left strafe walk.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  368913
+    },
+    {
+        "Path":  "tmp-model-candidates/Female Basic Locomotion Pack/left turn.fbx",
+        "Source":  "ZIP member",
+        "Archive":  "Female Basic Locomotion Pack.zip",
+        "Entry":  "left turn.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  381873
+    },
+    {
+        "Path":  "tmp-model-candidates/Female Basic Locomotion Pack/right strafe walk.fbx",
+        "Source":  "ZIP member",
+        "Archive":  "Female Basic Locomotion Pack.zip",
+        "Entry":  "right strafe walk.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  368769
+    },
+    {
+        "Path":  "tmp-model-candidates/Female Basic Locomotion Pack/right turn.fbx",
+        "Source":  "ZIP member",
+        "Archive":  "Female Basic Locomotion Pack.zip",
+        "Entry":  "right turn.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  372321
+    },
+    {
+        "Path":  "tmp-model-candidates/Female Basic Locomotion Pack/left turn (2).fbx",
+        "Source":  "ZIP member",
+        "Archive":  "Female Basic Locomotion Pack.zip",
+        "Entry":  "left turn (2).fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  378049
+    },
+    {
+        "Path":  "tmp-model-candidates/Female Basic Locomotion Pack/walking.fbx",
+        "Source":  "ZIP member",
+        "Archive":  "Female Basic Locomotion Pack.zip",
+        "Entry":  "walking.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  372545
+    },
+    {
+        "Path":  "tmp-model-candidates/Female Basic Locomotion Pack/right turn (2).fbx",
+        "Source":  "ZIP member",
+        "Archive":  "Female Basic Locomotion Pack.zip",
+        "Entry":  "right turn (2).fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  368513
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/barrels.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/barrels.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  63196
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/battlement-corner-inner.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/battlement-corner-inner.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  16852
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/battlement-corner-outer.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/battlement-corner-outer.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  18536
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/battlement-half.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/battlement-half.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  8936
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/battlement.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/battlement.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  11320
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/bricks.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/bricks.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  16624
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/column-damaged.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/column-damaged.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  7728
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/column-paint-damaged.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/column-paint-damaged.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  7784
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/column-paint.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/column-paint.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  4704
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/column-wood.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/column-wood.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  11608
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/column.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/column.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  4676
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/detail-barrel.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/detail-barrel.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  9968
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/detail-crate-ropes.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/detail-crate-ropes.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  11052
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/detail-crate-small.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/detail-crate-small.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  4196
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/detail-crate.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/detail-crate.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  4176
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/dock-corner.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/dock-corner.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  7496
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/dock-side.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/dock-side.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  6456
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/fence-top.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/fence-top.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  2440
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/fence-wood.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/fence-wood.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  7736
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/fence.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/fence.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  2376
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/floor-flat.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/floor-flat.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  2080
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/floor-stairs-corner-inner.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/floor-stairs-corner-inner.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  10484
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/floor-stairs-corner-outer.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/floor-stairs-corner-outer.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  10484
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/floor-stairs.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/floor-stairs.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  7848
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/floor-steps-corner-inner.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/floor-steps-corner-inner.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  12064
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/floor-steps-corner-outer.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/floor-steps-corner-outer.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  11260
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/floor-steps.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/floor-steps.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  8240
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/floor.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/floor.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  4200
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/ladder.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/ladder.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  14512
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/overhang-fence.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/overhang-fence.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  5776
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/overhang-round-railing.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/overhang-round-railing.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  14792
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/overhang-round.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/overhang-round.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  6576
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/overhang.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/overhang.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  15548
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/pulley-crate.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/pulley-crate.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  19128
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/pulley.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/pulley.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  9704
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/roof-corner.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/roof-corner.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  11820
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/roof-edge.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/roof-edge.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  9040
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/roof-high-side-corner-inner.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/roof-high-side-corner-inner.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  5156
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/roof-high-side-corner.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/roof-high-side-corner.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  4360
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/roof-high-side.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/roof-high-side.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  4508
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/roof-side-corner-inner.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/roof-side-corner-inner.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  5140
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/roof-side-corner.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/roof-side-corner.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  4316
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/roof-side.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/roof-side.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  4480
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/roof.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/roof.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  10824
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/stairs-corner.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/stairs-corner.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  23896
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/stairs-stone.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/stairs-stone.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  20312
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/stairs-wood.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/stairs-wood.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  21316
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/structure-cross.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/structure-cross.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  24724
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/structure-pole.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/structure-pole.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  4164
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/structure-poles.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/structure-poles.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  11244
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/structure-wall-cross.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/structure-wall-cross.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  11376
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/structure-wall.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/structure-wall.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  17232
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/structure.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/structure.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  22992
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/tower-base.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/tower-base.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  11984
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/tower-edge.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/tower-edge.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  9876
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/tower-paint-base.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/tower-paint-base.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  12032
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/tower-paint.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/tower-paint.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  7152
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/tower-top.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/tower-top.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  35704
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/tower.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/tower.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  7108
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/tree-large.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/tree-large.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  3100
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/tree-shrub.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/tree-shrub.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  3112
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-detail.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-detail.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  4676
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-door.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-door.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  7508
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-flat-gate.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-flat-gate.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  2992
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-fortified-door.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-fortified-door.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  14520
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-fortified-gate-half.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-fortified-gate-half.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  15236
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-fortified-gate.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-fortified-gate.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  17224
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-fortified-half.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-fortified-half.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  8416
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-fortified-paint-door.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-fortified-paint-door.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  14564
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-fortified-paint-gate.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-fortified-paint-gate.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  27388
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-fortified-paint-half.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-fortified-paint-half.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  8460
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-fortified-paint-window.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-fortified-paint-window.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  14596
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-fortified-paint.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-fortified-paint.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  11628
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-fortified-window.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-fortified-window.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  14548
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-fortified.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-fortified.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  11584
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-gate-half.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-gate-half.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  7456
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-gate.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-gate.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  10036
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-half.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-half.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  4588
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-low.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-low.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  4588
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-paint-detail.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-paint-detail.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  4720
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-paint-door.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-paint-door.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  7552
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-paint-flat.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-paint-flat.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  9228
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-paint-gate.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-paint-gate.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  21688
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-paint-half.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-paint-half.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  4652
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-paint-window.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-paint-window.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  7996
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-paint.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-paint.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  4620
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-pane-door.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-pane-door.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  4612
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-pane-paint-door.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-pane-paint-door.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  4660
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-pane-paint-window.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-pane-paint-window.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  5284
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-pane-paint.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-pane-paint.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  2304
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-pane-painted-wood-door.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-pane-painted-wood-door.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  5988
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-pane-painted-wood-window.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-pane-painted-wood-window.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  6424
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-pane-painted-wood.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-pane-painted-wood.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  3460
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-pane-window.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-pane-window.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  6588
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-pane-wood-door.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-pane-wood-door.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  5936
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-pane-wood-window.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-pane-wood-window.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  6372
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-pane-wood.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-pane-wood.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  3408
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-pane.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-pane.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  2044
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall-window.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall-window.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  7948
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wall.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wall.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  4576
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/water.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/water.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  3124
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wood-floor-half.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wood-floor-half.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  4052
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wood-floor-quarter.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wood-floor-quarter.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  4296
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wood-floor-railing.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wood-floor-railing.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  9004
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/GLB format/wood-floor.glb",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/GLB format/wood-floor.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  4040
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/barrels.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/barrels.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  47474
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/battlement-corner-inner.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/battlement-corner-inner.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  11723
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/battlement-corner-outer.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/battlement-corner-outer.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  13234
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/battlement-half.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/battlement-half.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  5742
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/battlement.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/battlement.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  7615
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/bricks.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/bricks.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  10681
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/column-damaged.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/column-damaged.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  4556
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/column-paint-damaged.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/column-paint-damaged.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  4594
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/column-paint.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/column-paint.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  1578
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/column-wood.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/column-wood.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  6997
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/column.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/column.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  1680
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/detail-barrel.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/detail-barrel.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  9661
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/detail-crate-ropes.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/detail-crate-ropes.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  6985
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/detail-crate-small.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/detail-crate-small.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  1890
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/detail-crate.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/detail-crate.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  1756
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/dock-corner.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/dock-corner.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  4384
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/dock-side.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/dock-side.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  3348
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/fence-top.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/fence-top.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  746
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/fence-wood.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/fence-wood.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  5084
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/fence.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/fence.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  726
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/floor-flat.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/floor-flat.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  444
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/floor-stairs-corner-inner.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/floor-stairs-corner-inner.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  6680
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/floor-stairs-corner-outer.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/floor-stairs-corner-outer.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  6619
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/floor-stairs.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/floor-stairs.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  4685
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/floor-steps-corner-inner.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/floor-steps-corner-inner.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  7745
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/floor-steps-corner-outer.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/floor-steps-corner-outer.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  7185
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/floor-steps.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/floor-steps.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  4914
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/floor.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/floor.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  1578
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/ladder.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/ladder.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  12718
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/overhang-fence.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/overhang-fence.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  4141
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/overhang-round-railing.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/overhang-round-railing.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  15847
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/overhang-round.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/overhang-round.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  4415
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/overhang.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/overhang.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  11189
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/pulley-crate.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/pulley-crate.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  15448
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/pulley.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/pulley.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  7439
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/roof-corner.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/roof-corner.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  7078
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/roof-edge.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/roof-edge.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  5190
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/roof-high-side-corner-inner.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/roof-high-side-corner-inner.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  1841
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/roof-high-side-corner.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/roof-high-side-corner.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  1369
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/roof-high-side.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/roof-high-side.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  1402
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/roof-side-corner-inner.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/roof-side-corner-inner.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  1768
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/roof-side-corner.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/roof-side-corner.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  1230
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/roof-side.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/roof-side.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  1244
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/roof.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/roof.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  6368
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/stairs-corner.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/stairs-corner.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  15207
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/stairs-stone.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/stairs-stone.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  13486
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/stairs-wood.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/stairs-wood.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  13103
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/structure-cross.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/structure-cross.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  20289
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/structure-pole.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/structure-pole.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  1784
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/structure-poles.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/structure-poles.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  6290
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/structure-wall-cross.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/structure-wall-cross.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  9254
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/structure-wall.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/structure-wall.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  11113
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/structure.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/structure.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  18139
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/tower-base.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/tower-base.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  10640
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/tower-edge.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/tower-edge.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  8179
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/tower-paint-base.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/tower-paint-base.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  10652
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/tower-paint.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/tower-paint.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  4241
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/tower-top.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/tower-top.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  31386
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/tower.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/tower.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  4147
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/tree-large.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/tree-large.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  1521
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/tree-shrub.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/tree-shrub.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  1461
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-detail.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-detail.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  1977
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-door.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-door.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  3877
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-flat-gate.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-flat-gate.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  1622
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-fortified-door.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-fortified-door.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  9083
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-fortified-gate-half.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-fortified-gate-half.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  10854
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-fortified-gate.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-fortified-gate.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  12345
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-fortified-half.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-fortified-half.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  4270
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-fortified-paint-door.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-fortified-paint-door.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  9115
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-fortified-paint-gate.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-fortified-paint-gate.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  21408
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-fortified-paint-half.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-fortified-paint-half.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  4304
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-fortified-paint-window.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-fortified-paint-window.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  9141
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-fortified-paint.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-fortified-paint.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  6776
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-fortified-window.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-fortified-window.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  9109
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-fortified.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-fortified.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  6742
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-gate-half.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-gate-half.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  4796
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-gate.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-gate.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  7163
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-half.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-half.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  1643
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-low.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-low.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  1628
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-paint-detail.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-paint-detail.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  2009
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-paint-door.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-paint-door.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  3796
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-paint-flat.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-paint-flat.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  7813
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-paint-gate.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-paint-gate.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  17277
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-paint-half.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-paint-half.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  1653
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-paint-window.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-paint-window.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  4324
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-paint.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-paint.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  1521
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-pane-door.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-pane-door.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  2286
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-pane-paint-door.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-pane-paint-door.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  2320
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-pane-paint-window.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-pane-paint-window.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  2930
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-pane-paint.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-pane-paint.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  695
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-pane-painted-wood-door.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-pane-painted-wood-door.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  2843
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-pane-painted-wood-window.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-pane-painted-wood-window.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  3299
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-pane-painted-wood.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-pane-painted-wood.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  1030
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-pane-window.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-pane-window.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  3823
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-pane-wood-door.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-pane-wood-door.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  2805
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-pane-wood-window.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-pane-wood-window.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  3261
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-pane-wood.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-pane-wood.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  1012
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-pane.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-pane.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  431
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall-window.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall-window.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  4422
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wall.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wall.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  1596
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/water.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/water.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  2426
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wood-floor-half.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wood-floor-half.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  1683
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wood-floor-quarter.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wood-floor-quarter.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  1871
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wood-floor-railing.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wood-floor-railing.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  5565
+    },
+    {
+        "Path":  "tmp-model-candidates/kenney_retro-fantasy-kit/Models/OBJ format/wood-floor.obj",
+        "Source":  "ZIP member",
+        "Archive":  "kenney_retro-fantasy-kit.zip",
+        "Entry":  "Models/OBJ format/wood-floor.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  1596
+    },
+    {
+        "Path":  "tmp-model-candidates/low-poly-eft-melee-weapons/source/TarkovMele.obj",
+        "Source":  "ZIP member",
+        "Archive":  "low-poly-eft-melee-weapons.zip",
+        "Entry":  "source/TarkovMele.obj",
+        "Extension":  ".obj",
+        "SizeBytes":  490084
+    },
+    {
+        "Path":  "tmp-model-candidates/mini-farming-pack-free-low-poly-farming-assets (1)/source/Farm Pack.glb",
+        "Source":  "ZIP member",
+        "Archive":  "mini-farming-pack-free-low-poly-farming-assets (1).zip",
+        "Entry":  "source/Farm Pack.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  537584
+    },
+    {
+        "Path":  "tmp-model-candidates/mini-farming-pack-free-low-poly-farming-assets/source/Farm Pack.glb",
+        "Source":  "ZIP member",
+        "Archive":  "mini-farming-pack-free-low-poly-farming-assets.zip",
+        "Entry":  "source/Farm Pack.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  537584
+    },
+    {
+        "Path":  "tmp-model-candidates/planetside-2-prototype-weapon/source/Planetside 2 Prototype weapon modernized version.fbx",
+        "Source":  "ZIP member",
+        "Archive":  "planetside-2-prototype-weapon.zip",
+        "Entry":  "source/Planetside 2 Prototype weapon modernized version.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  4983996
+    },
+    {
+        "Path":  "tmp-model-candidates/Slim Shooter Pack/trellis-2387720894.fbx",
+        "Source":  "ZIP member",
+        "Archive":  "Slim Shooter Pack.zip",
+        "Entry":  "trellis-2387720894.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  932929
+    },
+    {
+        "Path":  "tmp-model-candidates/Slim Shooter Pack/rifle run.fbx",
+        "Source":  "ZIP member",
+        "Archive":  "Slim Shooter Pack.zip",
+        "Entry":  "rifle run.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  345249
+    },
+    {
+        "Path":  "tmp-model-candidates/Slim Shooter Pack/strafe.fbx",
+        "Source":  "ZIP member",
+        "Archive":  "Slim Shooter Pack.zip",
+        "Entry":  "strafe.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  322065
+    },
+    {
+        "Path":  "tmp-model-candidates/Slim Shooter Pack/rifle aiming idle.fbx",
+        "Source":  "ZIP member",
+        "Archive":  "Slim Shooter Pack.zip",
+        "Entry":  "rifle aiming idle.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  498225
+    },
+    {
+        "Path":  "tmp-model-candidates/Slim Shooter Pack/walking.fbx",
+        "Source":  "ZIP member",
+        "Archive":  "Slim Shooter Pack.zip",
+        "Entry":  "walking.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  368689
+    },
+    {
+        "Path":  "tmp-model-candidates/Slim Shooter Pack/strafe (2).fbx",
+        "Source":  "ZIP member",
+        "Archive":  "Slim Shooter Pack.zip",
+        "Entry":  "strafe (2).fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  329025
+    },
+    {
+        "Path":  "tmp-model-candidates/Slim Shooter Pack/reloading.fbx",
+        "Source":  "ZIP member",
+        "Archive":  "Slim Shooter Pack.zip",
+        "Entry":  "reloading.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  575345
+    },
+    {
+        "Path":  "tmp-model-candidates/Slim Shooter Pack/firing rifle.fbx",
+        "Source":  "ZIP member",
+        "Archive":  "Slim Shooter Pack.zip",
+        "Entry":  "firing rifle.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  336001
+    },
+    {
+        "Path":  "tmp-model-candidates/weapon-pack/source/weapon_pack_SF.fbx",
+        "Source":  "ZIP member",
+        "Archive":  "weapon-pack.zip",
+        "Entry":  "source/weapon_pack_SF.fbx",
+        "Extension":  ".fbx",
+        "SizeBytes":  130060
+    },
+    {
+        "Path":  "tmp-model-candidates/weapons/source/bb.glb",
+        "Source":  "ZIP member",
+        "Archive":  "weapons.zip",
+        "Entry":  "source/bb.glb",
+        "Extension":  ".glb",
+        "SizeBytes":  25940624
+    }
+]
