@@ -17,7 +17,7 @@
     "test:weather": "node scripts/test-weather.mjs",
     "assets:manifest": "node scripts/generate-asset-manifest.mjs",
     "offline:manifest": "node scripts/generate-precache-manifest.mjs",
-    "test:service-worker": "node --check public/sw.js && node --check src/offline/RuntimeAssetPreloader.js"
+    "test:service-worker": "node --check public/sw.js && node --check src/offline/RuntimeAssetPreloader.js && node scripts/test-service-worker.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^7.4.3",
