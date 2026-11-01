@@ -405,6 +405,10 @@ if(chapter===1){
   }
   phaseRoadMesh=worldManager.createPhaseRoadOverlay(new THREE.MeshBasicMaterial({color:0x7e65cc,transparent:true,opacity:.11,side:THREE.DoubleSide,depthWrite:false}));
 }
+
+// Chapter-specific atmosphere: late-morning dust, storm pressure at the crossing, and phase drift.
+worldManager.setWeather(chapter===1?'clear':chapter===2?'storm':'anomaly');
+
 const extractionBeacon=new THREE.Group();extractionBeacon.position.set(0,worldManager.getHeightAt(0,-53),-53);
 const extractionRing=new THREE.Mesh(new THREE.TorusGeometry(1.15,.065,8,32),new THREE.MeshBasicMaterial({color:0x7ff6ff,transparent:true,opacity:.92}));
 extractionRing.rotation.x=Math.PI/2;extractionRing.position.y=.12;extractionBeacon.add(extractionRing);
