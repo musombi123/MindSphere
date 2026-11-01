@@ -340,7 +340,8 @@ export class PlayerController {
       for (const [key, value] of entries) {
         const definition = typeof value === 'string' ? { file: value } : value;
         if (!definition || !definition.file) continue;
-        const rawPath = definition.file.replace(/^\\/+/, '');
+        let rawPath = definition.file;
+        while (rawPath.startsWith('/')) rawPath = rawPath.slice(1);
         const relativePath = rawPath.startsWith('assets/') ? rawPath : 'assets/animations/' + rawPath;
         const file = /^https?:\\/\\//i.test(definition.file)
           ? definition.file
