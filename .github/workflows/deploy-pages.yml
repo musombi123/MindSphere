@@ -3,6 +3,8 @@ name: Build and deploy Project Zero Hour
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 concurrency:
@@ -39,7 +41,7 @@ jobs:
 
   deploy:
     name: Publish GitHub Pages
-    if: ${{ vars.ENABLE_GITHUB_PAGES == 'true' }}
+    if: ${{ github.event_name != 'pull_request' && vars.ENABLE_GITHUB_PAGES == 'true' }}
     needs: build
     runs-on: ubuntu-latest
     permissions:
