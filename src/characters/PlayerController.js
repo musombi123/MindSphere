@@ -343,9 +343,8 @@ export class PlayerController {
         let rawPath = definition.file;
         while (rawPath.startsWith('/')) rawPath = rawPath.slice(1);
         const relativePath = rawPath.startsWith('assets/') ? rawPath : 'assets/animations/' + rawPath;
-        const file = /^https?:\\/\\//i.test(definition.file)
-          ? definition.file
-          : publicAssetUrl(relativePath);
+        const isRemote = definition.file.toLowerCase().startsWith('https://') || definition.file.toLowerCase().startsWith('http://');
+        const file = isRemote ? definition.file : publicAssetUrl(relativePath);
         const isFbx = definition.format === 'fbx' || /\.fbx(?:[?#]|$)/i.test(file);
         if (!groups.has(file)) groups.set(file, { file, isFbx, entries: [] });
         groups.get(file).entries.push({ key, definition });
