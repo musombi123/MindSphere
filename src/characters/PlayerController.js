@@ -209,6 +209,7 @@ export class PlayerController {
       if (!modelScene) throw new Error('The character file loaded without a scene root.');
       this.avatar = cloneSkinnedScene(modelScene);
       this.avatar.name = 'ZERO_HUMANOID_RIG';
+      this.applyFallbackCharacterPalette(this.avatar, 'hero');
       this.normaliseAvatar(this.avatar);
       this.root.add(this.avatar);
       this.avatar.traverse((object) => {
@@ -262,6 +263,39 @@ export class PlayerController {
       dracoLoader.dispose();
       ktx2Loader.dispose();
     }
+  }
+
+  applyFallbackCharacterPalette(root, role = 'hero') {
+    const palettes = {
+      hero: { base: 0x596b58, armor: 0x24343a, skin: 0x806047, dark: 0x1b2324 },
+      gangster: { base: 0x654b45, armor: 0x342b2b, skin: 0x795b47, dark: 0x201e1d },
+      thief: { base: 0x82764d, armor: 0x3f4635, skin: 0x795b47, dark: 0x26291e },
+      boss: { base: 0x743e42, armor: 0x36282d, skin: 0x795b47, dark: 0x201b20 },
+      echo: { base: 0x74639b, armor: 0x332c4e, skin: 0x665a8a, dark: 0x211d35 }
+    };
+    const palette = palettes[role] || palettes.hero;
+    root.traverse((object) => {
+      if (!object.isMesh && !object.isSkinnedMesh) return;
+      const materials = Array.isArray(object.material) ? object.material : [object.material];
+      const recoloured = materials.map((material) => {
+        if (!material || material.map || !material.color) return material;
+        const clone = material.clone();
+        const name = normaliseName((object.name || '') + ' ' + (material.name || ''));
+        const color = /skin|face|head|hand/.test(name)
+          ? palette.skin
+          : /boot|shoe|sole|belt|glove/.test(name)
+            ? palette.dark
+            : /helmet|visor|armou?r|chest|plate|vest/.test(name)
+              ? palette.armor
+              : palette.base;
+        clone.color.setHex(color);
+        if ('roughness' in clone) clone.roughness = Math.max(0.68, clone.roughness || 0.8);
+        if ('metalness' in clone) clone.metalness = Math.min(0.28, clone.metalness || 0.08);
+        clone.needsUpdate = true;
+        return clone;
+      });
+      object.material = Array.isArray(object.material) ? recoloured : recoloured[0];
+    });
   }
 
   normaliseAvatar(avatar) {
@@ -502,6 +536,83 @@ export class PlayerController {
 
  
 
+  createProceduralWeapon(key) {
+    const root = new THREE.Group();
+    root.name = 'PROCEDURAL_WEAPON_' + String(key).toUpperCase();
+    const bodyMaterial = new THREE.MeshStandardMaterial({ color: 0x26343a, metalness: 0.58, roughness: 0.42 });
+    const darkMaterial = new THREE.MeshStandardMaterial({ color: 0x11191d, metalness: 0.34, roughness: 0.72 });
+    const metalMaterial = new THREE.MeshStandardMaterial({ color: 0x63747b, metalness: 0.78, roughness: 0.3 });
+    const energyColors = {
+      pulseRifle: 0x55e5ed,
+      novaCannon: 0xffad55,
+      arcLance: 0x75aaff,
+      gravityCore: 0xc18aff
+    };
+    const glowColor = energyColors[key] || 0x55e5ed;
+    const glowMaterial = new THREE.MeshStandardMaterial({
+      color: glowColor,
+      emissive: glowColor,
+      emissiveIntensity: 1.15,
+      metalness: 0.36,
+      roughness: 0.28
+    });
+    const addBox = (size, material, position, rotation = [0, 0, 0]) => {
+      const mesh = new THREE.Mesh(new THREE.BoxGeometry(size[0], size[1], size[2]), material);
+      mesh.position.set(position[0], position[1], position[2]);
+      mesh.rotation.set(rotation[0], rotation[1], rotation[2]);
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      root.add(mesh);
+      return mesh;
+    };
+    const addCylinderZ = (radiusTop, radiusBottom, length, material, position) => {
+      const mesh = new THREE.Mesh(new THREE.CylinderGeometry(radiusTop, radiusBottom, length, 12), material);
+      mesh.rotation.x = Math.PI * 0.5;
+      mesh.position.set(position[0], position[1], position[2]);
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      root.add(mesh);
+      return mesh;
+    };
+
+    const isHeavy = key === 'novaCannon' || key === 'gravityCore';
+    const bodyLength = key === 'arcLance' ? 0.92 : isHeavy ? 0.78 : 0.72;
+    addBox([0.14, 0.17, bodyLength], bodyMaterial, [0, 0, -0.27]);
+    addBox([0.15, 0.09, 0.22], darkMaterial, [0, -0.02, 0.16]);
+    addBox([0.085, 0.22, 0.13], darkMaterial, [0, -0.16, -0.12], [0.18, 0, 0]);
+    addBox([0.18, 0.05, 0.26], metalMaterial, [0, 0.105, -0.23]);
+    addBox([0.18, 0.07, 0.13], darkMaterial, [0, 0.09, 0.12]);
+    addBox([0.07, 0.055, 0.34], glowMaterial, [0, 0.012, -0.29]);
+
+    if (key === 'novaCannon') {
+      addBox([0.22, 0.20, 0.24], bodyMaterial, [0, 0, -0.69]);
+      addCylinderZ(0.13, 0.13, 0.16, metalMaterial, [0, 0, -0.83]);
+      addCylinderZ(0.105, 0.105, 0.08, glowMaterial, [0, 0, -0.94]);
+    } else if (key === 'arcLance') {
+      addCylinderZ(0.055, 0.085, 0.5, metalMaterial, [0, 0.02, -0.70]);
+      for (let i = 0; i < 3; i++) {
+        const ring = new THREE.Mesh(new THREE.TorusGeometry(0.095, 0.018, 8, 16), glowMaterial);
+        ring.position.set(0, 0.02, -0.48 - i * 0.16);
+        ring.rotation.x = Math.PI * 0.5;
+        root.add(ring);
+      }
+    } else if (key === 'gravityCore') {
+      addBox([0.23, 0.23, 0.24], bodyMaterial, [0, 0, -0.69]);
+      const core = new THREE.Mesh(new THREE.SphereGeometry(0.12, 14, 12), glowMaterial);
+      core.position.set(0, 0.03, -0.48);
+      root.add(core);
+      addCylinderZ(0.16, 0.16, 0.12, metalMaterial, [0, 0, -0.86]);
+    } else {
+      addCylinderZ(0.055, 0.075, 0.36, metalMaterial, [0, 0.01, -0.70]);
+      addCylinderZ(0.09, 0.09, 0.07, glowMaterial, [0, 0.01, -0.90]);
+      addBox([0.20, 0.06, 0.18], darkMaterial, [0, 0.16, -0.20]);
+    }
+
+    root.scale.setScalar(isHeavy ? 1.08 : 1);
+    root.userData.proceduralFallback = true;
+    return root;
+  }
+
   async loadWeaponVisuals(loader) {
     this.weaponVisuals.clear();
     const keys = ['pulseRifle', 'novaCannon', 'arcLance', 'gravityCore'];
@@ -512,8 +623,12 @@ export class PlayerController {
       if (!definition || !definition.file) {
         registerOptionalAsset(
           '/assets/weapons/' + key + '.glb',
-          'No approved 3D weapon model has been mapped for this weapon slot yet.'
+          'No licensed weapon GLB is mapped yet; a built-in 3D prototype weapon is active.'
         );
+        const fallback = this.createProceduralWeapon(key);
+        fallback.visible = false;
+        this.weaponSocket.add(fallback);
+        this.weaponVisuals.set(key, fallback);
         continue;
       }
 
@@ -592,7 +707,7 @@ export class PlayerController {
       const recoloured = original.map((material) => {
         if (!material) return material;
         const clone = material.clone();
-        if (clone.color) clone.color.lerp(tint, role === 'echo' ? 0.24 : 0.13);
+        if (clone.color) clone.color.lerp(tint, role === 'echo' ? 0.44 : 0.52);
         if (role === 'echo' && clone.emissive) {
           clone.emissive.lerp(new THREE.Color(0x553d9c), 0.16);
           clone.emissiveIntensity = Math.max(clone.emissiveIntensity || 0, 0.18);
