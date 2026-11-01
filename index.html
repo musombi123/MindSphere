@@ -117,7 +117,10 @@ import * as THREE from 'three';
 import { PlayerController } from './src/characters/PlayerController.js';
 import { WorldManager } from './src/world/WorldManager.js';
 import { updateWorldPerformanceStats } from './src/world/AssetDiagnostics.js';
+import { registerOfflineCache } from './src/offline/OfflineCache.js';
 import { createEnemyTacticalState, suppressEnemyTactics, updateEnemyTactics } from './src/combat/EnemyTacticalAI.js';
+
+registerOfflineCache();
 
 const canvas = document.getElementById('game-canvas');
 const renderer = new THREE.WebGLRenderer({canvas, antialias: !matchMedia('(pointer: coarse)').matches, alpha: false, powerPreference: 'high-performance'});
@@ -1353,7 +1356,15 @@ function animate(now){
   worldPerfFrames++;
   if(now-worldPerfStart>=500){
     const fps=worldPerfFrames*1000/(now-worldPerfStart);
-    updateWorldPerformanceStats({fps,drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles});
+    const heapBytes=performance.memory?.usedJSHeapSize;
+    updateWorldPerformanceStats({
+      fps,
+      drawCalls:renderer.info.render.calls,
+      triangles:renderer.info.render.triangles,
+      geometries:renderer.info.memory.geometries,
+      textures:renderer.info.memory.textures,
+      jsHeapMb:Number.isFinite(heapBytes)?heapBytes/1048576:null
+    });
     worldPerfFrames=0;worldPerfStart=now;
   }
 }
