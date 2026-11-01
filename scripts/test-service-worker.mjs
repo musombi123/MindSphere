@@ -19,12 +19,14 @@ class MemoryCache {
   }
 
   async put(key, response) {
-    const url = new URL(key instanceof Request ? key.url : String(key), scope).href;
+    const raw = typeof key === 'string' || key instanceof URL ? key : key.url;
+    const url = new URL(String(raw), scope).href;
     this.entries.set(url, response.clone());
   }
 
   async match(key) {
-    const url = new URL(key instanceof Request ? key.url : String(key), scope).href;
+    const raw = typeof key === 'string' || key instanceof URL ? key : key.url;
+    const url = new URL(String(raw), scope).href;
     const response = this.entries.get(url);
     return response ? response.clone() : undefined;
   }
@@ -81,7 +83,8 @@ function createWorker() {
 
   const fetcher = async (input) => {
     if (offline) throw new Error('simulated offline mode');
-    const url = new URL(input instanceof Request ? input.url : String(input), scope);
+    const raw = typeof input === 'string' || input instanceof URL ? input : input.url;
+    const url = new URL(String(raw), scope);
     if (url.href === new URL('precache-manifest.json', scope).href) {
       return new Response(JSON.stringify(manifest), {
         headers: { 'Content-Type': 'application/json' }
@@ -135,7 +138,7 @@ assert.ok(!cacheNamesAfterActivation.includes(CACHE_PREFIX + 'old-build'), 'acti
 offline = true;
 let navigationResponse;
 restartedWorker.get('fetch')({
-  request: new Request(new URL('story/deep-link', scope), { mode: 'navigate' }),
+  request: { url: new URL('story/deep-link', scope).href, method: 'GET', mode: 'navigate' },
   respondWith(promise) {
     navigationResponse = Promise.resolve(promise);
   }
