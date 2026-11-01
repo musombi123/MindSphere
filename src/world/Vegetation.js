@@ -31,9 +31,30 @@ export class Vegetation {
     const treeCount = this.quality === 'high' ? 42 : this.quality === 'medium' ? 28 : 15;
     const shrubCount = this.quality === 'high' ? 120 : this.quality === 'medium' ? 72 : 36;
     const trunkGeometry = new THREE.CylinderGeometry(0.13, 0.30, 1, 8, 1);
+    const branchGeometry = new THREE.CylinderGeometry(0.055, 0.12, 1, 6, 1);
     const crownGeometry = new THREE.SphereGeometry(1, 12, 9);
     const clusterGeometry = new THREE.SphereGeometry(1, 10, 8);
     const shrubGeometry = new THREE.IcosahedronGeometry(1, 1);
+    const grassGeometry = new THREE.BufferGeometry();
+    const grassPositions = [];
+    const grassIndices = [];
+    for (let blade = 0; blade < 3; blade++) {
+      const angle = blade * Math.PI / 3;
+      const sideX = -Math.sin(angle) * 0.075;
+      const sideZ = Math.cos(angle) * 0.075;
+      const leanX = Math.cos(angle) * 0.10;
+      const leanZ = Math.sin(angle) * 0.10;
+      const offset = blade * 3;
+      grassPositions.push(
+        -sideX, 0, -sideZ,
+        sideX, 0, sideZ,
+        leanX, 0.92, leanZ
+      );
+      grassIndices.push(offset, offset + 1, offset + 2);
+    }
+    grassGeometry.setAttribute('position', new THREE.Float32BufferAttribute(grassPositions, 3));
+    grassGeometry.setIndex(grassIndices);
+    grassGeometry.computeVertexNormals();
 
     const barkMaterial = new THREE.MeshStandardMaterial({
       color: 0xffffff,
@@ -57,11 +78,17 @@ export class Vegetation {
     const trunks = new THREE.InstancedMesh(trunkGeometry, barkMaterial, treeCount);
     const crowns = new THREE.InstancedMesh(crownGeometry, leafMaterial, treeCount);
     const clusters = new THREE.InstancedMesh(clusterGeometry, leafShadeMaterial, treeCount * 2);
+    const branches = new THREE.InstancedMesh(branchGeometry, barkMaterial, treeCount * 4);
     const shrubs = new THREE.InstancedMesh(shrubGeometry, shrubMaterial, shrubCount);
+    const grassCount = this.quality === 'high' ? 850 : this.quality === 'medium' ? 520 : 260;
+    const grassMaterial = new THREE.MeshStandardMaterial({ color: 0x7d914a, roughness: 1, side: THREE.DoubleSide });
+    const grass = new THREE.InstancedMesh(grassGeometry, grassMaterial, grassCount);
     trunks.name = 'BUNGOMA_3D_TREE_TRUNKS';
     crowns.name = 'BUNGOMA_3D_TREE_CANOPIES';
     clusters.name = 'BUNGOMA_3D_CANOPY_CLUSTERS';
+    branches.name = 'BUNGOMA_3D_TREE_BRANCHES';
     shrubs.name = 'BUNGOMA_3D_UNDERSTORY_SHRUBS';
+    grass.name = 'BUNGOMA_FIELD_GRASS_TUFTS';
 
     const dummy = new THREE.Object3D();
     const trees = [];
@@ -90,6 +117,23 @@ export class Vegetation {
       dummy.updateMatrix();
       crowns.setMatrixAt(placed, dummy.matrix);
 
+      for (let branch = 0; branch < 4; branch++) {
+        const angle = random() * Math.PI * 2 + branch * Math.PI * 0.5;
+        const length = 1.0 + random() * 1.25;
+        const direction = new THREE.Vector3(
+          Math.cos(angle) * 0.82,
+          0.40 + random() * 0.18,
+          Math.sin(angle) * 0.82
+        ).normalize();
+        const start = new THREE.Vector3(x, ground + height * 0.66, z);
+        const midpoint = start.clone().addScaledVector(direction, length * 0.5);
+        dummy.position.copy(midpoint);
+        dummy.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction);
+        dummy.scale.set(1, length, 1);
+        dummy.updateMatrix();
+        branches.setMatrixAt(placed * 4 + branch, dummy.matrix);
+      }
+
       for (let part = 0; part < 2; part++) {
         const direction = part === 0 ? -1 : 1;
         const index = placed * 2 + part;
@@ -109,7 +153,8 @@ export class Vegetation {
     }
     trunks.count = crowns.count = placed;
     clusters.count = placed * 2;
-    for (const mesh of [trunks, crowns, clusters]) {
+    branches.count = placed * 4;
+    for (const mesh of [trunks, crowns, clusters, branches]) {
       mesh.instanceMatrix.needsUpdate = true;
       mesh.castShadow = true;
       mesh.receiveShadow = true;
@@ -138,11 +183,32 @@ export class Vegetation {
     this.scene.add(shrubs);
     this.meshes.push(shrubs);
 
+    let grassPlaced = 0;
+    for (let attempt = 0; attempt < grassCount * 5 && grassPlaced < grassCount; attempt++) {
+      const side = random() < 0.5 ? -1 : 1;
+      const x = side * (6.2 + random() * 34);
+      const z = -130 + random() * 158;
+      if (Math.abs(x - roadCenterX(z)) < 5.8) continue;
+      const ground = this.terrain.getHeightAt(x, z);
+      const size = 0.55 + random() * 0.85;
+      dummy.position.set(x, ground, z);
+      dummy.rotation.set(0, random() * Math.PI * 2, 0);
+      dummy.scale.set(size, 0.42 + random() * 0.62, size);
+      dummy.updateMatrix();
+      grass.setMatrixAt(grassPlaced++, dummy.matrix);
+    }
+    grass.count = grassPlaced;
+    grass.instanceMatrix.needsUpdate = true;
+    grass.castShadow = false;
+    grass.receiveShadow = false;
+    this.scene.add(grass);
+    this.meshes.push(grass);
+
     this.treePositions = trees.map((tree) => ({
       position: new THREE.Vector3(tree.x, tree.ground, tree.z)
     }));
     this.addCatalogVegetation();
-    recordWorldNote('Roadside trees, layered canopies and understory use actual 3D instanced geometry with photo-derived bark/leaf materials, not vertical image cutouts.');
+    recordWorldNote('Roadside vegetation uses instanced 3D trunks, angled branches, umbrella canopies, low shrubs and individual grass tufts with photo-derived surface materials.');
   }
 
   addCatalogVegetation() {
