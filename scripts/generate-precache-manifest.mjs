@@ -49,7 +49,7 @@ const manifest = {
   files
 };
 
-await writeFile(outputPath, JSON.stringify(manifest, null, 2) + '\\n', 'utf8');
+await writeFile(outputPath, JSON.stringify(manifest, null, 2) + '\n', 'utf8');
 console.log('[Project Zero Hour] Offline precache manifest generated.');
 console.log('  Files: ' + files.length);
 console.log('  Payload: ' + (totalBytes / 1024 / 1024).toFixed(2) + ' MiB');
