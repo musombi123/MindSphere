@@ -79,7 +79,6 @@ export class Weather {
 
     this.createParticles();
     this.createLightning();
-    this.setWeather(settings.type || 'clear');
   }
 
   random() {
