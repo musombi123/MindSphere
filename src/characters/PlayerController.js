@@ -671,8 +671,12 @@ export class PlayerController {
         resolveOptionalAsset('/assets/weapons/' + key + '.glb');
         console.info('[Project Zero Hour] Weapon visual loaded:', key, file);
       } catch (error) {
-        registerMissingAsset(file, 'Weapon visual failed to load: ' + (error.message || String(error)));
+        registerMissingAsset(file, 'Mapped weapon visual failed to load: ' + (error.message || String(error)));
         console.warn('[Project Zero Hour] Weapon visual unavailable:', key, error);
+        const fallback = this.createProceduralWeapon(key);
+        fallback.visible = false;
+        this.weaponSocket.add(fallback);
+        this.weaponVisuals.set(key, fallback);
       }
     }
     this.setWeaponVisual(this.activeWeaponVisual);
