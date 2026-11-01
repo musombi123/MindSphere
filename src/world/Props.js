@@ -82,14 +82,7 @@ export class Props {
     const roofWidth = width * 0.57;
     this.addBox(group, [roofWidth, 0.14, depth + 0.65], this.materials.roof, [-width * 0.25, roofY - 0.15, 0], [0, 0, 0.43]);
     this.addBox(group, [roofWidth, 0.14, depth + 0.65], this.materials.roof, [width * 0.25, roofY - 0.15, 0], [0, 0, -0.43]);
-    for (let side = -1; side <= 1; side += 2) {
-      const tilt = side < 0 ? 0.43 : -0.43;
-      for (let rib = -2; rib <= 2; rib++) {
-        const localX = side * width * 0.25 + rib * 0.58;
-        const localY = roofY - 0.15 + Math.abs(rib * 0.58) * 0.42;
-        this.addBox(group, [0.055, 0.045, depth + 0.68], this.materials.roofRib, [localX, localY, 0], [0, 0, tilt]);
-      }
-    }
+
 
     const frontZ = depth * 0.5 + 0.075;
     this.addBox(group, [0.95, 1.95, 0.10], this.materials.door, [0, 1.12, frontZ]);
@@ -106,35 +99,65 @@ export class Props {
     group.name = 'PROCEDURAL_TIMBER_FENCE_PROXY';
     this.scene.add(group);
     this.proxyGroups.push({ key: 'timberFence', group });
+
     const sections = this.quality === 'high' ? 19 : this.quality === 'medium' ? 15 : 10;
     const startZ = 18;
     const endZ = -121;
     const step = (startZ - endZ) / sections;
+    const posts = new THREE.InstancedMesh(new THREE.BoxGeometry(0.17, 1.55, 0.17), this.materials.timberDark, (sections + 1) * 2);
+    const rails = new THREE.InstancedMesh(new THREE.BoxGeometry(0.12, 0.16, 1), this.materials.wood, sections * 4);
+    const braces = new THREE.InstancedMesh(new THREE.BoxGeometry(0.10, 0.10, 1), this.materials.timberDark, Math.ceil(sections / 2) * 2);
+    posts.name = 'FENCE_POST_INSTANCES';
+    rails.name = 'FENCE_RAIL_INSTANCES';
+    braces.name = 'FENCE_BRACE_INSTANCES';
+
+    const dummy = new THREE.Object3D();
+    let postIndex = 0, railIndex = 0, braceIndex = 0;
     for (const side of [-1, 1]) {
+      const points = [];
+      for (let i = 0; i <= sections; i++) {
+        const z = startZ - i * step;
+        const x = roadCenterX(z) + side * 9.4;
+        const y = this.terrain.getHeightAt(x, z);
+        points.push({ x, z, y });
+        dummy.position.set(x, y + 0.78, z);
+        dummy.rotation.set(0, 0, 0);
+        dummy.scale.set(1, 1, 1);
+        dummy.updateMatrix();
+        posts.setMatrixAt(postIndex++, dummy.matrix);
+      }
       for (let i = 0; i < sections; i++) {
-        const z0 = startZ - i * step;
-        const z1 = startZ - (i + 1) * step;
-        const x0 = roadCenterX(z0) + side * 9.4;
-        const x1 = roadCenterX(z1) + side * 9.4;
-        const midX = (x0 + x1) * 0.5;
-        const midZ = (z0 + z1) * 0.5;
-        const length = Math.hypot(x1 - x0, z1 - z0);
-        const yaw = Math.atan2(x1 - x0, z1 - z0);
-        const y0 = this.terrain.getHeightAt(x0, z0);
-        const y1 = this.terrain.getHeightAt(x1, z1);
-        const baseY = (y0 + y1) * 0.5;
-        for (const [x, z, y] of [[x0, z0, y0], [x1, z1, y1]]) {
-          this.addBox(group, [0.17, 1.55, 0.17], this.materials.timberDark, [x, y + 0.78, z]);
-        }
+        const a = points[i], b = points[i + 1];
+        const midX = (a.x + b.x) * 0.5;
+        const midZ = (a.z + b.z) * 0.5;
+        const midY = (a.y + b.y) * 0.5;
+        const length = Math.hypot(b.x - a.x, b.z - a.z) + 0.12;
+        const yaw = Math.atan2(b.x - a.x, b.z - a.z);
         for (const height of [0.55, 1.18]) {
-          this.addBox(group, [0.12, 0.16, length + 0.12], this.materials.wood, [midX, baseY + height, midZ], [0, yaw, 0]);
+          dummy.position.set(midX, midY + height, midZ);
+          dummy.rotation.set(0, yaw, 0);
+          dummy.scale.set(1, 1, length);
+          dummy.updateMatrix();
+          rails.setMatrixAt(railIndex++, dummy.matrix);
         }
-        // Short diagonal braces keep the fence visibly structural instead of a flat wall.
         if (i % 2 === 0) {
-          this.addBox(group, [0.10, 0.10, length * 0.78], this.materials.timberDark,
-            [midX, baseY + 0.88, midZ], [0, yaw, side > 0 ? 0.13 : -0.13]);
+          dummy.position.set(midX, midY + 0.88, midZ);
+          dummy.rotation.set(0, yaw, side > 0 ? 0.13 : -0.13);
+          dummy.scale.set(1, 1, length * 0.78);
+          dummy.updateMatrix();
+          braces.setMatrixAt(braceIndex++, dummy.matrix);
         }
       }
+    }
+    posts.count = postIndex;
+    rails.count = railIndex;
+    braces.count = braceIndex;
+    for (const mesh of [posts, rails, braces]) {
+      mesh.instanceMatrix.needsUpdate = true;
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      group.add(mesh);
+      this.meshes.push(mesh);
     }
   }
 
