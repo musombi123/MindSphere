@@ -27,7 +27,7 @@ export function installWorldDebugPanel(){
  const panel=document.createElement('section');panel.id='world-debug-panel';
  Object.assign(panel.style,{position:'fixed',inset:'5vh 4vw',zIndex:'10001',background:'rgba(6,12,16,.98)',color:'#effaff',border:'1px solid #83b6c5',borderRadius:'12px',padding:'18px',overflow:'auto',font:'12px/1.5 ui-monospace,monospace',boxShadow:'0 20px 70px #000b',display:'none'});
  const heading=document.createElement('div');Object.assign(heading.style,{display:'flex',justifyContent:'space-between',alignItems:'center',gap:'12px',marginBottom:'12px'});
- const title=document.createElement('strong');title.textContent='WORLD ASSET DIAGNOSTICS · F3';title.style.fontSize='16px';
+ const title=document.createElement('strong');title.textContent='WORLD ASSET DIAGNOSTICS · F3 / 3-FINGER TAP';title.style.fontSize='16px';
  const close=document.createElement('button');close.textContent='CLOSE';close.onclick=()=>panel.style.display='none';heading.append(title,close);
  const body=document.createElement('div');body.id='world-debug-panel-body';panel.append(heading,body);
  const perf=document.createElement('div');perf.id='world-performance-overlay';
@@ -67,7 +67,7 @@ export function installWorldDebugPanel(){
  d.updatePerformance=(stats)=>{
   d.performance={...d.performance,...stats};
   const p=d.performance;
-  const heap=Number.isFinite(Number(p.jsHeapMb))?Number(p.jsHeapMb).toFixed(1)+' MB':'n/a';
+  const heap=p.jsHeapMb!=null&&Number.isFinite(Number(p.jsHeapMb))?Number(p.jsHeapMb).toFixed(1)+' MB':'n/a';
   perf.textContent='WORLD PERFORMANCE · F4\\nFPS  '+Number(p.fps||0).toFixed(1)+'\\nDRAW CALLS  '+Number(p.drawCalls||0)+'\\nTRIANGLES  '+Number(p.triangles||0)+'\\nGEOMETRIES  '+Number(p.geometries||0)+'\\nTEXTURES  '+Number(p.textures||0)+'\\nJS HEAP  '+heap;;
   if(body.isConnected&&panel.style.display!=='none')d.render();
  };
@@ -86,7 +86,7 @@ export function installWorldDebugPanel(){
     'Triangles: '+Number(d.performance.triangles||0),
     'Geometries: '+Number(d.performance.geometries||0),
     'Textures: '+Number(d.performance.textures||0),
-    'JavaScript heap: '+(Number.isFinite(Number(d.performance.jsHeapMb))?Number(d.performance.jsHeapMb).toFixed(1)+' MB':'not exposed by this browser')
+    'JavaScript heap: '+(d.performance.jsHeapMb!=null&&Number.isFinite(Number(d.performance.jsHeapMb))?Number(d.performance.jsHeapMb).toFixed(1)+' MB':'not exposed by this browser')
    ])
   );
   const blockingLayer=Boolean(document.querySelector('.screen-layer:not(.hidden)'));
