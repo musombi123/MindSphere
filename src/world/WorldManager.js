@@ -26,6 +26,8 @@ export class WorldManager {
     this.vegetation = new Vegetation({scene,quality:this.quality,textures:this.textures,terrain:this.terrain,camera,assetLibrary:this.assetLibrary});
     this.props = new Props({scene,terrain:this.terrain,textures:this.textures,quality:this.quality,camera,assetLibrary:this.assetLibrary});
     this.weather = new Weather({scene,quality:this.quality});
+    window.__worldWeather=this.weather.type;
+    window.__setWorldWeather=(type)=>this.setWeather(type);
     this.audio = new AudioAmbience();
     this.postprocessing = new Postprocessing({renderer,scene,camera,sun,quality:this.quality});
     window.__worldQuality=this.quality;
@@ -36,6 +38,7 @@ export class WorldManager {
   initialize() {}
   getHeightAt(x, z) { return this.terrain.getHeightAt(x, z); }
   createPhaseRoadOverlay(material) { this.phaseRoadMesh = this.road.createPhaseOverlay(material); return this.phaseRoadMesh; }
+  setWeather(type='clear') { return this.weather.setWeather(type); }
   update(dt, elapsed) { this.elapsed = elapsed; this.road.update(dt, elapsed); this.sky.update(dt,elapsed); this.vegetation.update(dt,elapsed); this.props.update(dt,elapsed); this.weather.update(dt,elapsed); }
   render(dt, elapsed) { this.update(dt, elapsed); this.postprocessing.render(this.scene,this.camera); }
   resize(width=window.innerWidth,height=window.innerHeight){this.postprocessing.setSize(width,height);}
