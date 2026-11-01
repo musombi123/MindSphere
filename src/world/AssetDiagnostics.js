@@ -71,7 +71,8 @@ export function installWorldDebugPanel(){
   body.replaceChildren(settings,
    section('Photos used from the uploaded video',d.photos),
    section('Models loaded',d.modelsLoaded),
-   section('Missing assets — see red banner',d.missingAssets,true),
+   section('Required assets that failed to load',d.missingAssets,true),
+   section('Optional 3D models not yet mapped',d.optionalAssets),
    section('Geometry / primitives remaining',d.primitives),
    section('Performance snapshot',[
     'FPS: '+Number(d.performance.fps||0).toFixed(1),
@@ -79,7 +80,8 @@ export function installWorldDebugPanel(){
     'Triangles: '+Number(d.performance.triangles||0)
    ])
   );
-  if(d.missingAssets.length){const x=d.missingAssets[0];banner.textContent='ASSET MISSING: '+x.path+(d.missingAssets.length>1?' (+'+(d.missingAssets.length-1)+' more — open F3)':'');banner.style.display='block';}
+  const blockingLayer=Boolean(document.querySelector('.screen-layer:not(.hidden)'));
+  if(d.missingAssets.length&&!blockingLayer){const x=d.missingAssets[0];banner.textContent='REQUIRED ASSET FAILED: '+x.path+(d.missingAssets.length>1?' (+'+(d.missingAssets.length-1)+' more — open F3)':'');banner.style.display='block';}
   else banner.style.display='none';
   const uniquePaths=[...new Set(d.photos.map(p=>p.path))];
   const loadingPaths=uniquePaths.filter(path=>d.photos.some(p=>p.path===path&&p.status==='loading'));
