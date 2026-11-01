@@ -332,6 +332,7 @@ export class PlayerController {
       const response = await fetch(publicAssetUrl(ANIMATION_MANIFEST_URL), { cache: 'no-store' });
       if (!response.ok) return [];
       const manifest = await response.json();
+      resolveMissingAsset(publicAssetUrl(ANIMATION_MANIFEST_URL));
       const entries = Object.entries(manifest.clips || {});
       if (!entries.length) return [];
 
@@ -388,6 +389,7 @@ export class PlayerController {
             loadedAsset = group.isFbx
               ? await new FBXLoader().loadAsync(group.file)
               : await loader.loadAsync(group.file);
+            resolveMissingAsset(group.file);
             const sourceClips = loadedAsset.animations || [];
             for (const { key, definition } of group.entries) {
               const expected = definition.clipName
