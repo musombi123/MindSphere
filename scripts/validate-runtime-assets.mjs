@@ -15,7 +15,9 @@ function warn(message) { warnings.push(message); }
 
 async function readJson(file, label) {
   try {
-    return JSON.parse(await readFile(file, 'utf8'));
+    const source = await readFile(file, 'utf8');
+    // PowerShell 5's legacy UTF-8 writer may leave a BOM; tolerate it in existing catalogs.
+    return JSON.parse(source.replace(/^\uFEFF/, ''));
   } catch (error) {
     fail(label + ' is missing or invalid JSON: ' + error.message);
     return null;
