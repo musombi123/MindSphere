@@ -118,11 +118,9 @@ import { PlayerController } from './src/characters/PlayerController.js';
 import { WorldManager } from './src/world/WorldManager.js';
 import { updateWorldPerformanceStats } from './src/world/AssetDiagnostics.js';
 import { registerOfflineCache } from './src/offline/OfflineCache.js';
-import { preloadRuntimeAssets } from './src/offline/RuntimeAssetPreloader.js';
 import { createEnemyTacticalState, suppressEnemyTactics, updateEnemyTactics } from './src/combat/EnemyTacticalAI.js';
 
 registerOfflineCache();
-preloadRuntimeAssets().catch((error) => console.warn('[Project Zero Hour] Critical asset preload failed:', error));
 
 const canvas = document.getElementById('game-canvas');
 const renderer = new THREE.WebGLRenderer({canvas, antialias: !matchMedia('(pointer: coarse)').matches, alpha: false, powerPreference: 'high-performance'});
