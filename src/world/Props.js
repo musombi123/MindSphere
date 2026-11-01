@@ -12,6 +12,7 @@ export class Props {
     this.assetLibrary = assetLibrary;
     this.meshes = [];
     this.realInstances = [];
+    this.proxyGroups = [];
     this.materials = this.createMaterials();
     this.build();
     this.assetLibrary?.ready.then(() => this.addCatalogWorldModels()).catch((error) =>
@@ -59,6 +60,7 @@ export class Props {
     group.position.set(x, y, z);
     group.rotation.y = yaw;
     this.scene.add(group);
+    this.proxyGroups.push({ key: 'mudHouse', group });
 
     const width = variant ? 5.4 : 6.2;
     const depth = variant ? 4.5 : 5.1;
@@ -70,7 +72,7 @@ export class Props {
     gable.moveTo(-width * 0.5, 0);
     gable.lineTo(width * 0.5, 0);
     gable.lineTo(0, 1.45);
-    gable.closeShape();
+    gable.lineTo(-width * 0.5, 0);
     const gableGeometry = new THREE.ShapeGeometry(gable);
     this.addMesh(gableGeometry, this.materials.mud, group, [0, wallHeight + 0.12, depth * 0.5 + 0.005]);
     const rearGable = this.addMesh(gableGeometry.clone(), this.materials.mud, group, [0, wallHeight + 0.12, -depth * 0.5 - 0.005]);
@@ -80,14 +82,7 @@ export class Props {
     const roofWidth = width * 0.57;
     this.addBox(group, [roofWidth, 0.14, depth + 0.65], this.materials.roof, [-width * 0.25, roofY - 0.15, 0], [0, 0, 0.43]);
     this.addBox(group, [roofWidth, 0.14, depth + 0.65], this.materials.roof, [width * 0.25, roofY - 0.15, 0], [0, 0, -0.43]);
-    for (let side = -1; side <= 1; side += 2) {
-      const tilt = side < 0 ? 0.43 : -0.43;
-      for (let rib = -2; rib <= 2; rib++) {
-        const localX = side * width * 0.25 + rib * 0.58;
-        const localY = roofY - 0.15 + Math.abs(rib * 0.58) * 0.42;
-        this.addBox(group, [0.055, 0.045, depth + 0.68], this.materials.roofRib, [localX, localY, 0], [0, 0, tilt]);
-      }
-    }
+
 
     const frontZ = depth * 0.5 + 0.075;
     this.addBox(group, [0.95, 1.95, 0.10], this.materials.door, [0, 1.12, frontZ]);
@@ -100,35 +95,69 @@ export class Props {
   }
 
   buildFence() {
+    const group = new THREE.Group();
+    group.name = 'PROCEDURAL_TIMBER_FENCE_PROXY';
+    this.scene.add(group);
+    this.proxyGroups.push({ key: 'timberFence', group });
+
     const sections = this.quality === 'high' ? 19 : this.quality === 'medium' ? 15 : 10;
     const startZ = 18;
     const endZ = -121;
     const step = (startZ - endZ) / sections;
+    const posts = new THREE.InstancedMesh(new THREE.BoxGeometry(0.17, 1.55, 0.17), this.materials.timberDark, (sections + 1) * 2);
+    const rails = new THREE.InstancedMesh(new THREE.BoxGeometry(0.12, 0.16, 1), this.materials.wood, sections * 4);
+    const braces = new THREE.InstancedMesh(new THREE.BoxGeometry(0.10, 0.10, 1), this.materials.timberDark, Math.ceil(sections / 2) * 2);
+    posts.name = 'FENCE_POST_INSTANCES';
+    rails.name = 'FENCE_RAIL_INSTANCES';
+    braces.name = 'FENCE_BRACE_INSTANCES';
+
+    const dummy = new THREE.Object3D();
+    let postIndex = 0, railIndex = 0, braceIndex = 0;
     for (const side of [-1, 1]) {
+      const points = [];
+      for (let i = 0; i <= sections; i++) {
+        const z = startZ - i * step;
+        const x = roadCenterX(z) + side * 9.4;
+        const y = this.terrain.getHeightAt(x, z);
+        points.push({ x, z, y });
+        dummy.position.set(x, y + 0.78, z);
+        dummy.rotation.set(0, 0, 0);
+        dummy.scale.set(1, 1, 1);
+        dummy.updateMatrix();
+        posts.setMatrixAt(postIndex++, dummy.matrix);
+      }
       for (let i = 0; i < sections; i++) {
-        const z0 = startZ - i * step;
-        const z1 = startZ - (i + 1) * step;
-        const x0 = roadCenterX(z0) + side * 9.4;
-        const x1 = roadCenterX(z1) + side * 9.4;
-        const midX = (x0 + x1) * 0.5;
-        const midZ = (z0 + z1) * 0.5;
-        const length = Math.hypot(x1 - x0, z1 - z0);
-        const yaw = Math.atan2(x1 - x0, z1 - z0);
-        const y0 = this.terrain.getHeightAt(x0, z0);
-        const y1 = this.terrain.getHeightAt(x1, z1);
-        const baseY = (y0 + y1) * 0.5;
-        for (const [x, z, y] of [[x0, z0, y0], [x1, z1, y1]]) {
-          this.addBox(this.scene, [0.17, 1.55, 0.17], this.materials.timberDark, [x, y + 0.78, z]);
-        }
+        const a = points[i], b = points[i + 1];
+        const midX = (a.x + b.x) * 0.5;
+        const midZ = (a.z + b.z) * 0.5;
+        const midY = (a.y + b.y) * 0.5;
+        const length = Math.hypot(b.x - a.x, b.z - a.z) + 0.12;
+        const yaw = Math.atan2(b.x - a.x, b.z - a.z);
         for (const height of [0.55, 1.18]) {
-          this.addBox(this.scene, [0.12, 0.16, length + 0.12], this.materials.wood, [midX, baseY + height, midZ], [0, yaw, 0]);
+          dummy.position.set(midX, midY + height, midZ);
+          dummy.rotation.set(0, yaw, 0);
+          dummy.scale.set(1, 1, length);
+          dummy.updateMatrix();
+          rails.setMatrixAt(railIndex++, dummy.matrix);
         }
-        // Short diagonal braces keep the fence visibly structural instead of a flat wall.
         if (i % 2 === 0) {
-          this.addBox(this.scene, [0.10, 0.10, length * 0.78], this.materials.timberDark,
-            [midX, baseY + 0.88, midZ], [0, yaw, side > 0 ? 0.13 : -0.13]);
+          dummy.position.set(midX, midY + 0.88, midZ);
+          dummy.rotation.set(0, yaw, side > 0 ? 0.13 : -0.13);
+          dummy.scale.set(1, 1, length * 0.78);
+          dummy.updateMatrix();
+          braces.setMatrixAt(braceIndex++, dummy.matrix);
         }
       }
+    }
+    posts.count = postIndex;
+    rails.count = railIndex;
+    braces.count = braceIndex;
+    for (const mesh of [posts, rails, braces]) {
+      mesh.instanceMatrix.needsUpdate = true;
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      group.add(mesh);
+      this.meshes.push(mesh);
     }
   }
 
@@ -138,6 +167,7 @@ export class Props {
     const y = this.terrain.getHeightAt(x, z);
     group.position.set(x, y, z);
     this.scene.add(group);
+    this.proxyGroups.push({ key: 'waterTank', group });
     this.addMesh(new THREE.CylinderGeometry(1.0, 1.12, 2.25, 18, 1), this.materials.tank, group, [0, 1.35, 0]);
     this.addMesh(new THREE.SphereGeometry(1.0, 18, 9, 0, Math.PI * 2, 0, Math.PI * 0.5), this.materials.tank, group, [0, 2.48, 0]);
     for (let i = 0; i < 4; i++) {
@@ -152,6 +182,7 @@ export class Props {
     group.name = 'RURAL_UTILITY_PICKUP';
     group.position.set(x, this.terrain.getHeightAt(x, z), z);
     this.scene.add(group);
+    this.proxyGroups.push({ key: 'rustedPickup', group });
     this.addBox(group, [2.05, 0.62, 4.05], this.materials.vehicle, [0, 0.95, 0]);
     this.addBox(group, [1.92, 1.15, 1.72], this.materials.vehicle, [0, 1.78, 0.58]);
     this.addBox(group, [1.76, 0.72, 0.08], this.materials.glass, [0, 1.91, 1.46]);
@@ -172,6 +203,7 @@ export class Props {
     group.name = 'BODA_BODA_MOTORCYCLE';
     group.position.set(x, this.terrain.getHeightAt(x, z), z);
     this.scene.add(group);
+    this.proxyGroups.push({ key: 'bodaBoda', group });
     for (const wz of [-0.88, 0.88]) {
       this.addMesh(new THREE.TorusGeometry(0.39, 0.075, 8, 18), this.materials.rubber, group,
         [0, 0.43, wz], [0, Math.PI * 0.5, 0]);
@@ -208,6 +240,7 @@ export class Props {
     const crate = new THREE.Group();
     crate.position.set(roadCenterX(-18) + 12, this.terrain.getHeightAt(roadCenterX(-18) + 12, -18), -18);
     this.scene.add(crate);
+    this.proxyGroups.push({ key: 'crates', group: crate });
     this.addBox(crate, [0.92, 0.78, 0.82], this.materials.wood, [0, 0.39, 0]);
     this.addBox(crate, [0.96, 0.08, 0.08], this.materials.timberDark, [0, 0.39, 0.43]);
     this.addBox(crate, [0.08, 0.82, 0.08], this.materials.timberDark, [-0.42, 0.39, 0]);
@@ -228,17 +261,29 @@ export class Props {
       return instance;
     };
 
-    // Authored GLBs supersede corresponding proxy structures after they have passed loading.
-    if (this.assetLibrary.has('mudHouse')) {
-      for (const mesh of this.meshes) if (mesh.parent && mesh.name.startsWith('BUNGOMA_RURAL_MUD_HOMESTEAD')) mesh.visible = false;
-    }
-    if (this.assetLibrary.has('timberFence')) {
-      for (const mesh of this.meshes) if (mesh.parent && mesh.name.includes('FENCE')) mesh.visible = false;
+    // Authored GLBs supersede only their matching procedural proxy.
+    for (const proxy of this.proxyGroups) {
+      if (this.assetLibrary.has(proxy.key)) proxy.group.visible = false;
     }
 
+    if (this.assetLibrary.has('mudHouse')) {
+      for (const site of [{ z: 7, side: -1 }, { z: -43, side: 1 }, { z: -94, side: -1 }]) {
+        const x = roadCenterX(site.z) + site.side * (19 + (Math.abs(site.z) % 4));
+        place('mudHouse', x, site.z, { height: 3.9, rotation: site.side < 0 ? Math.PI * 0.5 : -Math.PI * 0.5 });
+      }
+    }
+    if (this.assetLibrary.has('timberFence')) {
+      for (const side of [-1, 1]) {
+        for (let i = 0; i < 15; i++) {
+          const z = 18 - i * 9.25;
+          place('timberFence', roadCenterX(z) + side * 9.4, z, { height: 1.55, rotation: Math.PI / 2 });
+        }
+      }
+    }
     place('bodaBoda', roadCenterX(-7) - 15, -7, { height: 1.35, rotation: Math.PI * 0.45 });
     place('rustedPickup', roadCenterX(-71) + 20, -71, { height: 1.95, rotation: -Math.PI * 0.5 });
     place('waterTank', roadCenterX(-35) - 21, -35, { height: 2.8 });
+    place('crates', roadCenterX(-18) + 12, -18, { height: 0.78 });
     place('stoneWall', roadCenterX(-91) + 17, -91, { height: 1.65, rotation: Math.PI / 2 });
   }
 
@@ -259,10 +304,12 @@ export class Props {
     for (const instance of this.realInstances) this.assetLibrary?.releaseInstance(instance);
     this.realInstances = [];
     for (const mesh of this.meshes) {
-      this.scene.remove(mesh);
+      mesh.parent?.remove(mesh);
       mesh.geometry?.dispose?.();
     }
     this.meshes = [];
+    for (const proxy of this.proxyGroups) this.scene.remove(proxy.group);
+    this.proxyGroups = [];
     for (const material of Object.values(this.materials || {})) material.dispose();
   }
 }

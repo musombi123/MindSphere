@@ -22,6 +22,47 @@ function loadImage(path,role){
  imageCache.set(path,promise);return promise;
 }
 function makeTexture(canvas,srgb,repeat){const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=srgb?THREE.SRGBColorSpace:THREE.NoColorSpace;texture.wrapS=texture.wrapT=repeat?THREE.RepeatWrapping:THREE.ClampToEdgeWrapping;texture.anisotropy=4;texture.needsUpdate=true;return texture;}
+function createProceduralPbr(baseColor, roughnessBase = 0.94) {
+ const size=512,albedoCanvas=document.createElement('canvas'),normalCanvas=document.createElement('canvas'),roughCanvas=document.createElement('canvas');
+ for(const canvas of [albedoCanvas,normalCanvas,roughCanvas])canvas.width=canvas.height=size;
+ const albedoCtx=albedoCanvas.getContext('2d'),normalCtx=normalCanvas.getContext('2d'),roughCtx=roughCanvas.getContext('2d');
+ const albedoImage=albedoCtx.createImageData(size,size),normalImage=normalCtx.createImageData(size,size),roughImage=roughCtx.createImageData(size,size);
+ const heights=new Float32Array(size*size);
+ const tau=Math.PI*2;
+ const clamp=(v)=>Math.max(0,Math.min(255,Math.round(v)));
+ for(let y=0;y<size;y++){
+  const v=y/size;
+  for(let x=0;x<size;x++){
+   const u=x/size;
+   const coarse=Math.sin(tau*(u*5+Math.sin(v*tau*3)*.11))*.52+Math.cos(tau*(v*6+Math.sin(u*tau*4)*.09))*.48;
+   const medium=Math.sin(tau*(u*19+v*13))*.42+Math.cos(tau*(u*31-v*23))*.34+Math.sin(tau*(u*43+v*37))*.24;
+   const fine=Math.sin(tau*(u*97+v*71))*Math.cos(tau*(u*83-v*109));
+   const h=coarse*.46+medium*.24+fine*.08;
+   const grain=(Math.sin(tau*(u*157+v*131))*.5+Math.cos(tau*(u*113-v*173))*.5)*7;
+   const index=(y*size+x)*4;
+   heights[y*size+x]=h;
+   albedoImage.data[index]=clamp(baseColor[0]+coarse*17+medium*11+grain);
+   albedoImage.data[index+1]=clamp(baseColor[1]+coarse*13+medium*9+grain*.68);
+   albedoImage.data[index+2]=clamp(baseColor[2]+coarse*9+medium*7+grain*.42);
+   albedoImage.data[index+3]=255;
+   const rough=clamp((roughnessBase+(Math.abs(medium)*.035))*255);
+   roughImage.data[index]=roughImage.data[index+1]=roughImage.data[index+2]=rough;
+   roughImage.data[index+3]=255;
+  }
+ }
+ for(let y=0;y<size;y++)for(let x=0;x<size;x++){
+  const left=heights[y*size+(x-1+size)%size],right=heights[y*size+(x+1)%size];
+  const up=heights[((y-1+size)%size)*size+x],down=heights[((y+1)%size)*size+x];
+  const nx=(left-right)*2.3,ny=(up-down)*2.3,len=Math.sqrt(nx*nx+ny*ny+1),i=(y*size+x)*4;
+  normalImage.data[i]=clamp(128+nx/len*127);
+  normalImage.data[i+1]=clamp(128+ny/len*127);
+  normalImage.data[i+2]=clamp(128+127/len);
+  normalImage.data[i+3]=255;
+ }
+ albedoCtx.putImageData(albedoImage,0,0);normalCtx.putImageData(normalImage,0,0);roughCtx.putImageData(roughImage,0,0);
+ const albedo=makeTexture(albedoCanvas,true,true),normal=makeTexture(normalCanvas,false,true),roughness=makeTexture(roughCanvas,false,true);
+ return {albedo,normal,roughness,sourcePath:'procedural-pbr'};
+}
 function drawCrop(ctx,canvas,image,crop,feather){
  const [u,v,w,h]=crop||[0,0,1,1];ctx.clearRect(0,0,canvas.width,canvas.height);
  ctx.drawImage(image,Math.floor(image.width*u),Math.floor(image.height*v),Math.max(1,Math.floor(image.width*w)),Math.max(1,Math.floor(image.height*h)),0,0,canvas.width,canvas.height);
@@ -64,27 +105,18 @@ function photo(name,path,crop,{feather=true,foliageKey=false}={}){
 export function createPhotoPbrTextures(){
  installWorldDebugPanel();
  return {
-  road:surface('red laterite road albedo and photo-derived PBR',FILES.road,[.05,.42,.90,.39]),
-  laterite:surface('red laterite soil crop',FILES.road,[.05,.54,.90,.34]),
-  mud:surface('darker red soil crop',FILES.road,[.13,.55,.74,.26]),
-  rock:surface('roadside earth crop',FILES.road,[.08,.51,.84,.30]),
-  ground:surface('garden ground photo',FILES.fence,[0,.38,1,.60]),
-  grass:surface('green garden ground photo',FILES.fence,[0,.46,1,.52]),
-  dryGrass:surface('road verge ground cover photo',FILES.landscape,[0,.57,1,.37]),
+  road:createProceduralPbr([132,70,43],.96),
+  laterite:createProceduralPbr([145,81,49],.95),
+  mud:createProceduralPbr([89,62,43],.98),
+  rock:createProceduralPbr([112,104,86],.96),
+  ground:createProceduralPbr([86,96,58],.98),
+  grass:createProceduralPbr([76,101,49],.97),
+  dryGrass:createProceduralPbr([121,107,64],.98),
   bark:surface('tree trunk photo crop',FILES.fence,[.11,0,.22,.90]),
   wood:surface('weathered timber fence photo crop',FILES.fence,[.02,.22,.96,.60]),
   metal:surface('corrugated roof photo crop',FILES.homestead,[0,0,1,.31]),
   leaf:surface('leaf canopy photo crop',FILES.fence,[0,0,1,.43]),
-  photo:{
-   sky:photo('photo sky and skyline strip',FILES.landscape,[0,0,1,.58]),
-   horizon:photo('rural road and tree-line backdrop',FILES.landscape,[0,.17,1,.56]),
-   treeLine:photo('distant tree-line photo panel',FILES.landscape,[0,.22,1,.43]),
-   treeCutout:photo('tree canopy foliage alpha cutout from user video',FILES.landscape,[.12,.16,.76,.40],{feather:true,foliageKey:true}),
-   plants:photo('green understory alpha cutout from user garden photo',FILES.fence,[0,.58,1,.40],{feather:true,foliageKey:true}),
-   vegetation:photo('garden and fence photo',FILES.fence,[0,0,1,1]),
-   fence:photo('hand-built timber fence photo',FILES.fence,[0,.1,1,.72]),
-   homestead:photo('rural homestead and corrugated roof photo',FILES.homestead,[0,0,1,1])
-  }
+  photo:{}
  };
 }
 export const createProceduralPbrTextures=createPhotoPbrTextures;
