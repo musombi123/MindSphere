@@ -1,19 +1,24 @@
 const getState=()=>window.__worldDebug||(window.__worldDebug={
- photos:[],modelsLoaded:[],missingAssets:[],optionalAssets:[],primitives:[
-  'Gameplay effects use geometry for weapon projectiles, the Aegis shield, Echo Shard crystals and chapter-specific anomaly effects.',
-  'Tree, fence and homestead layers use low-resolution photo references and cutouts. Authored near-field GLB models are not yet imported.'
- ],performance:{fps:0,drawCalls:0,triangles:0,gpuMs:null}
+ photos:[],modelsLoaded:[],missingAssets:[],optionalAssets:[],tasks:{},primitives:[
+  'Terrain, the laterite road, roadside stones, tree canopies and undergrowth are rendered as 3D geometry.',
+  'Catalog GLBs not yet mapped are optional art upgrades, not failed runtime requests. See ASSETS_NEEDED.md.'
+ ],performance:{fps:0,drawCalls:0,triangles:0,geometries:0,textures:0,jsHeapMb:null,gpuMs:null}
 });
+const ensureStateShape=(d)=>{
+ if(!d.tasks)d.tasks={};
+ d.performance={fps:0,drawCalls:0,triangles:0,geometries:0,textures:0,jsHeapMb:null,...(d.performance||{})};
+ return d;
+}
 
 export function installWorldDebugPanel(){
- const d=getState();if(document.getElementById('world-asset-missing-banner'))return d;
+ const d=ensureStateShape(getState());if(document.getElementById('world-asset-missing-banner'))return d;
  const banner=document.createElement('div');banner.id='world-asset-missing-banner';
  Object.assign(banner.style,{position:'fixed',top:'58px',left:'50%',transform:'translateX(-50%)',zIndex:'10000',maxWidth:'min(850px,calc(100vw - 24px))',padding:'9px 13px',border:'1px solid #ff6565',borderRadius:'8px',background:'rgba(88,4,12,.96)',color:'#fff',font:'800 12px/1.4 ui-monospace,monospace',boxShadow:'0 5px 22px #0009',display:'none',pointerEvents:'none'});
  banner.setAttribute('role','alert');
 
  const loader=document.createElement('div');loader.id='world-photo-loader';
  Object.assign(loader.style,{position:'fixed',left:'50%',bottom:'22px',transform:'translateX(-50%)',zIndex:'9999',width:'min(360px,calc(100vw - 30px))',padding:'12px 15px',background:'rgba(5,13,18,.92)',border:'1px solid #9bb9c755',borderRadius:'10px',color:'#edfaff',font:'800 10px/1.4 ui-monospace,monospace',boxShadow:'0 8px 28px #0008',display:'none'});
- const loadTitle=document.createElement('div');loadTitle.textContent='LOADING YOUR BUNGOMA PHOTO ASSETS';loadTitle.style.letterSpacing='.08em';
+ const loadTitle=document.createElement('div');loadTitle.textContent='LOADING PROJECT ZERO HOUR ASSETS';loadTitle.style.letterSpacing='.08em';
  const track=document.createElement('div');Object.assign(track.style,{height:'5px',marginTop:'8px',overflow:'hidden',borderRadius:'99px',background:'#cfe8ee22'});
  const fill=document.createElement('div');Object.assign(fill.style,{height:'100%',width:'0%',background:'#83e5ce',transition:'width .12s linear'});track.append(fill);
  const loadTip=document.createElement('div');loadTip.textContent='Preparing textures from your uploaded video…';Object.assign(loadTip.style,{marginTop:'6px',fontWeight:'500',color:'#a9c5cd'});
@@ -62,7 +67,8 @@ export function installWorldDebugPanel(){
  d.updatePerformance=(stats)=>{
   d.performance={...d.performance,...stats};
   const p=d.performance;
-  perf.textContent='WORLD PERFORMANCE · F4\nFPS  '+Number(p.fps||0).toFixed(1)+'\nDRAW CALLS  '+Number(p.drawCalls||0)+'\nTRIANGLES  '+Number(p.triangles||0);
+  const heap=Number.isFinite(Number(p.jsHeapMb))?Number(p.jsHeapMb).toFixed(1)+' MB':'n/a';
+  perf.textContent='WORLD PERFORMANCE · F4\\nFPS  '+Number(p.fps||0).toFixed(1)+'\\nDRAW CALLS  '+Number(p.drawCalls||0)+'\\nTRIANGLES  '+Number(p.triangles||0)+'\\nGEOMETRIES  '+Number(p.geometries||0)+'\\nTEXTURES  '+Number(p.textures||0)+'\\nJS HEAP  '+heap;;
   if(body.isConnected&&panel.style.display!=='none')d.render();
  };
  d.render=()=>{
@@ -77,7 +83,10 @@ export function installWorldDebugPanel(){
    section('Performance snapshot',[
     'FPS: '+Number(d.performance.fps||0).toFixed(1),
     'Draw calls: '+Number(d.performance.drawCalls||0),
-    'Triangles: '+Number(d.performance.triangles||0)
+    'Triangles: '+Number(d.performance.triangles||0),
+    'Geometries: '+Number(d.performance.geometries||0),
+    'Textures: '+Number(d.performance.textures||0),
+    'JavaScript heap: '+(Number.isFinite(Number(d.performance.jsHeapMb))?Number(d.performance.jsHeapMb).toFixed(1)+' MB':'not exposed by this browser')
    ])
   );
   const blockingLayer=Boolean(document.querySelector('.screen-layer:not(.hidden)'));
@@ -85,10 +94,19 @@ export function installWorldDebugPanel(){
   else banner.style.display='none';
   const uniquePaths=[...new Set(d.photos.map(p=>p.path))];
   const loadingPaths=uniquePaths.filter(path=>d.photos.some(p=>p.path===path&&p.status==='loading'));
-  const total=uniquePaths.length,loaded=uniquePaths.filter(path=>d.photos.some(p=>p.path===path&&p.status==='loaded')).length;
-  fill.style.width=(total?Math.round(loaded/total*100):0)+'%';
-  loadTip.textContent=loaded+' / '+total+' source photos ready · photo-based world assets';
-  loader.style.display=total>0&&loadingPaths.length?'block':'none';
+  const photoTotal=uniquePaths.length;
+  const photoLoaded=uniquePaths.filter(path=>d.photos.some(p=>p.path===path&&p.status==='loaded')).length;
+  const tasks=Object.values(d.tasks||{}).filter(task=>Number(task.total)>0);
+  const combinedTotal=photoTotal+tasks.reduce((sum,task)=>sum+Number(task.total||0),0);
+  const combinedLoaded=photoLoaded+tasks.reduce((sum,task)=>sum+Math.min(Number(task.loaded||0),Number(task.total||0)),0);
+  const pendingTask=tasks.find(task=>!task.done);
+  const pending=loadingPaths.length>0||Boolean(pendingTask);
+  fill.style.width=(combinedTotal?Math.round(combinedLoaded/combinedTotal*100):0)+'%';
+  loadTitle.textContent=pendingTask?(pendingTask.label||'LOADING RUNTIME ASSETS'):'LOADING PROJECT ZERO HOUR ASSETS';
+  loadTip.textContent=pendingTask
+    ? Number(pendingTask.loaded||0)+' / '+Number(pendingTask.total||0)+' · '+(pendingTask.label||'runtime assets')
+    : photoLoaded+' / '+photoTotal+' source photos ready · local world textures';
+  loader.style.display=pending?'block':'none';
  };
  d.render();
  window.addEventListener('keydown',e=>{
@@ -96,7 +114,25 @@ export function installWorldDebugPanel(){
   if(e.key==='F3'){e.preventDefault();panel.style.display=panel.style.display==='none'?'block':'none';}
   if(e.key==='F4'){e.preventDefault();perf.style.display=perf.style.display==='none'?'block':'none';}
  });
+ let threeFingerOpen=false;
+ document.addEventListener('touchstart',event=>{
+  if(event.touches&&event.touches.length>=3&&!threeFingerOpen){
+   threeFingerOpen=true;
+   panel.style.display=panel.style.display==='none'?'block':'none';
+   d.render?.();
+  }
+ },{passive:true});
+ const releaseThreeFinger=event=>{if(!event.touches||event.touches.length<3)threeFingerOpen=false;};
+ document.addEventListener('touchend',releaseThreeFinger,{passive:true});
+ document.addEventListener('touchcancel',releaseThreeFinger,{passive:true});
  return d;
+}
+export function updateAssetTask(key,{label='',loaded=0,total=0,done=false}={}){
+ const d=installWorldDebugPanel();
+ const taskTotal=Math.max(0,Number(total)||0);
+ const taskLoaded=Math.max(0,Math.min(taskTotal,Number(loaded)||0));
+ d.tasks[key]={label:String(label||key),loaded:taskLoaded,total:taskTotal,done:Boolean(done)||(taskTotal>0&&taskLoaded>=taskTotal)};
+ d.render?.();
 }
 export function recordPhotoUsed(path,role,status='loading'){
  const d=installWorldDebugPanel();const old=d.photos.find(p=>p.path===path&&p.role===role);
