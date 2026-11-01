@@ -148,7 +148,7 @@ const assetManifest = {
 };
 
 await mkdir(path.dirname(outputPath), { recursive: true });
-await writeFile(outputPath, JSON.stringify(assetManifest, null, 2) + '\\n', 'utf8');
+await writeFile(outputPath, JSON.stringify(assetManifest, null, 2) + '\n', 'utf8');
 
 console.log('[Project Zero Hour] Runtime asset manifest generated.');
 console.log('  Required local files: ' + assetManifest.requiredAssets.length);
