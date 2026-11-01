@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { recordPhotoUsed, registerMissingAsset, installWorldDebugPanel } from './AssetDiagnostics.js';
+import { recordPhotoUsed, registerMissingAsset, resolveMissingAsset, installWorldDebugPanel } from './AssetDiagnostics.js';
 
 const ROOT='reference/world/';
 const FILES={
