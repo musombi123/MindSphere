@@ -48,7 +48,7 @@ function localAssetPath(value, label) {
   return absolute;
 }
 
-async function verifyFileasync function verifyFile(file, label, acceptedExtensions = []) {
+async function verifyFile(file, label, acceptedExtensions = []) {
   if (!file) return false;
   try {
     const fileStat = await stat(file);
