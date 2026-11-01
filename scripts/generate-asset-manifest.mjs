@@ -103,7 +103,7 @@ for (const [key, raw] of Object.entries(animationManifest.clips)) {
   if (typeof file !== 'string' || !file.trim()) {
     throw new Error('Animation clip ' + key + ' has no file path.');
   }
-  const clean = file.trim().replace(/\\/g, '/').replace(/^\\/+/, '');
+  const clean = file.trim().replaceAll(String.fromCharCode(92), '/');
   const resolved = clean.startsWith('assets/')
     ? clean
     : path.posix.join('assets/animations', clean);
