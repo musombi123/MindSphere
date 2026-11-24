@@ -121,3 +121,12 @@ This remains a playable prototype, not a production-certified release. The world
 ## Licence
 
 The original game code and original materials are proprietary and all rights are reserved. Imported models, textures, sounds, fonts, and other third-party assets are not relicensed by this notice; their individual licences and provenance must be respected. See [LICENSE](LICENSE) and the asset documentation.
+
+## Repository governance
+
+- [Code of Conduct](CODE_OF_CONDUCT.md)
+- [Contributing](CONTRIBUTING.md)
+
+## Licence
+
+Original game code, story, and project materials are proprietary and all rights reserved; see [LICENSE](LICENSE). Third-party models, audio, fonts, textures, libraries, and other assets remain under their own licences. Consult the asset registers before redistributing builds or assets.
