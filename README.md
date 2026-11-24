@@ -116,3 +116,8 @@ When you deliberately choose to test a native build later, the workflow packages
 - [ ] Real rewarded-ad SDK, verified rewards, privacy/consent flow, and cloud saves
 
 This remains a playable prototype, not a production-certified release. The world uses a 3D heightfield, laterite road, instanced vegetation and 3D rural prop meshes with local photo-derived PBR surface materials. The sky is a procedural dome with a generated horizon ridge; it is not a tiled panorama. Some near-field structures remain procedural mesh stand-ins rather than photorealistic scans; see ASSETS_NEEDED.md for the remaining model backlog. The active player catalog still uses the previously inspected 65-bone Mixamo-compatible FBX. The root-level Military Male GLB is a separate, unapproved candidate and is not mapped as the production hero. Third-party asset packs are present in the repository, but their licensing and redistribution terms must be confirmed before shipping them.
+
+
+## Licence
+
+The original game code and original materials are proprietary and all rights are reserved. Imported models, textures, sounds, fonts, and other third-party assets are not relicensed by this notice; their individual licences and provenance must be respected. See [LICENSE](LICENSE) and the asset documentation.
